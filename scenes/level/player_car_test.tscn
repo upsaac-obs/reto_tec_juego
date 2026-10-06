@@ -7,7 +7,7 @@
 
 [sub_resource type="Curve2D" id="Curve2D_route"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 600, 0, 0, -44, 0, 0, 680, 80, 0, 0, 0, 44, 680, 400, -44, 0, 0, 0, 760, 480, 0, 0, 0, 0, 1600, 480)
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 1200, 0, 0, -88, 0, 0, 1360, 160, 0, 0, 0, 88, 1360, 800, -88, 0, 0, 0, 1520, 960, 0, 0, 0, 0, 3200, 960)
 }
 point_count = 6
 
@@ -18,16 +18,16 @@ curve = SubResource("Curve2D_route")
 script = ExtResource("1_route")
 
 [node name="TurnRight" type="Node2D" parent="Route"]
-position = Vector2(600, 0)
+position = Vector2(1200, 0)
 script = ExtResource("2_turn")
 
 [node name="TurnLeft" type="Node2D" parent="Route"]
-position = Vector2(680, 400)
+position = Vector2(1360, 800)
 script = ExtResource("2_turn")
 direction = -1
 
 [node name="ThreeLanes" type="Node2D" parent="Route"]
-position = Vector2(1000, 480)
+position = Vector2(2000, 960)
 script = ExtResource("3_section")
 lane_count = 3
 
