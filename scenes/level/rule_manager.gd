@@ -2,11 +2,13 @@ class_name RuleManager
 extends Node
 ## Cuenta faltas y puntos del nivel y calcula las estrellas.
 ## Versión inicial para el prototipo: todavía no regresa al punto de control
-## ni muestra mensajes (eso llega con las tareas RuleManager y Feedback).
+## ni pausa con el copiloto (eso llega con las tareas RuleManager y Feedback).
 
 signal infraction_reported(rule_id: StringName, grave: bool)
 signal good_action_reported(action_id: StringName, points: int)
 signal level_finished(stars: int)
+## Provisional: el HUD muestra el mensaje hasta que exista el autoload Feedback.
+signal feedback_requested(message_key: String, good: bool)
 
 var faults: int = 0
 var points: int = 0
@@ -21,12 +23,14 @@ func report_infraction(rule_id: StringName, message_key: String, grave := false)
 	faults += 1
 	print("Falta%s (%s): %s" % [" grave" if grave else "", rule_id, tr(message_key)])
 	infraction_reported.emit(rule_id, grave)
+	feedback_requested.emit(message_key, false)
 
 
 func report_good_action(action_id: StringName, message_key: String, action_points := 10) -> void:
 	points += action_points
 	print("+%d (%s): %s" % [action_points, action_id, tr(message_key)])
 	good_action_reported.emit(action_id, action_points)
+	feedback_requested.emit(message_key, true)
 
 
 func set_checkpoint(progress: float) -> void:

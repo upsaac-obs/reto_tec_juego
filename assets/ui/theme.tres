@@ -80,6 +80,65 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_topbar"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 0.0
+content_margin_bottom = 6.0
+bg_color = Color(0.8667, 0.1569, 0.2078, 1)
+border_width_bottom = 4
+border_color = Color(0.1176, 0.05882, 0.149, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pill"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 16.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1176, 0.05882, 0.149, 0.35)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_destination"]
+content_margin_left = 24.0
+content_margin_top = 4.0
+content_margin_right = 24.0
+content_margin_bottom = 4.0
+bg_color = Color(0.2471, 0.1059, 0.3059, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_message_bad"]
+content_margin_left = 28.0
+content_margin_top = 18.0
+content_margin_right = 28.0
+content_margin_bottom = 18.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.8667, 0.1569, 0.2078, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_message_good"]
+content_margin_left = 28.0
+content_margin_top = 18.0
+content_margin_right = 28.0
+content_margin_bottom = 18.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.7804, 0, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
 [resource]
 default_font_size = 32
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -102,3 +161,20 @@ PlayButton/styles/normal = SubResource("StyleBoxFlat_play_normal")
 PlayButton/styles/hover = SubResource("StyleBoxFlat_play_normal")
 PlayButton/styles/pressed = SubResource("StyleBoxFlat_play_pressed")
 PlayButton/styles/focus = SubResource("StyleBoxFlat_play_normal")
+MessageBad/base_type = &"PanelContainer"
+MessageBad/styles/panel = SubResource("StyleBoxFlat_message_bad")
+MessageGood/base_type = &"PanelContainer"
+MessageGood/styles/panel = SubResource("StyleBoxFlat_message_good")
+MessageLabel/base_type = &"Label"
+MessageLabel/colors/font_color = Color(0.2471, 0.1059, 0.3059, 1)
+MessageLabel/constants/outline_size = 0
+MessageLabel/font_sizes/font_size = 30
+TopBar/base_type = &"PanelContainer"
+TopBar/styles/panel = SubResource("StyleBoxFlat_topbar")
+TopBarDestination/base_type = &"PanelContainer"
+TopBarDestination/styles/panel = SubResource("StyleBoxFlat_destination")
+TopBarLabel/base_type = &"Label"
+TopBarLabel/constants/outline_size = 0
+TopBarLabel/font_sizes/font_size = 26
+TopBarPill/base_type = &"PanelContainer"
+TopBarPill/styles/panel = SubResource("StyleBoxFlat_pill")
