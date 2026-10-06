@@ -10,3 +10,4 @@ HUD_NIVEL_PRUEBA,"CALLE DE PRUEBA: ALTO Y PASO PEATONAL"
 HUD_DESTINO_PRUEBA,Escuela
 PONTE_CINTURON,"¡Primero el cinturón! Tócalo para poder arrancar."
 CINTURON_LISTO,"¡Listo, cinturón puesto! Ya puedes arrancar."
+META_LLEGASTE,"¡Llegaste a la meta!"
