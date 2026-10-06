@@ -1,15 +1,18 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/level/player_car.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player_car.png" id="2_texture"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(28, 16)
+size = Vector2(33, 16)
 
 [node name="PlayerCar" type="PathFollow2D"]
 loop = false
 script = ExtResource("1_script")
+texture = ExtResource("2_texture")
 
 [node name="Hitbox" type="Area2D" parent="." groups=["player"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_body")

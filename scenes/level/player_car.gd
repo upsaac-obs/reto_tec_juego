@@ -27,11 +27,18 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 @export var lane_change_time: float = 0.4
 ## Carril inicial. El 0 es el de la izquierda.
 @export var start_lane: int = 0
-@export var body_size: Vector2 = Vector2(28.0, 16.0):
+@export_group("Dibujo")
+## Sprite visto desde arriba con el frente hacia +x. El tráfico usa el mismo con modulate.
+@export var texture: Texture2D:
 	set(value):
-		body_size = value
+		texture = value
 		queue_redraw()
+@export var texture_offset: Vector2 = Vector2(-17.0, -10.0)
 @export var blink_interval: float = 0.3
+## Rectángulos en coordenadas del auto que se encienden al frenar.
+@export var brake_lights: Array[Rect2] = [Rect2(-16.0, -6.0, 2.0, 2.0), Rect2(-16.0, 4.0, 2.0, 2.0)]
+@export var left_signal_lights: Array[Rect2] = [Rect2(12.0, -8.0, 3.0, 2.0), Rect2(-15.0, -8.0, 3.0, 2.0)]
+@export var right_signal_lights: Array[Rect2] = [Rect2(12.0, 7.0, 3.0, 2.0), Rect2(-15.0, 7.0, 3.0, 2.0)]
 
 var speed: float = 0.0
 var seatbelt_on: bool = false
@@ -256,23 +263,13 @@ func _set_turn_signal(direction: int) -> void:
 	turn_signal_changed.emit(direction)
 
 
-## Dibujo provisional con figuras simples. El frente del auto apunta hacia +x.
+## El sprite ya trae carrocería y faros; aquí solo se encienden frenos y direccionales.
 func _draw() -> void:
-	var half := body_size / 2.0
-	draw_rect(Rect2(-half - Vector2.ONE, body_size + Vector2(2.0, 2.0)), Palette.COLOR_OUTLINE)
-	draw_rect(Rect2(-half, body_size), Palette.COLOR_ADO_RED)
-	# Parabrisas y vidrio trasero
-	draw_rect(Rect2(half.x - 10.0, -half.y + 2.0, 4.0, body_size.y - 4.0), Palette.COLOR_GLASS)
-	draw_rect(Rect2(-half.x + 3.0, -half.y + 3.0, 3.0, body_size.y - 6.0), Palette.COLOR_GLASS)
-	# Faros
-	draw_rect(Rect2(half.x - 2.0, -half.y + 1.0, 2.0, 3.0), Palette.COLOR_WARM_LIGHT)
-	draw_rect(Rect2(half.x - 2.0, half.y - 4.0, 2.0, 3.0), Palette.COLOR_WARM_LIGHT)
-	# Luces de freno
-	var brake_color := Palette.COLOR_WARM_LIGHT if is_braking else Palette.COLOR_SHADOW
-	draw_rect(Rect2(-half.x, -half.y + 1.0, 2.0, 3.0), brake_color)
-	draw_rect(Rect2(-half.x, half.y - 4.0, 2.0, 3.0), brake_color)
-	# Direccionales, en las esquinas del lado del giro (+y es la derecha del auto)
+	if texture != null:
+		draw_texture(texture, texture_offset)
+	if is_braking:
+		for rect in brake_lights:
+			draw_rect(rect, Palette.COLOR_SKY_HORIZON)
 	if turn_signal != 0 and fmod(_blink_time, blink_interval * 2.0) < blink_interval:
-		var y := half.y if turn_signal > 0 else -half.y - 3.0
-		draw_rect(Rect2(half.x - 4.0, y, 4.0, 3.0), Palette.COLOR_GOLD)
-		draw_rect(Rect2(-half.x, y, 4.0, 3.0), Palette.COLOR_GOLD)
+		for rect in (right_signal_lights if turn_signal > 0 else left_signal_lights):
+			draw_rect(rect, Palette.COLOR_GOLD)
