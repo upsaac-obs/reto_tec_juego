@@ -12,6 +12,7 @@ config_version=5
 
 config/name="RutaKids"
 run/main_scene="res://scenes/ui/main_menu.tscn"
+config/icon="res://assets/ui/app_icon.png"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.2471, 0.1059, 0.3059, 1)
 
@@ -74,5 +75,6 @@ locale/fallback="es"
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
