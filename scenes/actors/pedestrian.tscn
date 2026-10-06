@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/actors/pedestrian.gd" id="1_imgyg"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/child_frames.tres" id="2_ja1r8"]
+
+[node name="Pedestrian" type="Node2D" unique_id=1100360974]
+script = ExtResource("1_imgyg")
+sprite_frames = ExtResource("2_ja1r8")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1511882335]
+sprite_frames = ExtResource("2_ja1r8")
+animation = &"idle"
+offset = Vector2(0, -41.5)

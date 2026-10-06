@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/stop_zone.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+resource_local_to_scene = true
+size = Vector2(192, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_line"]
+resource_local_to_scene = true
+size = Vector2(8, 128)
+
+[node name="StopZone" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Zone" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zone"]
+position = Vector2(-96, 0)
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Line" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line"]
+position = Vector2(-4, 0)
+shape = SubResource("RectangleShape2D_line")
