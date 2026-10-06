@@ -48,6 +48,8 @@ var _car_in_approach: bool = false
 var _start_pending: bool = false
 var _faulted: bool = false
 var _yielded: bool = false
+## Sube en cada reinicio para ignorar el temporizador de una pasada anterior.
+var _round: int = 0
 
 
 func _ready() -> void:
@@ -81,7 +83,7 @@ func _on_approach_entered(area: Area2D) -> void:
 	_car_in_approach = true
 	if _state == State.WAITING and not _start_pending:
 		_start_pending = true
-		get_tree().create_timer(start_delay, false).timeout.connect(_start_crossing)
+		get_tree().create_timer(start_delay, false).timeout.connect(_start_crossing.bind(_round))
 
 
 func _on_approach_exited(area: Area2D) -> void:
@@ -89,7 +91,9 @@ func _on_approach_exited(area: Area2D) -> void:
 		_car_in_approach = false
 
 
-func _start_crossing() -> void:
+func _start_crossing(round_id: int) -> void:
+	if round_id != _round or _state != State.WAITING:
+		return
 	_state = State.CROSSING
 	_pedestrian.walk_to(_end.position)
 
@@ -117,6 +121,19 @@ func _on_pedestrian_arrived() -> void:
 		State.LEAVING:
 			_state = State.GONE
 			_pedestrian.fade_out()
+
+
+## El peatón vuelve a esperar en la banqueta y el paso se puede evaluar otra vez.
+func _on_car_restarted() -> void:
+	_round += 1
+	if _car != null:
+		_car.remove_stop_request(self)
+	_state = State.WAITING
+	_start_pending = false
+	_faulted = false
+	_yielded = false
+	_car_in_approach = false
+	_pedestrian.reset_at(_start.position)
 
 
 func _refresh() -> void:

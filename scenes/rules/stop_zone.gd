@@ -78,6 +78,12 @@ func _on_line_exited(area: Area2D) -> void:
 	_min_speed = INF
 
 
+func _on_car_restarted() -> void:
+	_evaluated = false
+	_tracking = false
+	_min_speed = INF
+
+
 func _refresh() -> void:
 	if not is_node_ready():
 		return

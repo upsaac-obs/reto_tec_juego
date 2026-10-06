@@ -3,8 +3,40 @@ class_name RulePiece
 extends Node2D
 ## Base de las piezas de reglas. Detecta al auto por su Hitbox (grupo "player")
 ## y le avisa al RuleManager del nivel (grupo "rule_manager").
+## Si el auto regresa a un punto de control que está antes de la pieza, se llama
+## _on_car_restarted() para que la pieza vuelva a su estado inicial.
 
 const Palette := preload("res://autoload/game_state.gd")
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_READY and not Engine.is_editor_hint():
+		_connect_rule_manager.call_deferred()
+
+
+func _connect_rule_manager() -> void:
+	var manager := _rule_manager()
+	if manager != null and not manager.checkpoint_restored.is_connected(_on_checkpoint_restored):
+		manager.checkpoint_restored.connect(_on_checkpoint_restored)
+
+
+func _on_checkpoint_restored(progress: float) -> void:
+	var manager := _rule_manager()
+	if manager == null or manager.car == null:
+		return
+	if progress < _progress_on_route(manager.car):
+		_on_car_restarted()
+
+
+## Se sobrescribe en cada pieza para volver a su estado inicial.
+func _on_car_restarted() -> void:
+	pass
+
+
+## Distancia sobre la ruta del auto del punto más cercano a esta pieza.
+func _progress_on_route(car: PlayerCar) -> float:
+	var route := car.get_parent() as Path2D
+	return route.curve.get_closest_offset(route.to_local(global_position))
 
 
 func _car_from(area: Area2D) -> PlayerCar:

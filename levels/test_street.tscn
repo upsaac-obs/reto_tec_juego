@@ -4,13 +4,12 @@
 [ext_resource type="Script" path="res://scenes/level/driving_route.gd" id="2_ghiwo"]
 [ext_resource type="PackedScene" path="res://scenes/rules/stop_zone.tscn" id="2_q26o6"]
 [ext_resource type="PackedScene" path="res://scenes/level/player_car.tscn" id="3_ac0x4"]
+[ext_resource type="PackedScene" path="res://scenes/rules/checkpoint.tscn" id="4_ebu3w"]
 [ext_resource type="PackedScene" path="res://scenes/rules/crosswalk.tscn" id="4_j1wff"]
+[ext_resource type="Script" path="res://scenes/rules/checkpoint.gd" id="5_j1wff"]
 [ext_resource type="Script" path="res://scenes/level/follow_camera.gd" id="6_j1wff"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_j1wff"]
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="9_4ui1r"]
-[ext_resource type="Script" path="res://scenes/ui/hud.gd" id="9_f2rh6"]
-[ext_resource type="Texture2D" path="res://assets/ui/icons/star.png" id="10_4ui1r"]
-[ext_resource type="Texture2D" path="res://assets/ui/icons/star_empty.png" id="11_122kn"]
 
 [sub_resource type="Curve2D" id="Curve2D_f2rh6"]
 _data = {
@@ -32,6 +31,10 @@ position = Vector2(1280, 0)
 [node name="Crosswalk" parent="Rules" unique_id=225141374 instance=ExtResource("4_j1wff")]
 position = Vector2(2592, 0)
 
+[node name="CheckpointAfterStop" type="Node2D" parent="Rules" unique_id=1019928763 instance=ExtResource("4_ebu3w")]
+position = Vector2(1600, 0)
+script = ExtResource("5_j1wff")
+
 [node name="Route" type="Path2D" parent="." unique_id=1158050752]
 curve = SubResource("Curve2D_f2rh6")
 script = ExtResource("2_ghiwo")
@@ -45,12 +48,10 @@ script = ExtResource("6_j1wff")
 target = NodePath("../Route/PlayerCar")
 bounds_layer = NodePath("../Ground")
 
-[node name="RuleManager" type="Node" parent="." unique_id=1873390035]
+[node name="RuleManager" type="Node" parent="." unique_id=1873390035 node_paths=PackedStringArray("car")]
 script = ExtResource("9_4ui1r")
+car = NodePath("../Route/PlayerCar")
 
-[node name="Hud" type="CanvasLayer" parent="." unique_id=366248213 node_paths=PackedStringArray("car", "rule_manager") instance=ExtResource("8_j1wff")]
-script = ExtResource("9_f2rh6")
+[node name="Hud" parent="." unique_id=366248213 node_paths=PackedStringArray("car", "rule_manager") instance=ExtResource("8_j1wff")]
 car = NodePath("../Route/PlayerCar")
 rule_manager = NodePath("../RuleManager")
-star_full = ExtResource("10_4ui1r")
-star_empty = ExtResource("11_122kn")
