@@ -67,6 +67,8 @@ Hitos: prototipo 6 oct (hito 3) · pruebas listas 25 oct (hito 4) · entrega fin
 
 ## Assets con Pixel Engine (100 créditos)
 
+**Regla actual:** Pixel Engine solo se usa para assets con animación (caminar, susto, copiloto hablando, ciclista pedaleando, sirena). Para assets fijos (tiles, señales, edificios, botones, iconos) Claude entrega un prompt listo con qué es, tamaño exacto en píxeles, vista, paleta y detalles, y el equipo lo genera por su cuenta. Los sprites se usan a tamaño 1:1 (viewport 1280 × 720, tiles de 64 px).
+
 Costos: generate_sprite 6 (modelo `oai_gpt25_low`) a 36 · animate_sprite 20 (`pixel-engine-v1.1`) a 26 · remove_background 2 · pixelate_image gratis.
 
 Orden para gastar:
