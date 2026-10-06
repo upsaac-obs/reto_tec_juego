@@ -1,3 +1,8 @@
 keys,es
 TITULO_JUEGO,RutaKids
 MENU_JUGAR,Jugar
+SENAL_ALTO,ALTO
+FALTA_ALTO,"¡Uy! En el alto hay que detenerse por completo antes de la línea."
+BIEN_ALTO,"¡Bien, alto completo!"
+FALTA_PEATON,"¡Cuidado! Alguien estaba cruzando. En el paso peatonal, primero el peatón."
+BIEN_PEATON,"¡Bien, cediste el paso!"

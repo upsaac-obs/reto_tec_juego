@@ -58,6 +58,8 @@ var _maneuver_lane: int = 0
 var _signal_elapsed: float = 0.0
 var _blink_time: float = 0.0
 var _finished: bool = false
+## Piezas que piden que el auto no avance (por ejemplo, un peatón cruzando).
+var _stop_requests: Array[Object] = []
 
 
 func _ready() -> void:
@@ -71,6 +73,21 @@ func _ready() -> void:
 	_lane_count = _route.lane_count_at(progress)
 	lane_index = clampi(start_lane, 0, _lane_count - 1)
 	v_offset = _route.lane_offset(lane_index, _lane_count)
+
+
+## Frena en seco. Lo usan las piezas de reglas para no tocar a nadie.
+func emergency_stop() -> void:
+	speed = 0.0
+	is_braking = true
+
+
+func add_stop_request(source: Object) -> void:
+	if not _stop_requests.has(source):
+		_stop_requests.append(source)
+
+
+func remove_stop_request(source: Object) -> void:
+	_stop_requests.erase(source)
 
 
 ## Pone el auto detenido en otro punto de la ruta (por ejemplo, el último punto de control).
@@ -173,6 +190,10 @@ func _update_speed(delta: float) -> void:
 	else:
 		speed -= coast_deceleration * delta
 	speed = clampf(speed, 0.0, max_speed)
+	if not _stop_requests.is_empty():
+		speed = 0.0
+		is_braking = true
+		return
 
 	# Frena solo antes de un giro que todavía no se ha indicado con la flecha.
 	var stop := _stop_progress()
