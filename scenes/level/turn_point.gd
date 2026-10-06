@@ -14,12 +14,12 @@ enum Direction { LEFT = -1, RIGHT = 1 }
 		direction = value
 		queue_redraw()
 ## Antes de esta distancia las flechas cambian de carril; dentro de ella, giran.
-@export var approach_distance: float = 160.0
+@export var approach_distance: float = 320.0
 ## Cuánto antes del giro se detiene el auto si no se ha tocado la flecha.
-@export var stop_margin: float = 8.0
+@export var stop_margin: float = 16.0
 ## Distancia después del giro en la que se apaga la direccional.
-@export var exit_distance: float = 64.0
-@export var arrow_back_distance: float = 40.0
+@export var exit_distance: float = 128.0
+@export var arrow_back_distance: float = 80.0
 
 ## Distancia sobre la ruta. La calcula DrivingRoute.
 var progress: float = 0.0
@@ -43,12 +43,12 @@ func _draw() -> void:
 	var base := route.curve.sample_baked_with_rotation(maxf(turn_progress - arrow_back_distance, 0.0))
 	var forward := base.x.normalized()
 	var side := base.y.normalized() * float(direction)
-	var start := base.origin - position - forward * 12.0
-	var corner := base.origin - position + forward * 8.0
-	var tip := corner + side * 14.0
-	draw_polyline(PackedVector2Array([start, corner, tip]), Palette.COLOR_GOLD, 4.0)
+	var start := base.origin - position - forward * 24.0
+	var corner := base.origin - position + forward * 16.0
+	var tip := corner + side * 28.0
+	draw_polyline(PackedVector2Array([start, corner, tip]), Palette.COLOR_GOLD, 8.0)
 	draw_colored_polygon(PackedVector2Array([
-		tip + side * 6.0,
-		tip - forward * 6.0,
-		tip + forward * 6.0,
+		tip + side * 12.0,
+		tip - forward * 12.0,
+		tip + forward * 12.0,
 	]), Palette.COLOR_GOLD)

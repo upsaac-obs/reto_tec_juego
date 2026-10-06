@@ -22,9 +22,9 @@ Juego móvil 2D (Android e iOS) hecho en Godot 4 para Fundación ADO. Niñas y n
 
 - Godot 4, la misma versión estable para todo el equipo. GDScript con tipos estáticos.
 - Render: Compatibility (OpenGL). Es el que mejor corre en gama baja.
-- Pantalla horizontal. Viewport base 640 × 360, stretch mode `viewport`, aspect `expand`.
+- Pantalla horizontal. Viewport base 1280 × 720, stretch mode `viewport`, aspect `expand`. Se duplicó de 640 × 360 para usar los sprites de Pixel Engine a su tamaño original (salen de ~100 px y al reducirlos se pierde el detalle).
 - Filtro de texturas por defecto: Nearest (pixel art).
-- Tiles de 32 × 32 px en `TileMapLayer`.
+- Tiles de 64 × 64 px en `TileMapLayer`. Un carril mide 64 px. Los sprites de Pixel Engine se usan a 1:1, sin reducir ni escalar.
 - Audio: `.ogg` para música y voces, `.wav` para efectos cortos.
 - Exportar Android con arm64 y armv7 para cubrir celulares viejos. iOS se exporta desde las Mac de Diego o Dylan.
 

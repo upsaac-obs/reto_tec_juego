@@ -12,7 +12,7 @@ const Palette := preload("res://autoload/game_state.gd")
 	set(value):
 		default_lane_count = value
 		queue_redraw()
-@export var lane_width: float = 32.0:
+@export var lane_width: float = 64.0:
 	set(value):
 		lane_width = value
 		queue_redraw()
@@ -21,7 +21,7 @@ const Palette := preload("res://autoload/game_state.gd")
 	set(value):
 		debug_draw = value
 		queue_redraw()
-@export var debug_dash_length: float = 12.0
+@export var debug_dash_length: float = 24.0
 
 
 func _ready() -> void:
@@ -71,17 +71,17 @@ func _draw() -> void:
 	if not debug_draw or curve == null or curve.point_count < 2:
 		return
 	var length := get_length()
-	var step := 8.0
+	var step := 16.0
 	var progress := 0.0
 	while progress < length:
 		var next := minf(progress + step, length)
 		var lanes := lane_count_at(progress)
 		var a := curve.sample_baked_with_rotation(progress)
 		var b := curve.sample_baked_with_rotation(next)
-		draw_line(a.origin, b.origin, Palette.COLOR_ASPHALT, lanes * lane_width + 2.0)
+		draw_line(a.origin, b.origin, Palette.COLOR_ASPHALT, lanes * lane_width + 4.0)
 		# Líneas punteadas entre carriles
 		if int(progress / debug_dash_length) % 2 == 0:
 			for k in range(1, lanes):
 				var side := (k - lanes / 2.0) * lane_width
-				draw_line(a.origin + a.y.normalized() * side, b.origin + b.y.normalized() * side, Palette.COLOR_WHITE, 2.0)
+				draw_line(a.origin + a.y.normalized() * side, b.origin + b.y.normalized() * side, Palette.COLOR_WHITE, 4.0)
 		progress = next

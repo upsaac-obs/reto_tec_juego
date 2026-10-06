@@ -18,10 +18,10 @@ const Palette := preload("res://autoload/game_state.gd")
 
 enum Maneuver { NONE, LANE_CHANGE, TURN }
 
-@export var max_speed: float = 120.0
-@export var acceleration: float = 60.0
-@export var braking: float = 150.0
-@export var coast_deceleration: float = 30.0
+@export var max_speed: float = 240.0
+@export var acceleration: float = 120.0
+@export var braking: float = 300.0
+@export var coast_deceleration: float = 60.0
 ## Segundos con la direccional encendida antes de cambiar de carril o girar.
 @export var signal_time: float = 1.0
 @export var lane_change_time: float = 0.4
@@ -33,12 +33,12 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 	set(value):
 		texture = value
 		queue_redraw()
-@export var texture_offset: Vector2 = Vector2(-17.0, -10.0)
+@export var texture_offset: Vector2 = Vector2(-34.0, -20.0)
 @export var blink_interval: float = 0.3
 ## Rectángulos en coordenadas del auto que se encienden al frenar.
-@export var brake_lights: Array[Rect2] = [Rect2(-16.0, -6.0, 2.0, 2.0), Rect2(-16.0, 4.0, 2.0, 2.0)]
-@export var left_signal_lights: Array[Rect2] = [Rect2(12.0, -8.0, 3.0, 2.0), Rect2(-15.0, -8.0, 3.0, 2.0)]
-@export var right_signal_lights: Array[Rect2] = [Rect2(12.0, 7.0, 3.0, 2.0), Rect2(-15.0, 7.0, 3.0, 2.0)]
+@export var brake_lights: Array[Rect2] = [Rect2(-32.0, -12.0, 3.0, 5.0), Rect2(-32.0, 8.0, 3.0, 5.0)]
+@export var left_signal_lights: Array[Rect2] = [Rect2(22.0, -16.0, 6.0, 3.0), Rect2(-29.0, -16.0, 6.0, 3.0)]
+@export var right_signal_lights: Array[Rect2] = [Rect2(22.0, 14.0, 6.0, 3.0), Rect2(-29.0, 14.0, 6.0, 3.0)]
 
 var speed: float = 0.0
 var seatbelt_on: bool = false

@@ -8,8 +8,8 @@ Hitos: prototipo 6 oct (hito 3) · pruebas listas 25 oct (hito 4) · entrega fin
 
 **Terminado cuando:** el APK corre en un celular Android y se puede manejar, frenar en un alto y recibir una falta con mensaje.
 
-- [ ] **Proyecto base.** Crear el proyecto con las decisiones técnicas de `CLAUDE.md` (Compatibility, 640 × 360, Nearest, horizontal), la estructura de carpetas, `.gitignore` de Godot y los autoloads vacíos.
-- [ ] **PlayerCar.** `PathFollow2D` sobre un `Path2D`. Botón de cinturón (sin cinturón no avanza), pedal verde (acelera), pedal rojo (frena), sin pedales baja de velocidad poco a poco. Flechas cambian de carril animando `v_offset`. Valores iniciales como `@export`: velocidad máxima 120 px/s, aceleración 60 px/s², frenado 150 px/s², desaceleración sin pedales 30 px/s².
+- [ ] **Proyecto base.** Crear el proyecto con las decisiones técnicas de `CLAUDE.md` (Compatibility, 1280 × 720, Nearest, horizontal), la estructura de carpetas, `.gitignore` de Godot y los autoloads vacíos.
+- [ ] **PlayerCar.** `PathFollow2D` sobre un `Path2D`. Botón de cinturón (sin cinturón no avanza), pedal verde (acelera), pedal rojo (frena), sin pedales baja de velocidad poco a poco. Flechas cambian de carril animando `v_offset`. Valores iniciales como `@export`: velocidad máxima 240 px/s, aceleración 120 px/s², frenado 300 px/s², desaceleración sin pedales 60 px/s² (el doble de los valores originales por el cambio a 1280 × 720).
 - [ ] **Calle de prueba.** Una calle recta con tiles provisionales de colores planos y una `Camera2D` que sigue al auto.
 - [ ] **StopZone y Crosswalk.** Alto: es falta si el auto cruza la línea sin bajar a menos de 5 px/s dentro de la zona. Paso peatonal: un peatón cruza; si el auto entra mientras está ocupado, frena solo y es falta grave.
 - [ ] **HUD provisional.** Como el mockup: nombre del nivel, estrellas, puntos, engrane, flechas, cinturón y pedales. Mensaje simple de falta (sin copiloto todavía).

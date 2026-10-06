@@ -7,7 +7,7 @@ extends Camera2D
 ## Capa del mapa que define los bordes de la cámara.
 @export var bounds_layer: TileMapLayer
 ## Cuánto se adelanta la cámara en la dirección del auto.
-@export var look_ahead: float = 120.0
+@export var look_ahead: float = 240.0
 ## Qué tan rápido se acomoda la vista al girar (más alto = más rápido).
 @export var look_ahead_smoothing: float = 3.0
 
