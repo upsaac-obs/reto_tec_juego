@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/level/driving_route.gd" id="1_route"]
+[ext_resource type="Script" path="res://scenes/level/turn_point.gd" id="2_turn"]
+[ext_resource type="Script" path="res://scenes/level/street_section.gd" id="3_section"]
+[ext_resource type="PackedScene" path="res://scenes/level/player_car.tscn" id="4_car"]
+
+[sub_resource type="Curve2D" id="Curve2D_route"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 600, 0, 0, -44, 0, 0, 680, 80, 0, 0, 0, 44, 680, 400, -44, 0, 0, 0, 760, 480, 0, 0, 0, 0, 1600, 480)
+}
+point_count = 6
+
+[node name="PlayerCarTest" type="Node2D"]
+
+[node name="Route" type="Path2D" parent="."]
+curve = SubResource("Curve2D_route")
+script = ExtResource("1_route")
+
+[node name="TurnRight" type="Node2D" parent="Route"]
+position = Vector2(600, 0)
+script = ExtResource("2_turn")
+
+[node name="TurnLeft" type="Node2D" parent="Route"]
+position = Vector2(680, 400)
+script = ExtResource("2_turn")
+direction = -1
+
+[node name="ThreeLanes" type="Node2D" parent="Route"]
+position = Vector2(1000, 480)
+script = ExtResource("3_section")
+lane_count = 3
+
+[node name="PlayerCar" parent="Route" instance=ExtResource("4_car")]
+start_lane = 1
+
+[node name="Camera2D" type="Camera2D" parent="Route/PlayerCar"]
+position_smoothing_enabled = true
