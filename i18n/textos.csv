@@ -6,3 +6,7 @@ FALTA_ALTO,"¡Uy! En el alto hay que detenerse por completo antes de la línea."
 BIEN_ALTO,"¡Bien, alto completo!"
 FALTA_PEATON,"¡Cuidado! Alguien estaba cruzando. En el paso peatonal, primero el peatón."
 BIEN_PEATON,"¡Bien, cediste el paso!"
+HUD_NIVEL_PRUEBA,"CALLE DE PRUEBA: ALTO Y PASO PEATONAL"
+HUD_DESTINO_PRUEBA,Escuela
+PONTE_CINTURON,"¡Primero el cinturón! Tócalo para poder arrancar."
+CINTURON_LISTO,"¡Listo, cinturón puesto! Ya puedes arrancar."

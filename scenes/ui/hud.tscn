@@ -1,0 +1,200 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/hud.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/coin.png" id="2_coin"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/star.png" id="3_star"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/star_empty.png" id="4_star_empty"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/gear.png" id="5_gear"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/seatbelt.png" id="6_seatbelt"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/arrow_left.png" id="7_left"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/arrow_right.png" id="8_right"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/brake_pedal.png" id="9_brake"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/gas_pedal.png" id="10_gas"]
+
+[node name="Hud" type="CanvasLayer"]
+script = ExtResource("1_script")
+star_full = ExtResource("3_star")
+star_empty = ExtResource("4_star_empty")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopBar" type="PanelContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 72.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"TopBar"
+
+[node name="Row" type="HBoxContainer" parent="Root/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LevelName" type="Label" parent="Root/TopBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TopBarLabel"
+text = "HUD_NIVEL_PRUEBA"
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="PointsPill" type="PanelContainer" parent="Root/TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"TopBarPill"
+
+[node name="PointsRow" type="HBoxContainer" parent="Root/TopBar/Row/PointsPill"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Coin" type="TextureRect" parent="Root/TopBar/Row/PointsPill/PointsRow"]
+layout_mode = 2
+texture = ExtResource("2_coin")
+stretch_mode = 5
+
+[node name="Points" type="Label" parent="Root/TopBar/Row/PointsPill/PointsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_type_variation = &"TopBarLabel"
+text = "0"
+vertical_alignment = 1
+
+[node name="StarsPill" type="PanelContainer" parent="Root/TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"TopBarPill"
+
+[node name="Stars" type="HBoxContainer" parent="Root/TopBar/Row/StarsPill"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Star1" type="TextureRect" parent="Root/TopBar/Row/StarsPill/Stars"]
+layout_mode = 2
+texture = ExtResource("3_star")
+stretch_mode = 5
+
+[node name="Star2" type="TextureRect" parent="Root/TopBar/Row/StarsPill/Stars"]
+layout_mode = 2
+texture = ExtResource("3_star")
+stretch_mode = 5
+
+[node name="Star3" type="TextureRect" parent="Root/TopBar/Row/StarsPill/Stars"]
+layout_mode = 2
+texture = ExtResource("3_star")
+stretch_mode = 5
+
+[node name="DestinationPill" type="PanelContainer" parent="Root/TopBar/Row"]
+layout_mode = 2
+theme_type_variation = &"TopBarDestination"
+
+[node name="Destination" type="Label" parent="Root/TopBar/Row/DestinationPill"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_type_variation = &"TopBarLabel"
+text = "HUD_DESTINO_PRUEBA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gear" type="TextureButton" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -116.0
+offset_top = 88.0
+offset_right = -24.0
+offset_bottom = 188.0
+grow_horizontal = 0
+texture_normal = ExtResource("5_gear")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Message" type="PanelContainer" parent="Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -380.0
+offset_top = 104.0
+offset_right = 380.0
+offset_bottom = 184.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"MessageBad"
+
+[node name="MessageLabel" type="Label" parent="Root/Message"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MessageLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="LeftControls" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Seatbelt" type="TouchScreenButton" parent="Root/LeftControls"]
+unique_name_in_owner = true
+position = Vector2(48, -404)
+scale = Vector2(2, 2)
+texture_normal = ExtResource("6_seatbelt")
+action = "car_seatbelt"
+
+[node name="ArrowLeft" type="TouchScreenButton" parent="Root/LeftControls"]
+unique_name_in_owner = true
+position = Vector2(40, -168)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("7_left")
+action = "car_left"
+
+[node name="ArrowRight" type="TouchScreenButton" parent="Root/LeftControls"]
+unique_name_in_owner = true
+position = Vector2(212, -168)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("8_right")
+action = "car_right"
+
+[node name="RightControls" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Brake" type="TouchScreenButton" parent="Root/RightControls"]
+unique_name_in_owner = true
+position = Vector2(-372, -148)
+scale = Vector2(4, 4)
+texture_normal = ExtResource("9_brake")
+action = "car_brake"
+
+[node name="Gas" type="TouchScreenButton" parent="Root/RightControls"]
+unique_name_in_owner = true
+position = Vector2(-148, -228)
+scale = Vector2(4, 4)
+texture_normal = ExtResource("10_gas")
+action = "car_accelerate"
