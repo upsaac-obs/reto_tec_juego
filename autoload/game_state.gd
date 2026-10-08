@@ -30,8 +30,10 @@ const PX_PER_KMH := 4.0
 const MODE_PEQUE := "peque"
 const MODE_GRANDE := "grande"
 
-## "peque" (4 a 7 años) o "grande" (8 a 13 años).
-var mode: String = MODE_PEQUE
+## "peque" (4 a 7 años) o "grande" (8 a 13 años). El nativo lo manda en
+## start_level. Por defecto "grande" mientras el modo peque (el auto avanza
+## solo) no esté hecho; así F6 en el editor muestra los mensajes correctos.
+var mode: String = MODE_GRANDE
 ## En kiosco todo está abierto y no se guarda nada.
 var kiosk: bool = false
 ## Datos del nivel abierto (los pone BridgeClient). null en idle.
