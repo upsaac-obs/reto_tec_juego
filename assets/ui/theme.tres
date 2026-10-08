@@ -139,6 +139,25 @@ corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_dim"]
+bg_color = Color(0.1176, 0.05882, 0.149, 0.78)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_panel"]
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 0.7804, 0, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
 [resource]
 default_font_size = 32
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -182,3 +201,19 @@ PointsPopup/base_type = &"Label"
 PointsPopup/colors/font_color = Color(1, 0.7804, 0, 1)
 PointsPopup/constants/outline_size = 12
 PointsPopup/font_sizes/font_size = 48
+CardDim/base_type = &"Panel"
+CardDim/styles/panel = SubResource("StyleBoxFlat_card_dim")
+CardPanel/base_type = &"PanelContainer"
+CardPanel/styles/panel = SubResource("StyleBoxFlat_card_panel")
+CardTitle/base_type = &"Label"
+CardTitle/colors/font_color = Color(0.2471, 0.1059, 0.3059, 1)
+CardTitle/constants/outline_size = 0
+CardTitle/font_sizes/font_size = 40
+CardDecalogo/base_type = &"Label"
+CardDecalogo/colors/font_color = Color(0.8667, 0.1569, 0.2078, 1)
+CardDecalogo/constants/outline_size = 0
+CardDecalogo/font_sizes/font_size = 22
+CardPhrase/base_type = &"Label"
+CardPhrase/colors/font_color = Color(0.2471, 0.1059, 0.3059, 1)
+CardPhrase/constants/outline_size = 0
+CardPhrase/font_sizes/font_size = 34
