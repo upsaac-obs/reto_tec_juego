@@ -19,8 +19,8 @@ Hitos: prototipo 6 oct (hito 3) · pruebas listas 25 oct (hito 4) · entrega fin
 
 **Terminado cuando:** los niveles 0, 1 y 2 se juegan de principio a fin, dan estrellas y el progreso se guarda.
 
-- [ ] **RuleManager** con la API de `CLAUDE.md`: faltas, falta grave con regreso al punto de control, puntos y cálculo de estrellas.
-- [ ] **Feedback**: copiloto provisional, texto con `tr()`, voz si existe el archivo, pausa de 2 segundos. Sonido alegre y "+10" para las acciones correctas.
+- [x] **RuleManager** con la API de `CLAUDE.md`: faltas, falta grave con regreso al punto de control, puntos y cálculo de estrellas.
+- [x] **Feedback**: copiloto provisional, texto con `tr()`, voz si existe el archivo, pausa de 2 segundos. Sonido alegre y "+10" para las acciones correctas.
 - [ ] **Tarjeta de hábito** al final del nivel: ilustración, frase del decálogo y estrellas.
 - [ ] **LevelData** (`resources/level_data.gd`): número, nombre, punto del decálogo, clave de la frase final, destino y escena.
 - [ ] **SaveData**: `user://save.cfg` con estrellas por nivel, puntos, modo y silencio. No guarda nada en modo kiosco.
