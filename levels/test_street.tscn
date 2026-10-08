@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="9_4ui1r"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="10_card"]
 [ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="12_light"]
+[ext_resource type="PackedScene" path="res://scenes/rules/speed_zone.tscn" id="13_speed"]
 
 [sub_resource type="Curve2D" id="Curve2D_f2rh6"]
 _data = {
@@ -36,6 +37,11 @@ position = Vector2(2592, 0)
 [node name="TrafficLight" parent="Rules" unique_id=530118847 instance=ExtResource("12_light")]
 position = Vector2(2000, 0)
 start_light = 2
+
+[node name="SchoolZone" parent="Rules" unique_id=741902233 instance=ExtResource("13_speed")]
+position = Vector2(2800, 0)
+kind = 1
+limit_kmh = 20
 
 [node name="CheckpointAfterStop" type="Node2D" parent="Rules" unique_id=1019928763 instance=ExtResource("4_ebu3w")]
 position = Vector2(1600, 0)
