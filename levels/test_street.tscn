@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="10_card"]
 [ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="12_light"]
 [ext_resource type="PackedScene" path="res://scenes/rules/speed_zone.tscn" id="13_speed"]
+[ext_resource type="PackedScene" path="res://scenes/rules/bike_lane.tscn" id="14_bike"]
 
 [sub_resource type="Curve2D" id="Curve2D_f2rh6"]
 _data = {
@@ -42,6 +43,10 @@ start_light = 2
 position = Vector2(2800, 0)
 kind = 1
 limit_kmh = 20
+
+[node name="BikeLane" parent="Rules" unique_id=318804469 instance=ExtResource("14_bike")]
+position = Vector2(384, 0)
+side_offset = -32.0
 
 [node name="CheckpointAfterStop" type="Node2D" parent="Rules" unique_id=1019928763 instance=ExtResource("4_ebu3w")]
 position = Vector2(1600, 0)
