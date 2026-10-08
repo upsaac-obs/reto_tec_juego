@@ -9,6 +9,6 @@ id = 0
 name_key = "NIVEL_00_NOMBRE"
 decalogo_key = ""
 phrase_key = "FRASE_00"
-destination_key = ""
+destination_key = "DESTINO_PARQUE"
 illustration = ExtResource("2_card")
 scene_path = ""
