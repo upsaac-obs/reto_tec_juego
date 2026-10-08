@@ -24,6 +24,9 @@ const COLOR_SKIN_LIGHT := Color("#F2C29B")
 const COLOR_SKIN_MEDIUM := Color("#C68B59")
 const COLOR_SKIN_DARK := Color("#8A5A3B")
 
+## Conversión para los letreros de velocidad: 60 km/h = 240 px/s (máximo del auto).
+const PX_PER_KMH := 4.0
+
 const MODE_PEQUE := "peque"
 const MODE_GRANDE := "grande"
 
