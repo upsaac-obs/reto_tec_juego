@@ -1,0 +1,58 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/bridge/level_test.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="2_rules"]
+[ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="3_card"]
+[ext_resource type="Texture2D" path="res://assets/ui/habit_cards/card_00.png" id="4_card00"]
+
+[node name="LevelTest" type="Panel" node_paths=PackedStringArray("rule_manager")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"IdleBackground"
+script = ExtResource("1_script")
+rule_manager = NodePath("RuleManager")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="Center/Column"]
+layout_mode = 2
+text = "PRUEBA_TITULO"
+horizontal_alignment = 1
+
+[node name="Fault" type="Button" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PRUEBA_FALTA"
+
+[node name="Finish" type="Button" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PlayButton"
+text = "PRUEBA_TERMINAR"
+
+[node name="Exit" type="Button" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PRUEBA_SALIR"
+
+[node name="RuleManager" type="Node" parent="."]
+script = ExtResource("2_rules")
+
+[node name="HabitCard" parent="." node_paths=PackedStringArray("rule_manager") instance=ExtResource("3_card")]
+rule_manager = NodePath("../RuleManager")
+illustration = ExtResource("4_card00")
+level_name_key = "NIVEL_00_NOMBRE"
+phrase_key = "FRASE_00"

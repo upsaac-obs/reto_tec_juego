@@ -19,6 +19,8 @@ signal checkpoint_restored(progress: float)
 @export var grave_return_delay: float = 0.5
 
 var faults: int = 0
+## Faltas por regla (rule_id → cuántas). Se manda al nativo en level_finished.
+var infractions: Dictionary[StringName, int] = {}
 var points: int = 0
 var _checkpoint: float = 0.0
 var _returning: bool = false
@@ -36,6 +38,7 @@ func report_infraction(rule_id: StringName, message_key: String, grave := false)
 	if _finished:
 		return
 	faults += 1
+	infractions[rule_id] = infractions.get(rule_id, 0) + 1
 	infraction_reported.emit(rule_id, grave)
 	Feedback.show_infraction(message_key)
 	if grave:

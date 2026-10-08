@@ -2,6 +2,8 @@
 
 Juego móvil 2D (Android e iOS) hecho en Godot 4 para Fundación ADO. Niñas y niños de 4 a 13 años manejan un auto visto desde arriba por una ciudad basada en Puebla. Cada nivel enseña un punto del decálogo de movilidad. El diseño completo está en `docs/diseno.md` y las tareas están en `PLAN.md`.
 
+> **Arquitectura en evaluación:** ver `docs/arquitectura.md` (app nativa + Godot solo para niveles, puente `RutaBridge`). Mientras dura el spike, no hagas menús, SaveData, kiosco ni pantalla de tutores en Godot. Los niveles terminan con `BridgeClient.exit_level()`, nunca cambiando de escena directo.
+
 ## Reglas que nunca se rompen
 
 - Nada de internet: sin peticiones HTTP, sin SDKs de anuncios ni de analíticas, sin servicios en línea (REQ-5).
