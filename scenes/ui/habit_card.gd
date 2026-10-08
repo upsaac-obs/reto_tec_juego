@@ -3,10 +3,8 @@ extends CanvasLayer
 ## Tarjeta del hábito al terminar el nivel: ilustración, nombre del nivel, punto
 ## del decálogo, frase final (con voz si existe) y estrellas que aparecen una
 ## por una. Se abre sola con level_finished del RuleManager y pausa el juego.
-## Cuando exista LevelData, los datos del nivel saldrán de ahí.
-
-signal retry_pressed
-signal continue_pressed
+## Repetir y Continuar pasan por BridgeClient (Continuar cierra el nivel y
+## avisa al nativo). Cuando exista LevelData, los datos del nivel saldrán de ahí.
 
 @export var rule_manager: RuleManager
 @export var illustration: Texture2D
@@ -16,8 +14,6 @@ signal continue_pressed
 @export var phrase_key: String
 @export var star_full: Texture2D
 @export var star_empty: Texture2D
-## A dónde lleva Continuar mientras no exista la selección de niveles.
-@export_file("*.tscn") var continue_scene: String = "res://scenes/ui/main_menu.tscn"
 ## Segundos entre llegar a la meta y abrir la tarjeta (deja ver el mensaje de meta).
 @export var open_delay: float = 1.2
 @export var appear_time: float = 0.25
@@ -75,12 +71,8 @@ func _pop_star(star: TextureRect) -> void:
 
 
 func _on_retry_pressed() -> void:
-	get_tree().paused = false
-	retry_pressed.emit()
-	get_tree().reload_current_scene()
+	BridgeClient.retry_level()
 
 
 func _on_continue_pressed() -> void:
-	get_tree().paused = false
-	continue_pressed.emit()
-	get_tree().change_scene_to_file(continue_scene)
+	BridgeClient.exit_level(true)

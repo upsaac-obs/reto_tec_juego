@@ -65,6 +65,11 @@ func clear() -> void:
 	_voice.stop()
 
 
+## true mientras dura la pausa de una falta (la quita él solo).
+func is_pausing() -> bool:
+	return _pausing
+
+
 func _show(message_key: String, mood: CopilotBubble.Mood) -> void:
 	_message_id += 1
 	var id := _message_id
