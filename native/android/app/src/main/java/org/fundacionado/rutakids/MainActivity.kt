@@ -156,6 +156,8 @@ class MainActivity : FragmentActivity(), GodotHost {
     // --- Prueba de 10 ciclos ---
 
     private fun startCycles() {
+        // Un segundo toque mientras corre lanzaría dos cadenas que se pisan.
+        if (cyclesLeft > 0) return
         cycleMemory.clear()
         cyclesLeft = 10
         nextCycle()
@@ -206,7 +208,7 @@ class MainActivity : FragmentActivity(), GodotHost {
                     Button(onClick = { startLevel(99) }, enabled = ready) {
                         Text("Nivel 99 · botones (${bestStars[99]}★)")
                     }
-                    OutlinedButton(onClick = { startCycles() }, enabled = ready) {
+                    OutlinedButton(onClick = { startCycles() }, enabled = ready && cycleMemory.size !in 1..10) {
                         Text("Abrir y cerrar 10 veces", color = Color.White)
                     }
                     Text("Último resultado: ${lastResult.value}", color = Color.White)
