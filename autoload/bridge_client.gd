@@ -10,12 +10,6 @@ enum State { IDLE, PLAYING }
 
 const PROTOCOL_VERSION := 1
 const IDLE_SCENE := "res://scenes/bridge/idle.tscn"
-## Provisional hasta que exista LevelData: level_id → escena.
-## El 99 es el nivel de prueba del spike (botones Falta, Terminar y Salir).
-const LEVEL_SCENES := {
-	1: "res://levels/test_street.tscn",
-	99: "res://scenes/bridge/level_test.tscn",
-}
 const MODES: Array[String] = [GameState.MODE_PEQUE, GameState.MODE_GRANDE]
 
 ## Segundos sin tocar la pantalla dentro de un nivel en kiosco antes de avisar.
@@ -93,7 +87,7 @@ func exit_level(completed: bool) -> void:
 func retry_level() -> void:
 	if state != State.PLAYING:
 		return
-	_load_level(level_id)
+	_load_level(GameState.level)
 
 
 ## Mantener presionado el engrane: el nativo abre la pantalla de tutores.
@@ -116,8 +110,12 @@ func _on_start_level(json: String) -> void:
 		_error(&"unsupported_version", str(data.get("v")))
 		return
 	var id: Variant = data.get("level_id")
-	if not (id is float and id == floorf(id) and LEVEL_SCENES.has(int(id))):
+	var level: LevelData = LevelData.load_by_id(int(id)) if id is float and id == floorf(id) else null
+	if level == null:
 		_error(&"unknown_level", str(id))
+		return
+	if not level.is_built():
+		_error(&"level_not_built", str(int(id)))
 		return
 	var mode: Variant = data.get("mode")
 	if not (mode is String and MODES.has(mode)):
@@ -132,7 +130,7 @@ func _on_start_level(json: String) -> void:
 	GameState.mode = mode
 	GameState.kiosk = data["kiosk"]
 	_on_set_muted(data["muted"])
-	_load_level(int(id))
+	_load_level(level)
 
 
 func _on_pause_level() -> void:
@@ -162,16 +160,18 @@ func _on_set_muted(muted: bool) -> void:
 
 # --- Internos ---
 
-func _load_level(id: int) -> void:
+func _load_level(level: LevelData) -> void:
 	state = State.PLAYING
-	level_id = id
+	level_id = level.id
+	GameState.level = level
 	_reset_attempt()
-	get_tree().change_scene_to_file(LEVEL_SCENES[id])
+	get_tree().change_scene_to_file(level.scene_path)
 
 
 func _go_idle() -> void:
 	state = State.IDLE
 	level_id = -1
+	GameState.level = null
 	_reset_attempt()
 	get_tree().change_scene_to_file(IDLE_SCENE)
 
@@ -204,18 +204,19 @@ func _on_scene_changed() -> void:
 ## desde el editor, lo toma como si el nativo lo hubiera abierto.
 func _adopt_first_scene() -> void:
 	var path := get_tree().current_scene.scene_file_path if get_tree().current_scene else ""
-	for id: int in LEVEL_SCENES:
-		if LEVEL_SCENES[id] == path:
-			state = State.PLAYING
-			level_id = id
-			_reset_attempt()
+	var level := LevelData.find_by_scene(path)
+	if level != null:
+		state = State.PLAYING
+		level_id = level.id
+		GameState.level = level
+		_reset_attempt()
 	_on_scene_changed()
 
 
 func _connect_level() -> void:
 	var manager := get_tree().get_first_node_in_group(&"rule_manager") as RuleManager
 	if manager == null:
-		_error(&"no_rule_manager", LEVEL_SCENES[level_id])
+		_error(&"no_rule_manager", GameState.level.scene_path)
 		return
 	manager.level_finished.connect(_on_level_finished.bind(manager))
 

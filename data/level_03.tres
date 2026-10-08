@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://resources/level_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/ui/habit_cards/card_03.png" id="2_card"]
+
+[resource]
+script = ExtResource("1_data")
+id = 3
+name_key = "NIVEL_03_NOMBRE"
+decalogo_key = "DECALOGO_03"
+phrase_key = "FRASE_03"
+destination_key = ""
+illustration = ExtResource("2_card")
+scene_path = ""

@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://scenes/bridge/level_test.gd" id="1_script"]
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="2_rules"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="3_card"]
-[ext_resource type="Texture2D" path="res://assets/ui/habit_cards/card_00.png" id="4_card00"]
 
 [node name="LevelTest" type="Panel" node_paths=PackedStringArray("rule_manager")]
 anchors_preset = 15
@@ -53,6 +52,3 @@ script = ExtResource("2_rules")
 
 [node name="HabitCard" parent="." node_paths=PackedStringArray("rule_manager") instance=ExtResource("3_card")]
 rule_manager = NodePath("../RuleManager")
-illustration = ExtResource("4_card00")
-level_name_key = "NIVEL_00_NOMBRE"
-phrase_key = "FRASE_00"

@@ -9,8 +9,6 @@ signal settings_pressed
 
 @export var car: PlayerCar
 @export var rule_manager: RuleManager
-@export var level_name_key: String = "HUD_NIVEL_PRUEBA"
-@export var destination_key: String = "HUD_DESTINO_PRUEBA"
 @export var star_full: Texture2D
 @export var star_empty: Texture2D
 ## Oscurece el botón mientras se presiona.
@@ -30,8 +28,12 @@ var _pulse: Tween
 
 
 func _ready() -> void:
-	_level_name.text = tr(level_name_key)
-	_destination.text = tr(destination_key)
+	var level := LevelData.of(self)
+	_level_name.text = tr(level.name_key) if level != null else ""
+	var destination := level.destination_key if level != null else ""
+	_destination.text = tr(destination)
+	# Sin destino decidido todavía, no se muestra la pastilla vacía.
+	_destination.get_parent().visible = not destination.is_empty()
 	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas]:
 		button.pressed.connect(func() -> void: button.self_modulate = pressed_tint)
 		button.released.connect(func() -> void: button.self_modulate = Color.WHITE)

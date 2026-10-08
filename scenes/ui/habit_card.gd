@@ -4,14 +4,9 @@ extends CanvasLayer
 ## del decálogo, frase final (con voz si existe) y estrellas que aparecen una
 ## por una. Se abre sola con level_finished del RuleManager y pausa el juego.
 ## Repetir y Continuar pasan por BridgeClient (Continuar cierra el nivel y
-## avisa al nativo). Cuando exista LevelData, los datos del nivel saldrán de ahí.
+## avisa al nativo). Los datos salen del LevelData del nivel (data/level_XX.tres).
 
 @export var rule_manager: RuleManager
-@export var illustration: Texture2D
-@export var level_name_key: String
-## Vacío en el tutorial, que no tiene punto del decálogo.
-@export var decalogo_key: String
-@export var phrase_key: String
 @export var star_full: Texture2D
 @export var star_empty: Texture2D
 ## Segundos entre llegar a la meta y abrir la tarjeta (deja ver el mensaje de meta).
@@ -40,11 +35,15 @@ func open(stars: int) -> void:
 	await get_tree().create_timer(open_delay).timeout
 	Feedback.clear()
 	get_tree().paused = true
-	_illustration.texture = illustration
-	_level_name.text = tr(level_name_key)
-	_decalogo.text = tr(decalogo_key) if not decalogo_key.is_empty() else ""
-	_decalogo.visible = not decalogo_key.is_empty()
-	_phrase.text = tr(phrase_key)
+	var level := LevelData.of(self)
+	if level == null:
+		push_warning("HabitCard: el nivel no tiene LevelData en data/")
+		level = LevelData.new()
+	_illustration.texture = level.illustration
+	_level_name.text = tr(level.name_key)
+	_decalogo.text = tr(level.decalogo_key)
+	_decalogo.visible = not level.decalogo_key.is_empty()
+	_phrase.text = tr(level.phrase_key)
 	for star: TextureRect in _stars.get_children():
 		star.texture = star_empty
 	show()
@@ -55,7 +54,7 @@ func open(stars: int) -> void:
 	tween.tween_property(_panel, ^"scale", Vector2.ONE, appear_time).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_panel, ^"modulate:a", 1.0, appear_time)
 	await tween.finished
-	Feedback.play_voice(phrase_key)
+	Feedback.play_voice(level.phrase_key)
 	for i in mini(stars, _stars.get_child_count()):
 		await get_tree().create_timer(star_interval).timeout
 		_pop_star(_stars.get_child(i) as TextureRect)

@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_j1wff"]
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="9_4ui1r"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="10_card"]
-[ext_resource type="Texture2D" path="res://assets/ui/habit_cards/card_01.png" id="11_card01"]
 
 [sub_resource type="Curve2D" id="Curve2D_f2rh6"]
 _data = {
@@ -60,7 +59,3 @@ rule_manager = NodePath("../RuleManager")
 
 [node name="HabitCard" parent="." unique_id=902114377 node_paths=PackedStringArray("rule_manager") instance=ExtResource("10_card")]
 rule_manager = NodePath("../RuleManager")
-illustration = ExtResource("11_card01")
-level_name_key = "NIVEL_01_NOMBRE"
-decalogo_key = "DECALOGO_01"
-phrase_key = "FRASE_01"

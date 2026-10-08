@@ -56,7 +56,7 @@ Así cada plataforma implementa 5 señales y 1 método, y las dos quedan iguales
 | `level_exited(json)` | El nivel se cerró: Continuar en la tarjeta (`completed: true`), Salir en la pausa, `abort_level` o un `start_level` encima. **Solo aquí el nativo esconde la vista de Godot** | `{"v":1,"level_id":3,"completed":true}`. `completed` dice si antes se mandó `level_finished` |
 | `inactivity_timeout` | 60 s sin tocar la pantalla dentro de un nivel (solo kiosco). Una vez, hasta que vuelvan a tocar. El nativo decide (normalmente llama `abort_level`) | — |
 | `tutor_requested(json)` | Mantener presionado el engrane 3 s dentro del nivel. El nativo pausa con `pause_level` y abre la pantalla de tutores | `{"v":1,"level_id":3}` |
-| `bridge_error(json)` | Algo falló. Códigos: `invalid_json`, `unsupported_version`, `unknown_level`, `invalid_field`, `no_rule_manager` | `{"v":1,"code":"unknown_level","detail":"..."}` |
+| `bridge_error(json)` | Algo falló. Códigos: `invalid_json`, `unsupported_version`, `unknown_level` (no existe `data/level_XX.tres`), `level_not_built` (existe pero aún no tiene escena), `invalid_field`, `no_rule_manager` | `{"v":1,"code":"unknown_level","detail":"..."}` |
 
 Reglas del contrato:
 
@@ -64,7 +64,7 @@ Reglas del contrato:
 - El nativo nunca asume que un nivel terminó si no recibió `level_finished` o `level_exited`.
 - Cada `start_level` termina con exactamente un `level_exited`. Si el nivel se cierra mientras todavía carga (`abort_level` o otro `start_level` encima), llega `level_exited` **sin** `level_started` antes. El nativo no debe esperar los dos en pareja.
 - `infractions` solo trae las reglas con al menos una falta; la que no aparece vale 0. `duration_s` son segundos jugados, sin contar pausas.
-- `level_id` 99 es el nivel de prueba del spike (botones Falta, Terminar y Salir, con la tarjeta de hábito real). El 1 abre por ahora la calle de prueba.
+- `level_id` sale de `data/level_XX.tres` (LevelData): 0 a 10 y el 99, nivel de prueba del spike (botones Falta, Terminar y Salir, con la tarjeta de hábito real). El 1 abre por ahora la calle de prueba.
 - `infractions` usa los mismos `rule_id` del RuleManager: `stop`, `red_light`, `speed`, `crosswalk`, `bike_lane`, `look`, `patience`, `yellow`, `phone`, `lights`, `distance`, `ambulance`, `crash`.
 
 ## 4. Ciclo de vida

@@ -31,4 +31,5 @@ const MODE_GRANDE := "grande"
 var mode: String = MODE_PEQUE
 ## En kiosco todo está abierto y no se guarda nada.
 var kiosk: bool = false
-var current_level: int = 0
+## Datos del nivel abierto (los pone BridgeClient). null en idle.
+var level: LevelData
