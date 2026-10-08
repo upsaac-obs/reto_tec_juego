@@ -11,3 +11,37 @@ HUD_DESTINO_PRUEBA,Escuela
 PONTE_CINTURON,"¡Primero el cinturón! Tócalo para poder arrancar."
 CINTURON_LISTO,"¡Listo, cinturón puesto! Ya puedes arrancar."
 META_LLEGASTE,"¡Llegaste a la meta!"
+TARJETA_REPETIR,Repetir
+TARJETA_CONTINUAR,Continuar
+NIVEL_00_NOMBRE,Abróchate y arranca
+NIVEL_01_NOMBRE,Primero el peatón
+NIVEL_02_NOMBRE,Respeta las señales
+NIVEL_03_NOMBRE,Mira dos veces
+NIVEL_04_NOMBRE,Con calma
+NIVEL_05_NOMBRE,Sin prisa
+NIVEL_06_NOMBRE,Ojos en el camino
+NIVEL_07_NOMBRE,Hazte visible
+NIVEL_08_NOMBRE,Comparte el camino
+NIVEL_09_NOMBRE,Piensa en todos
+NIVEL_10_NOMBRE,Hábito de campeón
+DECALOGO_01,Decálogo 1 · Respeta al peatón
+DECALOGO_02,Decálogo 2 · No normalices la prisa
+DECALOGO_03,Decálogo 3 · Observa antes de avanzar
+DECALOGO_04,Decálogo 4 · Dispositivos de tránsito
+DECALOGO_05,Decálogo 5 · Comparte el camino
+DECALOGO_06,Decálogo 6 · Evita distracciones
+DECALOGO_07,Decálogo 7 · Hazte visible
+DECALOGO_08,Decálogo 8 · Paciencia
+DECALOGO_09,Decálogo 9 · Piensa en comunidad
+DECALOGO_10,Decálogo 10 · Conviértelo en hábito
+FRASE_00,"Antes de arrancar, cinturón."
+FRASE_01,Quien camina va primero.
+FRASE_02,Las señales son acuerdos para cuidarnos.
+FRASE_03,"Mira dos veces, avanza una."
+FRASE_04,Hay quien necesita más tiempo. Esperamos.
+FRASE_05,Llegar bien es mejor que llegar rápido.
+FRASE_06,"El celular espera, la calle no."
+FRASE_07,"Si te ven, te cuidan."
+FRASE_08,La calle es de todos.
+FRASE_09,Cada decisión en la calle cuida a alguien.
+FRASE_10,Los buenos hábitos se hacen todos los días.

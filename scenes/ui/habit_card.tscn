@@ -1,0 +1,124 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/habit_card.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/star.png" id="2_star"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/star_empty.png" id="3_star_empty"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/good.wav" id="4_good"]
+
+[node name="HabitCard" type="CanvasLayer"]
+process_mode = 3
+layer = 20
+visible = false
+script = ExtResource("1_script")
+star_full = ExtResource("2_star")
+star_empty = ExtResource("3_star_empty")
+
+[node name="Dim" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"CardDim"
+
+[node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CardPanel" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Row" type="HBoxContainer" parent="Center/CardPanel"]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="Illustration" type="TextureRect" parent="Center/CardPanel/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(720, 432)
+layout_mode = 2
+size_flags_vertical = 4
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="Center/CardPanel/Row"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="LevelName" type="Label" parent="Center/CardPanel/Row/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CardTitle"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Decalogo" type="Label" parent="Center/CardPanel/Row/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"CardDecalogo"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Phrase" type="Label" parent="Center/CardPanel/Row/Info"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+theme_type_variation = &"CardPhrase"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Stars" type="HBoxContainer" parent="Center/CardPanel/Row/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Star1" type="TextureRect" parent="Center/CardPanel/Row/Info/Stars"]
+custom_minimum_size = Vector2(98, 94)
+layout_mode = 2
+texture = ExtResource("3_star_empty")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star2" type="TextureRect" parent="Center/CardPanel/Row/Info/Stars"]
+custom_minimum_size = Vector2(98, 94)
+layout_mode = 2
+texture = ExtResource("3_star_empty")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star3" type="TextureRect" parent="Center/CardPanel/Row/Info/Stars"]
+custom_minimum_size = Vector2(98, 94)
+layout_mode = 2
+texture = ExtResource("3_star_empty")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buttons" type="HBoxContainer" parent="Center/CardPanel/Row/Info"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Retry" type="Button" parent="Center/CardPanel/Row/Info/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TARJETA_REPETIR"
+
+[node name="Continue" type="Button" parent="Center/CardPanel/Row/Info/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PlayButton"
+text = "TARJETA_CONTINUAR"
+
+[node name="StarSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("4_good")

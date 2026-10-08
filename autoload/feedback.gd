@@ -69,13 +69,14 @@ func _show(message_key: String, mood: CopilotBubble.Mood) -> void:
 	_message_id += 1
 	var id := _message_id
 	_bubble.show_message(tr(message_key), mood)
-	_play_voice(message_key)
+	play_voice(message_key)
 	await get_tree().create_timer(message_time).timeout
 	if id == _message_id:
 		_bubble.hide_message()
 
 
-func _play_voice(message_key: String) -> void:
+## Reproduce assets/audio/voz/<CLAVE>.ogg si existe (también la usa la tarjeta de hábito).
+func play_voice(message_key: String) -> void:
 	_voice.stop()
 	var path := VOICE_PATH % message_key
 	if ResourceLoader.exists(path):
