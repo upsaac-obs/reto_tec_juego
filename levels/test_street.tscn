@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_j1wff"]
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="9_4ui1r"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="10_card"]
+[ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="12_light"]
 
 [sub_resource type="Curve2D" id="Curve2D_f2rh6"]
 _data = {
@@ -31,6 +32,10 @@ position = Vector2(1280, 0)
 
 [node name="Crosswalk" parent="Rules" unique_id=225141374 instance=ExtResource("4_j1wff")]
 position = Vector2(2592, 0)
+
+[node name="TrafficLight" parent="Rules" unique_id=530118847 instance=ExtResource("12_light")]
+position = Vector2(2000, 0)
+start_light = 2
 
 [node name="CheckpointAfterStop" type="Node2D" parent="Rules" unique_id=1019928763 instance=ExtResource("4_ebu3w")]
 position = Vector2(1600, 0)

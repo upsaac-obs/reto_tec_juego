@@ -51,3 +51,6 @@ DESTINO_ESCUELA,Escuela
 DESTINO_PARQUE,Parque
 DESTINO_HOSPITAL,Hospital
 DESTINO_TERMINAL,Terminal
+FALTA_ROJO,"¡Alto! Con la luz roja hay que esperar antes de la línea."
+BIEN_ROJO,"¡Bien, esperaste la luz verde!"
+FALTA_AMARILLO,"La luz amarilla avisa que viene el rojo: hay que frenar, no acelerar."

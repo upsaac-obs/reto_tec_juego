@@ -46,6 +46,8 @@ var lane_index: int = 0
 ## -1 izquierda, 0 apagada, 1 derecha.
 var turn_signal: int = 0
 var is_braking: bool = false
+## true mientras el niño pisa el pedal verde (lo revisa el semáforo en amarillo).
+var is_accelerating: bool = false
 
 var _route: DrivingRoute
 var _turns: Array[TurnPoint] = []
@@ -181,11 +183,11 @@ func _update_maneuver(delta: float) -> void:
 
 
 func _update_speed(delta: float) -> void:
-	var accelerating := Input.is_action_pressed(&"car_accelerate") and seatbelt_on
+	is_accelerating = Input.is_action_pressed(&"car_accelerate") and seatbelt_on
 	is_braking = Input.is_action_pressed(&"car_brake")
 	if is_braking:
 		speed -= braking * delta
-	elif accelerating:
+	elif is_accelerating:
 		speed += acceleration * delta
 	else:
 		speed -= coast_deceleration * delta
