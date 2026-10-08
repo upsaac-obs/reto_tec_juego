@@ -178,3 +178,7 @@ TopBarLabel/constants/outline_size = 0
 TopBarLabel/font_sizes/font_size = 26
 TopBarPill/base_type = &"PanelContainer"
 TopBarPill/styles/panel = SubResource("StyleBoxFlat_pill")
+PointsPopup/base_type = &"Label"
+PointsPopup/colors/font_color = Color(1, 0.7804, 0, 1)
+PointsPopup/constants/outline_size = 12
+PointsPopup/font_sizes/font_size = 48

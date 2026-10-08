@@ -60,7 +60,7 @@ res://
 2. El auto (`PlayerCar`) sigue la ruta (`DrivingRoute`, un `Path2D`) con un `PathFollow2D`. `progress` avanza con la velocidad. Cambiar de carril es animar `v_offset` con un tween; cada calle define sus carriles con `StreetSection`. Los giros están en la ruta y se marcan con `TurnPoint`: el niño elige girar tocando la flecha que marca el piso; si no la toca, el auto se detiene antes del cruce y espera (las otras flechas no hacen nada ahí). El auto pone la direccional 1 segundo antes de cada giro y cada cambio de carril. Para mover el auto a un punto de control usa `restart_at()`, no cambies `progress` directo.
 3. Cada pieza de regla es un `Area2D` que detecta al auto (grupo `player`), revisa su estado (velocidad, luces, cinturón) y llama al `RuleManager`. Cada pieza reporta como máximo una falta por pasada.
 4. `RuleManager` cuenta faltas y puntos, guarda el último punto de control y calcula las estrellas al llegar a la meta.
-5. `Feedback` (autoload con `process_mode = ALWAYS`) pausa el juego 2 segundos, muestra al copiloto con el texto y reproduce `assets/audio/voz/<CLAVE>.ogg` si existe.
+5. `Feedback` (autoload con `process_mode = ALWAYS`) muestra al copiloto con el texto y reproduce `assets/audio/voz/<CLAVE>.ogg` si existe. `show_infraction()` pausa el juego 2 segundos; `show_good_action()` suena alegre y muestra "+10" sin pausar; `show_info()` solo habla. El `RuleManager` lo llama solo; las piezas de reglas no lo usan directo.
 
 API del RuleManager:
 
