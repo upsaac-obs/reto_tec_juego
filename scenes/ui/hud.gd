@@ -13,7 +13,6 @@ signal settings_pressed
 @export var destination_key: String = "HUD_DESTINO_PRUEBA"
 @export var star_full: Texture2D
 @export var star_empty: Texture2D
-@export var message_time: float = 2.5
 ## Oscurece el botón mientras se presiona.
 @export var pressed_tint: Color = Color(0.75, 0.75, 0.75)
 ## El cinturón parpadea hasta que se lo ponen.
@@ -24,19 +23,15 @@ signal settings_pressed
 @onready var _points: Label = %Points
 @onready var _stars: HBoxContainer = %Stars
 @onready var _destination: Label = %Destination
-@onready var _message: PanelContainer = %Message
-@onready var _message_label: Label = %MessageLabel
 @onready var _seatbelt: TouchScreenButton = %Seatbelt
 @onready var _gear: TextureButton = %Gear
 
-var _message_timer: SceneTreeTimer
 var _pulse: Tween
 
 
 func _ready() -> void:
 	_level_name.text = tr(level_name_key)
 	_destination.text = tr(destination_key)
-	_message.hide()
 	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas]:
 		button.pressed.connect(func() -> void: button.self_modulate = pressed_tint)
 		button.released.connect(func() -> void: button.self_modulate = Color.WHITE)
@@ -44,23 +39,11 @@ func _ready() -> void:
 	if rule_manager != null:
 		rule_manager.infraction_reported.connect(func(_id: StringName, _grave: bool) -> void: _refresh_score())
 		rule_manager.good_action_reported.connect(func(_id: StringName, _points_won: int) -> void: _refresh_score())
-		rule_manager.feedback_requested.connect(show_message)
 	if car != null:
 		car.seatbelt_fastened.connect(_on_seatbelt_fastened)
-		car.blocked_without_seatbelt.connect(show_message.bind("PONTE_CINTURON", false))
+		car.blocked_without_seatbelt.connect(Feedback.show_info.bind("PONTE_CINTURON"))
 	_refresh_score()
 	_start_seatbelt_pulse()
-
-
-func show_message(message_key: String, good: bool) -> void:
-	_message_label.text = tr(message_key)
-	_message.theme_type_variation = &"MessageGood" if good else &"MessageBad"
-	_message.show()
-	var timer := get_tree().create_timer(message_time)
-	_message_timer = timer
-	timer.timeout.connect(func() -> void:
-		if _message_timer == timer:
-			_message.hide())
 
 
 func _refresh_score() -> void:
@@ -81,4 +64,4 @@ func _on_seatbelt_fastened() -> void:
 	if _pulse != null:
 		_pulse.kill()
 	_seatbelt.modulate = seatbelt_done_tint
-	show_message("CINTURON_LISTO", true)
+	Feedback.show_good_action("CINTURON_LISTO", 0)

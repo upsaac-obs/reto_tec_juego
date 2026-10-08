@@ -12,13 +12,11 @@ signal good_action_reported(action_id: StringName, points: int)
 signal level_finished(stars: int)
 ## El auto regresó al punto de control (distancia sobre la ruta).
 signal checkpoint_restored(progress: float)
-## Provisional: el HUD muestra el mensaje hasta que exista el autoload Feedback.
-signal feedback_requested(message_key: String, good: bool)
 
 @export var car: PlayerCar
-## Segundos entre la falta grave y el regreso al punto de control
-## (deja ver el susto y el mensaje).
-@export var grave_return_delay: float = 2.5
+## Segundos entre la falta grave y el regreso al punto de control. Se cuentan
+## después de la pausa de Feedback, que ya deja ver el susto y el mensaje.
+@export var grave_return_delay: float = 0.5
 
 var faults: int = 0
 var points: int = 0
@@ -39,7 +37,7 @@ func report_infraction(rule_id: StringName, message_key: String, grave := false)
 		return
 	faults += 1
 	infraction_reported.emit(rule_id, grave)
-	feedback_requested.emit(message_key, false)
+	Feedback.show_infraction(message_key)
 	if grave:
 		_return_to_checkpoint()
 
@@ -49,7 +47,7 @@ func report_good_action(action_id: StringName, message_key: String, action_point
 		return
 	points += action_points
 	good_action_reported.emit(action_id, action_points)
-	feedback_requested.emit(message_key, true)
+	Feedback.show_good_action(message_key, action_points)
 
 
 ## Solo avanza: pasar otra vez por un punto anterior no lo mueve hacia atrás.
@@ -74,7 +72,7 @@ func finish_level() -> void:
 	if _finished:
 		return
 	_finished = true
-	feedback_requested.emit("META_LLEGASTE", true)
+	Feedback.show_good_action("META_LLEGASTE", 0)
 	level_finished.emit(get_stars())
 
 
