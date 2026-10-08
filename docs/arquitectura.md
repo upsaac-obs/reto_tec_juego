@@ -62,6 +62,7 @@ Reglas del contrato:
 
 - Godot valida el JSON que recibe. Si algo no cuadra, emite `bridge_error` y no se queda colgado.
 - El nativo nunca asume que un nivel terminó si no recibió `level_finished` o `level_exited`.
+- Cada `start_level` termina con exactamente un `level_exited`. Si el nivel se cierra mientras todavía carga (`abort_level` o otro `start_level` encima), llega `level_exited` **sin** `level_started` antes. El nativo no debe esperar los dos en pareja.
 - `infractions` solo trae las reglas con al menos una falta; la que no aparece vale 0. `duration_s` son segundos jugados, sin contar pausas.
 - `level_id` 99 es el nivel de prueba del spike (botones Falta, Terminar y Salir, con la tarjeta de hábito real). El 1 abre por ahora la calle de prueba.
 - `infractions` usa los mismos `rule_id` del RuleManager: `stop`, `red_light`, `speed`, `crosswalk`, `bike_lane`, `look`, `patience`, `yellow`, `phone`, `lights`, `distance`, `ambulance`, `crash`.
@@ -102,9 +103,9 @@ Objetivo: probar que el puente funciona de ida y vuelta en las dos plataformas a
 - [ ] Elegir y fijar la versión de Godot compatible con SwiftGodotKit y `godot-lib`. El proyecto usa hoy **Godot 4.7.2**: confirmar que las dos lo soportan o bajar de versión.
 - [x] Proyecto Godot mínimo: `scenes/bridge/idle.tscn`, `scenes/bridge/level_test.tscn` (level_id 99), `autoload/bridge_client.gd` y `scenes/bridge/fake_bridge.gd`. Probado con el FakeBridge: errores de JSON, inicio, faltas, meta, tarjeta, Repetir, Continuar, Salir, abort, pausa en segundo plano, kiosco y silencio.
 - [ ] iOS: app SwiftUI con un botón "Nivel 1". Muestra `GodotAppView`, manda `start_level` y recibe `level_finished`. Muestra las estrellas en una etiqueta nativa.
-- [ ] Android: app en Compose con lo mismo, usando `godot-lib` y un plugin v2 en Kotlin.
-- [ ] Abrir y cerrar el nivel 10 veces seguidas sin cierres ni aumento de memoria.
-- [ ] Medir: tiempo hasta `engine_ready`, tamaño de la app y memoria en un celular de gama baja.
+- [x] Android: app en Compose con lo mismo, usando `godot-lib` 4.7.2 y un plugin v2 en Kotlin (`native/android/`). Probado en un Samsung Galaxy A15 (SM-A155M, Mali-G57): niveles 1 y 99 completos, tarjeta de hábito, resultado guardado en el nativo.
+- [x] Abrir y cerrar el nivel 10 veces seguidas sin cierres ni aumento de memoria. Android (A15): 247 → 253 MB, sube 6 MB en los primeros ciclos y luego se queda estable. Falta en iOS.
+- [ ] Medir: tiempo hasta `engine_ready`, tamaño de la app y memoria en un celular de gama baja. Android (A15, build debug): menú nativo visible en 1.9 s, `engine_ready` en 3.7 s, memoria ~250 MB. **Falta**: tamaño en build release (necesita el NDK para quitar símbolos; en debug la librería de Godot pesa ~71 MB por arquitectura) e iOS.
 
 Criterio de terminado: todo lo anterior funciona en un iPhone o iPad real y en un Android real. Si no está listo en 2 días de trabajo, se descarta esta arquitectura y se sigue con todo en Godot.
 
