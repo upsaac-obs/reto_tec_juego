@@ -3,7 +3,9 @@ class_name PlayerCar
 extends PathFollow2D
 ## Auto del jugador. Sigue la DrivingRoute que es su padre.
 ## - Sin cinturón no avanza.
-## - Pedal verde acelera, pedal rojo frena y sin pedales baja poco a poco.
+## - Modo grande: pedal verde acelera, pedal rojo frena y sin pedales baja poco a poco.
+## - Modo peque: el auto acelera solo hasta auto_drive_factor del límite de la
+##   calle (o de la SpeedZone en la que esté) y el niño solo usa freno y flechas.
 ## - Las flechas cambian de carril o, cerca de un TurnPoint, giran.
 ##   Siempre pone la direccional signal_time segundos antes de moverse.
 ## Las piezas de reglas lo detectan por su Hitbox (grupo "player"); el auto es su owner.
@@ -22,6 +24,8 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 @export var acceleration: float = 120.0
 @export var braking: float = 300.0
 @export var coast_deceleration: float = 60.0
+## Modo peque: fracción del límite a la que el auto avanza solo.
+@export_range(0.1, 1.0) var auto_drive_factor: float = 0.7
 ## Segundos con la direccional encendida antes de cambiar de carril o girar.
 @export var signal_time: float = 1.0
 @export var lane_change_time: float = 0.4
@@ -47,7 +51,10 @@ var lane_index: int = 0
 var turn_signal: int = 0
 var is_braking: bool = false
 ## true mientras el niño pisa el pedal verde (lo revisa el semáforo en amarillo).
+## En modo peque siempre es false: acelerar solo no es decisión del niño.
 var is_accelerating: bool = false
+## Modo peque: el auto avanza solo. Se toma de GameState.mode al empezar.
+var auto_drive: bool = false
 
 var _route: DrivingRoute
 var _turns: Array[TurnPoint] = []
@@ -62,6 +69,8 @@ var _blink_time: float = 0.0
 var _finished: bool = false
 ## Piezas que piden que el auto no avance (por ejemplo, un peatón cruzando).
 var _stop_requests: Array[Object] = []
+## Límites de las SpeedZone en las que está el auto (pieza → px/s).
+var _speed_limits: Dictionary = {}
 
 
 func _ready() -> void:
@@ -71,6 +80,7 @@ func _ready() -> void:
 	assert(_route != null, "PlayerCar tiene que ser hijo de un DrivingRoute")
 	loop = false
 	rotates = true
+	auto_drive = GameState.mode == GameState.MODE_PEQUE
 	_turns = _route.get_turn_points()
 	_lane_count = _route.lane_count_at(progress)
 	lane_index = clampi(start_lane, 0, _lane_count - 1)
@@ -182,11 +192,35 @@ func _update_maneuver(delta: float) -> void:
 			_turn_unlocked = true
 
 
+## La pone una SpeedZone mientras el auto está dentro (para el modo peque).
+func set_speed_limit(source: Object, limit: float) -> void:
+	_speed_limits[source] = limit
+
+
+func clear_speed_limit(source: Object) -> void:
+	_speed_limits.erase(source)
+
+
+## Límite que aplica ahora: el de la calle o el más bajo de las zonas.
+func current_limit() -> float:
+	var limit := max_speed
+	for zone_limit: float in _speed_limits.values():
+		limit = minf(limit, zone_limit)
+	return limit
+
+
 func _update_speed(delta: float) -> void:
-	is_accelerating = Input.is_action_pressed(&"car_accelerate") and seatbelt_on
+	is_accelerating = Input.is_action_pressed(&"car_accelerate") and seatbelt_on and not auto_drive
 	is_braking = Input.is_action_pressed(&"car_brake")
 	if is_braking:
 		speed -= braking * delta
+	elif auto_drive and seatbelt_on:
+		var target := current_limit() * auto_drive_factor
+		if speed < target:
+			speed = minf(speed + acceleration * delta, target)
+		else:
+			# Al entrar a una zona más lenta baja rápido, sin esperar al niño.
+			speed = maxf(speed - braking * delta, target)
 	elif is_accelerating:
 		speed += acceleration * delta
 	else:

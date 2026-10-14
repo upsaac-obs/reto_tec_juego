@@ -30,9 +30,9 @@ const PX_PER_KMH := 4.0
 const MODE_PEQUE := "peque"
 const MODE_GRANDE := "grande"
 
-## "peque" (4 a 7 años) o "grande" (8 a 13 años). El nativo lo manda en
-## start_level. Por defecto "grande" mientras el modo peque (el auto avanza
-## solo) no esté hecho; así F6 en el editor muestra los mensajes correctos.
+## "peque" (4 a 7 años: el auto avanza solo) o "grande" (8 a 13 años: dos
+## pedales). El nativo lo manda en start_level. Con F6 en el editor se usa este
+## valor: cámbialo aquí para probar un nivel en modo peque.
 var mode: String = MODE_GRANDE
 ## En kiosco todo está abierto y no se guarda nada.
 var kiosk: bool = false

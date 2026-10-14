@@ -44,6 +44,8 @@ func _ready() -> void:
 	if car != null:
 		car.seatbelt_fastened.connect(_on_seatbelt_fastened)
 		car.blocked_without_seatbelt.connect(Feedback.show_info.bind("PONTE_CINTURON"))
+	# Modo peque: el auto avanza solo; el niño solo tiene freno y flechas.
+	%Gas.visible = GameState.mode != GameState.MODE_PEQUE
 	_refresh_score()
 	_start_seatbelt_pulse()
 
