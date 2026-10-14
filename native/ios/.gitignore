@@ -1,0 +1,5 @@
+RutaKidsSpike/main.pck
+*.xcodeproj/
+build/
+DerivedData/
+.swiftpm/
