@@ -19,8 +19,15 @@ func _run_all() -> void:
 		if not (file.begins_with("test_") and file.ends_with(".gd")) or file in ["test_case.gd", "test_runner.gd"]:
 			continue
 		print("\n== %s" % file)
+		var script := load("res://tests/" + file) as GDScript
+		if script == null or not script.can_instantiate():
+			# Un archivo de prueba que no compila cuenta como falla, no se salta.
+			total_failed += 1
+			failures.append("%s: no compila" % file)
+			print("  FALLA el archivo no compila")
+			continue
 		var test := Node.new()
-		test.set_script(load("res://tests/" + file))
+		test.set_script(script)
 		test.process_mode = Node.PROCESS_MODE_ALWAYS
 		add_child(test)
 		await test.run()
