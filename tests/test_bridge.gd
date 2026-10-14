@@ -33,8 +33,14 @@ func run() -> void:
 	check(last("bridge_error")["code"] == "unsupported_version", "v=2 → unsupported_version")
 	fake.start_level.emit('{"v":1,"level_id":50,"mode":"peque","kiosk":false,"muted":false}')
 	check(last("bridge_error")["code"] == "unknown_level", "nivel 50 → unknown_level")
-	fake.start_level.emit('{"v":1,"level_id":3,"mode":"peque","kiosk":false,"muted":false}')
-	check(last("bridge_error")["code"] == "level_not_built", "nivel 3 (sin escena) → level_not_built")
+	var unbuilt := -1
+	for id in LevelData.IDS:
+		if not LevelData.load_by_id(id).is_built():
+			unbuilt = id
+			break
+	if unbuilt >= 0:
+		fake.start_level.emit('{"v":1,"level_id":%d,"mode":"peque","kiosk":false,"muted":false}' % unbuilt)
+		check(last("bridge_error")["code"] == "level_not_built", "nivel %d (sin escena) → level_not_built" % unbuilt)
 	fake.start_level.emit('{"v":1,"level_id":99,"mode":"mediano","kiosk":false,"muted":false}')
 	check(last("bridge_error")["code"] == "invalid_field", "modo inválido → invalid_field")
 	check(BridgeClient.state == BridgeClient.State.IDLE and count("level_started") == 0, "después de los errores sigue en idle")

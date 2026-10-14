@@ -11,4 +11,4 @@ decalogo_key = "DECALOGO_03"
 phrase_key = "FRASE_03"
 destination_key = ""
 illustration = ExtResource("2_card")
-scene_path = ""
+scene_path = "res://levels/level_03.tscn"

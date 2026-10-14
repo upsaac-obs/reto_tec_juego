@@ -1,5 +1,5 @@
 extends TestCase
-## Recorridos completos de los niveles 0, 1 y 2 por el puente (FakeBridge):
+## Recorridos completos de los niveles construidos por el puente (FakeBridge):
 ## - Un conductor cuidadoso los termina con 3 estrellas y sin faltas.
 ## - Uno que corre en la zona escolar saca menos estrellas.
 
@@ -10,6 +10,7 @@ var stopped_at := {}
 var cruise := 150.0
 var respect_limits := true
 var respect_signals := true
+const LEVELS: Array[int] = [0, 1, 2, 3]
 
 
 func must_wait(piece: Node) -> bool:
@@ -17,6 +18,8 @@ func must_wait(piece: Node) -> bool:
 		return (piece as Crosswalk).is_occupied()
 	if not respect_signals:
 		return false
+	if piece is BlindCrossing:
+		return stopped_at.get(piece, 0.0) < 0.6 or (piece as BlindCrossing).is_busy()
 	if piece is StopZone:
 		return stopped_at.get(piece, 0.0) < 0.6
 	if piece is TrafficLight:
@@ -48,7 +51,8 @@ func _physics_process(delta: float) -> void:
 		Input.action_press(&"car_accelerate")
 	else:
 		Input.action_release(&"car_accelerate")
-	if car.speed > target + 4.0:
+	# Para esperar hay que mantener el freno (en modo peque el auto avanza solo).
+	if car.speed > target + 4.0 or target < 1.0:
 		Input.action_press(&"car_brake")
 	else:
 		Input.action_release(&"car_brake")
@@ -67,6 +71,9 @@ func play(id: int) -> Variant:
 		var x: float = piece.position.x - 64.0
 		if piece is Crosswalk:
 			stops.append([x - piece.crosswalk_width / 2.0 - piece.fault_margin - 40.0, piece])
+		elif piece is BlindCrossing:
+			# Se detiene sobre los ojos, antes de la línea de "mira".
+			stops.append([x - piece.cross_width / 2.0 - 60.0, piece])
 		elif piece is StopZone or piece is TrafficLight:
 			stops.append([x - 45.0, piece])
 		elif piece is SpeedZone:
@@ -97,14 +104,14 @@ func run() -> void:
 	Engine.time_scale = 3.0
 	BridgeClient._go_idle()
 	await frames()
-	for id in [0, 1, 2]:
+	for id in LEVELS:
 		fake_bridge().sent.clear()
 		var result: Variant = await play(id)
 		print("    nivel %d: %s" % [id, str(result)])
 		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d: el conductor cuidadoso lo termina con 3 estrellas y sin faltas" % id)
 	# Modo peque: el auto avanza solo; el conductor solo frena.
 	fake_bridge().mode = GameState.MODE_PEQUE
-	for id in [0, 1, 2]:
+	for id in LEVELS:
 		fake_bridge().sent.clear()
 		var result: Variant = await play(id)
 		print("    nivel %d (peque): %s" % [id, str(result)])
