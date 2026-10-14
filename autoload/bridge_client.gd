@@ -3,6 +3,7 @@ extends Node
 ## - Nativo → Godot: el singleton RutaBridge emite señales (start_level, pause_level,
 ##   resume_level, abort_level, set_muted) y aquí se escuchan.
 ## - Godot → nativo: se llama RutaBridge.notify(evento, json). Todo JSON lleva "v".
+## En iOS la app le habla al nodo /root/BridgeClient/HostBridge (mismo contrato).
 ## Sin app nativa (editor, escritorio) se usa FakeBridge, que imprime en consola.
 ## Godot no guarda nada: recibe todo en start_level y entrega todo en level_finished.
 
@@ -35,7 +36,14 @@ func _init() -> void:
 
 func _ready() -> void:
 	if Engine.has_singleton("RutaBridge"):
+		# Android: plugin v2 registrado como singleton.
 		_bridge = Engine.get_singleton("RutaBridge")
+	elif OS.has_feature("ios") or OS.get_cmdline_user_args().has("--host-bridge"):
+		# iOS (SwiftGodotKit): la app busca el nodo HostBridge y le habla directo.
+		var host := HostBridge.new()
+		host.name = "HostBridge"
+		add_child(host)
+		_bridge = host
 	else:
 		var fake := FakeBridge.new()
 		add_child(fake)

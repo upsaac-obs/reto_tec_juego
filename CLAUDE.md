@@ -17,6 +17,7 @@ Juego móvil 2D (Android e iOS) hecho en Godot 4 para Fundación ADO. Niñas y n
 - Haz una tarea de `PLAN.md` por sesión, en una rama `feature/<nombre-corto>`.
 - Antes de empezar, lee la tarea y su criterio de terminado. Si algo no está claro, pregunta en vez de inventar reglas del juego.
 - Al terminar, explica cómo probarla en el editor de Godot (qué escena abrir y qué hacer), porque el equipo la prueba a mano antes de aceptarla.
+- Antes de entregar, corre `tests/run_tests.sh` (pruebas automáticas sin abrir el editor; deja el log con el commit en `tests/resultados/`). Todas deben pasar. Si agregas una regla o un nivel, agrega su prueba en `tests/test_*.gd`.
 - Marca la tarea en `PLAN.md` solo cuando el equipo confirme que funciona.
 - No cambies las decisiones técnicas de abajo sin preguntar.
 
