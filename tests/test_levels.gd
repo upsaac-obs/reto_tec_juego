@@ -102,6 +102,14 @@ func run() -> void:
 		var result: Variant = await play(id)
 		print("    nivel %d: %s" % [id, str(result)])
 		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d: el conductor cuidadoso lo termina con 3 estrellas y sin faltas" % id)
+	# Modo peque: el auto avanza solo; el conductor solo frena.
+	fake_bridge().mode = GameState.MODE_PEQUE
+	for id in [0, 1, 2]:
+		fake_bridge().sent.clear()
+		var result: Variant = await play(id)
+		print("    nivel %d (peque): %s" % [id, str(result)])
+		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d en modo peque: frenando a tiempo se termina con 3 estrellas" % id)
+	fake_bridge().mode = GameState.MODE_GRANDE
 	respect_limits = false
 	cruise = 240.0
 	fake_bridge().sent.clear()

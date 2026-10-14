@@ -89,10 +89,14 @@ func _on_zone_entered(area: Area2D) -> void:
 	_car = car
 	_over_time = 0.0
 	_faulted = false
+	car.set_speed_limit(self, get_limit_speed())
 
 
 func _on_zone_exited(area: Area2D) -> void:
-	if _car_from(area) == null or _car == null:
+	var leaving := _car_from(area)
+	if leaving != null:
+		leaving.clear_speed_limit(self)
+	if leaving == null or _car == null:
 		return
 	# Salir hacia atrás (regreso a un punto de control) no cuenta como pasar.
 	if _car.global_position.distance_to(_exit_point()) < _car.global_position.distance_to(global_position) \
@@ -102,6 +106,8 @@ func _on_zone_exited(area: Area2D) -> void:
 
 
 func _on_car_restarted() -> void:
+	if _car != null:
+		_car.clear_speed_limit(self)
 	_car = null
 	_over_time = 0.0
 	_faulted = false
