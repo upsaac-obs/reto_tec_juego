@@ -5,6 +5,8 @@ plugins {
 
 android {
     namespace = "org.fundacionado.rutakids"
+    // Necesario para quitar los símbolos de depuración de libgodot_android.so en release.
+    ndkVersion = "30.0.16248370"
     compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
@@ -22,6 +24,13 @@ android {
     }
 
     buildFeatures { compose = true }
+
+    buildTypes {
+        release {
+            // Spike: se firma con la llave de depuración para poder instalarla y medirla.
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

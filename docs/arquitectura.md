@@ -21,7 +21,7 @@ Godot **no guarda nada en disco**. Todo lo que necesita lo recibe al abrir el ni
 ## 2. Tecnología para incrustar Godot
 
 - **Base: LibGodot.** Desde Godot 4.6, Godot puede compilarse como librería para incrustarse en otra app. Se usa en producción con Swift y Kotlin. La función para detener Godot y volver a arrancarlo todavía se está integrando (ver hallazgo H1).
-- **iOS: SwiftGodotKit.** Pone el juego dentro de una vista de SwiftUI (`GodotApp(packFile: "main.pck")` + `GodotAppView()`). El puente es una clase Swift marcada con `@Godot`, con propiedades `@Signal`, registrada con `Engine.registerSingleton` en el hook de inicio (`initHookCb`, nivel `.scene`). En GDScript se obtiene con `Engine.get_singleton("RutaBridge")`. Los nombres camelCase de Swift llegan en snake_case a Godot.
+- **iOS: SwiftGodotKit** (rama `swiftgodotkit-4.7`, que usa Godot **4.7.3-rc**). Pone el juego dentro de una vista de SwiftUI (`GodotApp(packFile: "main.pck")` + `GodotAppView()`). No registra un singleton: como en su ejemplo AxolotlDemo, la app **busca un nodo** del árbol de Godot y le habla directo. Ese nodo es `/root/BridgeClient/HostBridge` (`scenes/bridge/host_bridge.gd`), que `BridgeClient` crea cuando `OS.has_feature("ios")`. Kit de la Mac: `native/ios/`.
 - **Android: Godot como librería** (`godot-lib`, la librería oficial de Godot para Android) dentro de una `Activity` o `Fragment` de la app. El puente es un **plugin de Android v2** escrito en Kotlin (clase que extiende `GodotPlugin`, métodos con `@UsedByGodot` y señales registradas y emitidas desde Kotlin). En GDScript se obtiene igual, con `Engine.get_singleton("RutaBridge")`.
 - **Versión:** fijar una sola versión de Godot (4.6 o superior) que sea compatible con SwiftGodotKit y con `godot-lib`. Verificar la compatibilidad antes de empezar: es el primer punto del spike.
 
@@ -31,8 +31,9 @@ Un solo singleton llamado `RutaBridge` en las dos plataformas, con los mismos no
 
 **Mecanismo (igual en las dos plataformas):**
 
-- **Nativo → Godot:** el objeto `RutaBridge` **emite señales de Godot** con los nombres de la primera tabla (`start_level`, `pause_level`, …). `bridge_client.gd` se conecta a ellas. En Kotlin: `registerPluginSignals` + `emitSignal`. En Swift: propiedades `@Signal` + `emit`.
-- **Godot → nativo:** GDScript llama **un solo método**, `notify(event: String, json: String)`, con los nombres de la segunda tabla. En Kotlin: `@UsedByGodot fun notify(...)`. En Swift: `@Callable func notify(...)`. Cada app lo convierte en lo que necesite (un `Flow`, un `@Published`, etc.).
+- **Nativo → Godot:** el objeto del puente **emite señales de Godot** con los nombres de la primera tabla (`start_level`, `pause_level`, …). `bridge_client.gd` se conecta a ellas. En Kotlin: `registerPluginSignals` + `emitSignal` en el singleton `RutaBridge`. En Swift: la app llama `HostBridge.receive_packet("comando|json")` y `HostBridge` emite la señal.
+- **Godot → nativo:** GDScript llama **un solo método**, `notify(event: String, json: String)`, con los nombres de la segunda tabla. En Kotlin: `@UsedByGodot fun notify(...)`. En Swift: `HostBridge` emite la señal `message("evento|json")` y la app la escucha con un `Callable`. Como Godot manda `engine_ready` antes de que Swift se conecte, `HostBridge` guarda los mensajes hasta que la app manda `connect|`.
+- En iOS todo va en **un solo texto** `"nombre|json"` para que Swift solo pase y reciba un `String`.
 
 Así cada plataforma implementa 5 señales y 1 método, y las dos quedan iguales (H5).
 
@@ -105,7 +106,8 @@ Objetivo: probar que el puente funciona de ida y vuelta en las dos plataformas a
 - [ ] iOS: app SwiftUI con un botón "Nivel 1". Muestra `GodotAppView`, manda `start_level` y recibe `level_finished`. Muestra las estrellas en una etiqueta nativa.
 - [x] Android: app en Compose con lo mismo, usando `godot-lib` 4.7.2 y un plugin v2 en Kotlin (`native/android/`). Probado en un Samsung Galaxy A15 (SM-A155M, Mali-G57): niveles 1 y 99 completos, tarjeta de hábito, resultado guardado en el nativo.
 - [x] Abrir y cerrar el nivel 10 veces seguidas sin cierres ni aumento de memoria. Android (A15): 247 → 253 MB, sube 6 MB en los primeros ciclos y luego se queda estable. Falta en iOS.
-- [ ] Medir: tiempo hasta `engine_ready`, tamaño de la app y memoria en un celular de gama baja. Android (A15, build debug): menú nativo visible en 1.9 s, `engine_ready` en 3.7 s, memoria ~250 MB. **Falta**: tamaño en build release (necesita el NDK para quitar símbolos; en debug la librería de Godot pesa ~71 MB por arquitectura) e iOS.
+- [ ] Medir: tiempo hasta `engine_ready`, tamaño de la app y memoria en un celular de gama baja. Android (A15, build debug): menú nativo visible en 1.9 s, `engine_ready` en 3.7 s, memoria ~250 MB. **Falta**: iOS.
+- [x] Tamaño en Android, build *release* (14 oct): APK solo arm64 **78.1 MB**; APK con arm64 + armv7 **150.5 MB** (pasa por poco el límite de 150 MB propuesto en el Excel de aceptación). Casi todo es `libgodot_android.so` (71 MB por arquitectura): **ya viene sin símbolos de depuración** y es la versión *release* del motor, así que el NDK no la reduce. Comprimida pesa 22.9 MB, que es lo que se descargaría por arquitectura. Para bajar el tamaño instalado: publicar en Google Play como App Bundle (cada celular baja solo su arquitectura, ~78 MB) o compilar `godot-lib` sin 3D (`disable_3d=yes`) y con `optimize=size` (hallazgo H4).
 
 Criterio de terminado: todo lo anterior funciona en un iPhone o iPad real y en un Android real. Si no está listo en 2 días de trabajo, se descarta esta arquitectura y se sigue con todo en Godot.
 
