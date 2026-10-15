@@ -3,7 +3,7 @@ extends PathFollow2D
 ## Auto del tráfico. Sigue su Path2D (el padre) a cruise_speed y frena si tiene
 ## algo enfrente: el auto del jugador (grupo "player") u otro auto del tráfico
 ## (grupo "traffic"). Nunca choca. Al llegar al final de su ruta se borra.
-## Usa el mismo sprite que el auto del jugador, pintado con body_color.
+## Sprite: assets/sprites/vehicles/npc_car.png (auto blanco) pintado con body_color.
 
 signal left_route
 
