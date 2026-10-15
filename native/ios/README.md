@@ -13,44 +13,15 @@ Si en 2 días de trabajo no funciona, la regla del documento (H13) es descartar 
 
 ## 1. Pasar el proyecto a la Mac
 
-El repositorio hoy solo existe en la computadora de Linux (no tiene remoto). Hay dos formas:
-
-### Opción A (recomendada): repositorio privado en GitHub
-
-En la computadora de Linux, dentro de `~/claude/godot_game`:
+El repositorio está en GitHub: https://github.com/upsaac-obs/reto_tec_juego (pedir acceso de escritura a quien administre `upsaac-obs`). En la Mac:
 
 ```bash
-gh auth login                      # si todavía no hay sesión de GitHub
-gh repo create rutakids --private --source . --remote origin
-git push origin --all              # sube todas las ramas
-```
-
-Después invitar a quien tenga la Mac (GitHub → Settings → Collaborators). En la Mac:
-
-```bash
-git clone https://github.com/<usuario>/rutakids.git
+git clone https://github.com/upsaac-obs/reto_tec_juego.git rutakids
 cd rutakids
-git switch feature/spike-ios
+git switch -c feature/spike-ios origin/feature/modo-peque   # trae el kit de iOS y los niveles 0 a 3
 ```
 
-### Opción B: un solo archivo (sin GitHub)
-
-En la computadora de Linux:
-
-```bash
-cd ~/claude/godot_game
-git bundle create ~/claude/rutakids.bundle --all
-```
-
-Pasar `rutakids.bundle` a la Mac (USB, AirDrop, Drive). En la Mac:
-
-```bash
-git clone rutakids.bundle rutakids
-cd rutakids
-git switch feature/spike-ios
-```
-
-Para traer los cambios de regreso, en la Mac: `git bundle create spike-ios.bundle feature/spike-ios` y en Linux: `git fetch ~/Downloads/spike-ios.bundle feature/spike-ios:feature/spike-ios`.
+Para subir los resultados: `git push -u origin feature/spike-ios`. GitHub pide usuario y un *personal access token* (no la contraseña), con permiso *Contents: Read and write* en el repositorio.
 
 ---
 
