@@ -152,10 +152,10 @@ Diseño: *"Atardecer, un túnel y lluvia. Aparecen ciclistas con casco y refleja
 
 `tools/gen_strings.py` lee `i18n/textos.csv` y genera los textos de cada app (hallazgo H8 de `docs/arquitectura.md`):
 
-| App | Archivo que genera |
-| --- | --- |
-| iOS | `native/ios/RutaKidsSpike/es.lproj/Localizable.strings` |
-| Android | `native/android/app/src/main/res/values/strings.xml` |
+| App     | Archivo que genera                                      |
+| ------- | ------------------------------------------------------- |
+| iOS     | `native/ios/RutaKidsSpike/es.lproj/Localizable.strings` |
+| Android | `native/android/app/src/main/res/values/strings.xml`    |
 
 Así los menús nativos no tienen textos sueltos y ADO revisa un solo archivo. Hay que agregar al CSV las claves de los menús: Jugar, Peque, Grande, Tutores, Borrar progreso, Kiosco, etc.
 
@@ -165,33 +165,33 @@ Así los menús nativos no tienen textos sueltos y ADO revisa un solo archivo. H
 
 ### 5.1 Pantallas
 
-| Pantalla | Qué hace | Terminado cuando |
-| --- | --- | --- |
-| **Inicio** | Fondo del menú, botón grande **Jugar**, engrane de tutores y botón de sonido | Se ve en menos de 3 s desde el ícono. Godot arranca **escondido** en segundo plano |
-| **Selección de edad** | Solo la primera vez: dos dibujos grandes, **Peque** (4 a 7) y **Grande** (8 a 13), con un toque | Guarda el modo y no vuelve a salir. El modo se cambia desde Tutores |
-| **Selección de niveles** | 11 tarjetas (0 a 10) con ícono (`assets/ui/level_icons.png`), nombre y estrellas | El 0 siempre está abierto y cada nivel se abre con **1 estrella en el anterior**. Si Godot responde `level_not_built`, la tarjeta sale bloqueada |
-| **Nivel** | Muestra la vista de Godot y manda `start_level` con `level_id`, `mode`, `kiosk` y `muted` | Mientras no llegue `engine_ready`, la tarjeta muestra "cargando". **Con `level_finished` se guarda el resultado y la vista NO se cierra** (Godot muestra la tarjeta de hábito); se cierra solo con `level_exited` |
-| **Tutores** | Se abre manteniendo el engrane **3 s**, en el menú o dentro del nivel cuando llega `tutor_requested` (antes se manda `pause_level`) | Muestra las estrellas por hábito y deja cambiar el modo, borrar el progreso (con confirmación) y activar o desactivar el kiosco |
-| **Kiosco** | Todo abierto, no se guarda nada, sin Salir | Tras **60 s sin tocar** en los menús, vuelve a Inicio. Dentro del nivel, al llegar `inactivity_timeout`, se manda `abort_level` y se vuelve a Inicio |
+| Pantalla                 | Qué hace                                                                                                                            | Terminado cuando                                                                                                                                                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Inicio**               | Fondo del menú, botón grande **Jugar**, engrane de tutores y botón de sonido                                                        | Se ve en menos de 3 s desde el ícono. Godot arranca **escondido** en segundo plano                                                                                                                                |
+| **Selección de edad**    | Solo la primera vez: dos dibujos grandes, **Peque** (4 a 7) y **Grande** (8 a 13), con un toque                                     | Guarda el modo y no vuelve a salir. El modo se cambia desde Tutores                                                                                                                                               |
+| **Selección de niveles** | 11 tarjetas (0 a 10) con ícono (`assets/ui/level_icons.png`), nombre y estrellas                                                    | El 0 siempre está abierto y cada nivel se abre con **1 estrella en el anterior**. Si Godot responde `level_not_built`, la tarjeta sale bloqueada                                                                  |
+| **Nivel**                | Muestra la vista de Godot y manda `start_level` con `level_id`, `mode`, `kiosk` y `muted`                                           | Mientras no llegue `engine_ready`, la tarjeta muestra "cargando". **Con `level_finished` se guarda el resultado y la vista NO se cierra** (Godot muestra la tarjeta de hábito); se cierra solo con `level_exited` |
+| **Tutores**              | Se abre manteniendo el engrane **3 s**, en el menú o dentro del nivel cuando llega `tutor_requested` (antes se manda `pause_level`) | Muestra las estrellas por hábito y deja cambiar el modo, borrar el progreso (con confirmación) y activar o desactivar el kiosco                                                                                   |
+| **Kiosco**               | Todo abierto, no se guarda nada, sin Salir                                                                                          | Tras **60 s sin tocar** en los menús, vuelve a Inicio. Dentro del nivel, al llegar `inactivity_timeout`, se manda `abort_level` y se vuelve a Inicio                                                              |
 
 **Ciclo de vida:**
 
-| Cuándo | Qué manda la app |
-| --- | --- |
-| La app pasa a segundo plano | `pause_level` |
-| La app regresa | `resume_level` |
-| Se toca el botón de sonido | `set_muted` |
+| Cuándo                      | Qué manda la app |
+| --------------------------- | ---------------- |
+| La app pasa a segundo plano | `pause_level`    |
+| La app regresa              | `resume_level`   |
+| Se toca el botón de sonido  | `set_muted`      |
 
 Godot se inicia **una sola vez** y nunca se destruye: entre un nivel y otro solo se esconde su vista.
 
 ### 5.2 Qué se guarda (nada personal)
 
-| Dato | Ejemplo |
-| --- | --- |
-| `mode` | `"peque"` o `"grande"` |
-| `muted`, `kiosk` | `false` |
-| `level_<id>_stars` | 0 a 3, siempre la **mejor** |
-| `level_<id>_points` | los mejores puntos |
+| Dato                     | Ejemplo                                   |
+| ------------------------ | ----------------------------------------- |
+| `mode`                   | `"peque"` o `"grande"`                    |
+| `muted`, `kiosk`         | `false`                                   |
+| `level_<id>_stars`       | 0 a 3, siempre la **mejor**               |
+| `level_<id>_points`      | los mejores puntos                        |
 | `level_<id>_infractions` | `{"stop":1}`, para la pantalla de tutores |
 
 - **iOS:** `UserDefaults`.
