@@ -17,6 +17,8 @@ extends RulePiece
 ## - Genera tráfico en la calle que cruza (menos en modo peque).
 
 const NPC_SCENE := preload("res://scenes/actors/npc_car.tscn")
+## Ojos y flecha pintados en el piso (assets de la fase 2).
+const LOOK_MARK := preload("res://assets/sprites/signals/look_mark.png")
 const NPC_COLORS: Array[Color] = [Palette.COLOR_GLASS, Palette.COLOR_GOLD, Palette.COLOR_GREEN, Palette.COLOR_SKY_MID, Palette.COLOR_WHITE]
 
 @export var road_width: float = 128.0:
@@ -243,16 +245,11 @@ func _draw() -> void:
 	while dash < road_width / 2.0:
 		draw_rect(Rect2(line_x, dash, 8.0, 12.0), Palette.COLOR_WHITE)
 		dash += 20.0
-	_draw_eyes(Vector2(-half - look_length / 2.0, 0.0))
+	# La marca se pinta girada para que los ojos y la flecha miren a los lados del cruce.
+	var mark_center := Vector2(-half - look_length / 2.0, 0.0)
+	draw_set_transform(mark_center, PI / 2.0)
+	draw_texture(LOOK_MARK, -LOOK_MARK.get_size() / 2.0)
+	draw_set_transform(Vector2.ZERO)
 	if Engine.is_editor_hint():
 		draw_rect(Rect2(-half - look_length, -road_width / 2.0, look_length, road_width), Palette.COLOR_GOLD, false, 2.0)
 
-
-## Dos ojos grandes pintados en el piso, mirando a los lados.
-func _draw_eyes(center: Vector2) -> void:
-	for y_sign: float in [-1.0, 1.0]:
-		var eye := center + Vector2(0.0, 22.0 * y_sign)
-		draw_circle(eye, 17.0, Palette.COLOR_OUTLINE)
-		draw_circle(eye, 15.0, Palette.COLOR_WHITE)
-		draw_circle(eye + Vector2(0.0, 7.0 * y_sign), 7.0, Palette.COLOR_OUTLINE)
-		draw_circle(eye + Vector2(-2.0, 4.0 * y_sign), 2.0, Palette.COLOR_WHITE)
