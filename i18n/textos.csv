@@ -72,3 +72,40 @@ TUTO_META,"¡Ya casi llegamos al parque! La meta está al final de la calle."
 FALTA_MIRA,"¡Alto! Antes del cruce hay que detenerse en los ojos y mirar a los dos lados."
 FALTA_MIRA_OCUPADO,"¡Espera! Venía un auto. Después de mirar, espera a que el cruce esté libre."
 BIEN_MIRA,"¡Bien! Miraste dos veces y cruzaste seguro."
+MENU_EDAD_TITULO,¿Quién va a manejar?
+MENU_PEQUE,Peque
+MENU_PEQUE_EDADES,4 a 7 años
+MENU_GRANDE,Grande
+MENU_GRANDE_EDADES,8 a 13 años
+MENU_NIVELES_TITULO,Elige tu ruta
+MENU_CARGANDO,Cargando…
+MENU_BLOQUEADO,Muy pronto
+MENU_SONIDO,Sonido
+MENU_TUTORES,Tutores
+MENU_REGRESAR,Regresar
+MENU_SALIR,Salir
+MENU_KIOSCO,Modo kiosco
+MENU_BORRAR_PROGRESO,Borrar progreso
+TUTOR_TITULO,Tutores
+TUTOR_AJUSTES,Ajustes
+TUTOR_MODO,Modo de juego
+TUTOR_KIOSCO_AYUDA,"Todos los niveles abiertos, no se guarda nada y no hay Salir."
+TUTOR_PROGRESO,Progreso
+TUTOR_SIN_FALTAS,Sin faltas
+TUTOR_BORRAR_TITULO,¿Borrar el progreso?
+TUTOR_BORRAR_TEXTO,"Se borran las estrellas, los puntos y las faltas de todos los niveles. No se puede deshacer."
+TUTOR_BORRAR_SI,"Sí, borrar"
+TUTOR_CANCELAR,Cancelar
+REGLA_STOP,Alto
+REGLA_RED_LIGHT,Semáforo en rojo
+REGLA_SPEED,Velocidad
+REGLA_CROSSWALK,Paso peatonal
+REGLA_BIKE_LANE,Ciclovía
+REGLA_LOOK,Mirar antes de avanzar
+REGLA_PATIENCE,Paciencia
+REGLA_YELLOW,Semáforo en amarillo
+REGLA_PHONE,Celular
+REGLA_LIGHTS,Luces
+REGLA_DISTANCE,Distancia con ciclista
+REGLA_AMBULANCE,Ambulancia
+REGLA_CRASH,Choque

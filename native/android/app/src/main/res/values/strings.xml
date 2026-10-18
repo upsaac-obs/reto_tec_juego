@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Temporal: copiado de i18n/textos.csv. Lo va a reemplazar tools/gen_strings.py (tarea 11). No editar textos aquí. -->
+<resources>
+    <string name="TITULO_JUEGO">RutaKids</string>
+    <string name="MENU_JUGAR">Jugar</string>
+    <string name="NIVEL_00_NOMBRE">Abróchate y arranca</string>
+    <string name="NIVEL_01_NOMBRE">Primero el peatón</string>
+    <string name="NIVEL_02_NOMBRE">Respeta las señales</string>
+    <string name="NIVEL_03_NOMBRE">Mira dos veces</string>
+    <string name="NIVEL_04_NOMBRE">Con calma</string>
+    <string name="NIVEL_05_NOMBRE">Sin prisa</string>
+    <string name="NIVEL_06_NOMBRE">Ojos en el camino</string>
+    <string name="NIVEL_07_NOMBRE">Hazte visible</string>
+    <string name="NIVEL_08_NOMBRE">Comparte el camino</string>
+    <string name="NIVEL_09_NOMBRE">Piensa en todos</string>
+    <string name="NIVEL_10_NOMBRE">Hábito de campeón</string>
+    <string name="MENU_EDAD_TITULO">¿Quién va a manejar?</string>
+    <string name="MENU_PEQUE">Peque</string>
+    <string name="MENU_PEQUE_EDADES">4 a 7 años</string>
+    <string name="MENU_GRANDE">Grande</string>
+    <string name="MENU_GRANDE_EDADES">8 a 13 años</string>
+    <string name="MENU_NIVELES_TITULO">Elige tu ruta</string>
+    <string name="MENU_CARGANDO">Cargando…</string>
+    <string name="MENU_BLOQUEADO">Muy pronto</string>
+    <string name="MENU_SONIDO">Sonido</string>
+    <string name="MENU_TUTORES">Tutores</string>
+    <string name="MENU_REGRESAR">Regresar</string>
+    <string name="MENU_SALIR">Salir</string>
+    <string name="MENU_KIOSCO">Modo kiosco</string>
+    <string name="MENU_BORRAR_PROGRESO">Borrar progreso</string>
+    <string name="TUTOR_TITULO">Tutores</string>
+    <string name="TUTOR_AJUSTES">Ajustes</string>
+    <string name="TUTOR_MODO">Modo de juego</string>
+    <string name="TUTOR_KIOSCO_AYUDA">Todos los niveles abiertos, no se guarda nada y no hay Salir.</string>
+    <string name="TUTOR_PROGRESO">Progreso</string>
+    <string name="TUTOR_SIN_FALTAS">Sin faltas</string>
+    <string name="TUTOR_BORRAR_TITULO">¿Borrar el progreso?</string>
+    <string name="TUTOR_BORRAR_TEXTO">Se borran las estrellas, los puntos y las faltas de todos los niveles. No se puede deshacer.</string>
+    <string name="TUTOR_BORRAR_SI">Sí, borrar</string>
+    <string name="TUTOR_CANCELAR">Cancelar</string>
+    <string name="REGLA_STOP">Alto</string>
+    <string name="REGLA_RED_LIGHT">Semáforo en rojo</string>
+    <string name="REGLA_SPEED">Velocidad</string>
+    <string name="REGLA_CROSSWALK">Paso peatonal</string>
+    <string name="REGLA_BIKE_LANE">Ciclovía</string>
+    <string name="REGLA_LOOK">Mirar antes de avanzar</string>
+    <string name="REGLA_PATIENCE">Paciencia</string>
+    <string name="REGLA_YELLOW">Semáforo en amarillo</string>
+    <string name="REGLA_PHONE">Celular</string>
+    <string name="REGLA_LIGHTS">Luces</string>
+    <string name="REGLA_DISTANCE">Distancia con ciclista</string>
+    <string name="REGLA_AMBULANCE">Ambulancia</string>
+    <string name="REGLA_CRASH">Choque</string>
+</resources>
