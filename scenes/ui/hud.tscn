@@ -133,7 +133,7 @@ mouse_filter = 2
 [node name="Seatbelt" type="TouchScreenButton" parent="Root/LeftControls"]
 unique_name_in_owner = true
 position = Vector2(48, -404)
-scale = Vector2(2, 2)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("6_seatbelt")
 action = "car_seatbelt"
 
