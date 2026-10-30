@@ -9,6 +9,6 @@ id = 3
 name_key = "NIVEL_03_NOMBRE"
 decalogo_key = "DECALOGO_03"
 phrase_key = "FRASE_03"
-destination_key = ""
+destination_key = "DESTINO_CASA_ABUELA"
 illustration = ExtResource("2_card")
 scene_path = "res://levels/level_03.tscn"

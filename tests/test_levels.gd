@@ -10,6 +10,8 @@ var stopped_at := {}
 var cruise := 150.0
 var respect_limits := true
 var respect_signals := true
+var spot: ParkingSpot
+var door: DoorExit
 const LEVELS: Array[int] = [0, 1, 2, 3]
 
 
@@ -30,6 +32,9 @@ func must_wait(piece: Node) -> bool:
 func _physics_process(delta: float) -> void:
 	if car == null or get_tree().paused:
 		return
+	# Nivel 3: ya estacionado, el conductor cuidadoso espera a que pase la bici y abre.
+	if door != null and spot.is_parked() and not door.is_cyclist_near():
+		door.open_door()
 	var p := car.progress
 	var target := cruise
 	if respect_limits:
@@ -67,8 +72,14 @@ func play(id: int) -> Variant:
 	stops.clear()
 	zones.clear()
 	stopped_at.clear()
+	spot = null
+	door = null
 	for piece in level.get_node("Rules").get_children():
 		var x: float = piece.position.x - 64.0
+		if piece is ParkingSpot:
+			spot = piece
+		elif piece is DoorExit:
+			door = piece
 		if piece is Crosswalk:
 			stops.append([x - piece.crosswalk_width / 2.0 - piece.fault_margin - 40.0, piece])
 		elif piece is BlindCrossing:
