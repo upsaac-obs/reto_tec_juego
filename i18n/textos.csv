@@ -72,3 +72,9 @@ TUTO_META,"¡Ya casi llegamos al parque! La meta está al final de la calle."
 FALTA_MIRA,"¡Alto! Antes del cruce hay que detenerse en los ojos y mirar a los dos lados."
 FALTA_MIRA_OCUPADO,"¡Espera! Venía un auto. Después de mirar, espera a que el cruce esté libre."
 BIEN_MIRA,"¡Bien! Miraste dos veces y cruzaste seguro."
+DESTINO_CASA_ABUELA,Casa de la abuela
+ESTACIONADO_AVISO,"¡Bien estacionado! Cuando sea seguro, toca Abrir puerta."
+ESTACIONAR_CARRIL,"Muévete con la flecha al carril del cajón para estacionarte."
+BOTON_ABRIR_PUERTA,Abrir puerta
+FALTA_PUERTA,"¡Cuidado! Venía una bici. Antes de abrir la puerta, mira dos veces y espera a que pase."
+BIEN_PUERTA,"¡Bien! Miraste y esperaste a que pasara la bici."
