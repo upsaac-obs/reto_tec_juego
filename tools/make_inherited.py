@@ -13,7 +13,7 @@ import re
 import sys
 
 BASE = "res://scenes/level/level.tscn"
-KEEP_OVERRIDES = {"Ground": ["tile_map_data"], "Route": ["curve"], "Route/PlayerCar": ["start_lane"], "Hud": ["show_lights_button"]}
+KEEP_OVERRIDES = {"Ground": ["tile_map_data"], "Route": ["curve", "default_lane_count"], "Route/PlayerCar": ["start_lane"], "Hud": ["show_lights_button"]}
 BASE_NODES = {".", "Ground", "Rules", "Route", "Route/PlayerCar", "FollowCamera", "RuleManager", "Hud", "HabitCard"}
 INDEX = {"Ground": ' index="0"', "Route": "", "Route/PlayerCar": ' index="0"', "Hud": ""}
 
