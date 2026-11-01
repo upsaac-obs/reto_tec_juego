@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/level/driving_route.gd" id="1_route"]
+[ext_resource type="PackedScene" path="res://scenes/level/player_car.tscn" id="2_car"]
+[ext_resource type="Script" path="res://scenes/level/follow_camera.gd" id="3_camera"]
+[ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="4_rules"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="6_card"]
+[ext_resource type="TileSet" path="res://assets/tiles/street_tiles.tres" id="7_tiles"]
+
+[sub_resource type="Curve2D" id="Curve2D_base"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 1024, 0)
+}
+point_count = 2
+
+[node name="Level" type="Node2D"]
+
+[node name="Ground" type="TileMapLayer" parent="."]
+tile_set = ExtResource("7_tiles")
+
+[node name="Rules" type="Node2D" parent="."]
+
+[node name="Route" type="Path2D" parent="."]
+curve = SubResource("Curve2D_base")
+script = ExtResource("1_route")
+debug_draw = false
+
+[node name="PlayerCar" parent="Route" instance=ExtResource("2_car")]
+
+[node name="FollowCamera" type="Camera2D" parent="." node_paths=PackedStringArray("target", "bounds_layer")]
+script = ExtResource("3_camera")
+target = NodePath("../Route/PlayerCar")
+bounds_layer = NodePath("../Ground")
+
+[node name="RuleManager" type="Node" parent="." node_paths=PackedStringArray("car")]
+script = ExtResource("4_rules")
+car = NodePath("../Route/PlayerCar")
+
+[node name="Hud" parent="." node_paths=PackedStringArray("car", "rule_manager") instance=ExtResource("5_hud")]
+car = NodePath("../Route/PlayerCar")
+rule_manager = NodePath("../RuleManager")
+
+[node name="HabitCard" parent="." node_paths=PackedStringArray("rule_manager") instance=ExtResource("6_card")]
+rule_manager = NodePath("../RuleManager")

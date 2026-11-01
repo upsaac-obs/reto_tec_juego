@@ -24,11 +24,17 @@ const COLOR_SKIN_LIGHT := Color("#F2C29B")
 const COLOR_SKIN_MEDIUM := Color("#C68B59")
 const COLOR_SKIN_DARK := Color("#8A5A3B")
 
+## Conversión para los letreros de velocidad: 60 km/h = 240 px/s (máximo del auto).
+const PX_PER_KMH := 4.0
+
 const MODE_PEQUE := "peque"
 const MODE_GRANDE := "grande"
 
-## "peque" (4 a 7 años) o "grande" (8 a 13 años).
-var mode: String = MODE_PEQUE
+## "peque" (4 a 7 años: el auto avanza solo) o "grande" (8 a 13 años: dos
+## pedales). El nativo lo manda en start_level. Con F6 en el editor se usa este
+## valor: cámbialo aquí para probar un nivel en modo peque.
+var mode: String = MODE_GRANDE
 ## En kiosco todo está abierto y no se guarda nada.
 var kiosk: bool = false
-var current_level: int = 0
+## Datos del nivel abierto (los pone BridgeClient). null en idle.
+var level: LevelData

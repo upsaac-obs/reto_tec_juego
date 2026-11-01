@@ -19,8 +19,8 @@ Hitos: prototipo 6 oct (hito 3) · pruebas listas 25 oct (hito 4) · entrega fin
 
 **Terminado cuando:** los niveles 0, 1 y 2 se juegan de principio a fin, dan estrellas y el progreso se guarda.
 
-- [ ] **RuleManager** con la API de `CLAUDE.md`: faltas, falta grave con regreso al punto de control, puntos y cálculo de estrellas.
-- [ ] **Feedback**: copiloto provisional, texto con `tr()`, voz si existe el archivo, pausa de 2 segundos. Sonido alegre y "+10" para las acciones correctas.
+- [x] **RuleManager** con la API de `CLAUDE.md`: faltas, falta grave con regreso al punto de control, puntos y cálculo de estrellas.
+- [x] **Feedback**: copiloto provisional, texto con `tr()`, voz si existe el archivo, pausa de 2 segundos. Sonido alegre y "+10" para las acciones correctas.
 - [ ] **Tarjeta de hábito** al final del nivel: ilustración, frase del decálogo y estrellas.
 - [ ] **LevelData** (`resources/level_data.gd`): número, nombre, punto del decálogo, clave de la frase final, destino y escena.
 - [ ] **SaveData**: `user://save.cfg` con estrellas por nivel, puntos, modo y silencio. No guarda nada en modo kiosco.
@@ -66,6 +66,8 @@ Hitos: prototipo 6 oct (hito 3) · pruebas listas 25 oct (hito 4) · entrega fin
 - [ ] Visto bueno de Fundación ADO.
 
 ## Assets con Pixel Engine (100 créditos)
+
+**Regla actual:** Pixel Engine solo se usa para assets con animación (caminar, susto, copiloto hablando, ciclista pedaleando, sirena). Para assets fijos (tiles, señales, edificios, botones, iconos) Claude entrega un prompt listo con qué es, tamaño exacto en píxeles, vista, paleta y detalles, y el equipo lo genera por su cuenta. Los sprites se usan a tamaño 1:1 (viewport 1280 × 720, tiles de 64 px).
 
 Costos: generate_sprite 6 (modelo `oai_gpt25_low`) a 36 · animate_sprite 20 (`pixel-engine-v1.1`) a 26 · remove_background 2 · pixelate_image gratis.
 

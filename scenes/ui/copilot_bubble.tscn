@@ -1,0 +1,72 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/copilot_bubble.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/copilot/copilot_frames.tres" id="2_frames"]
+
+[node name="CopilotBubble" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Box" type="HBoxContainer" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -440.0
+offset_top = 96.0
+offset_right = 440.0
+offset_bottom = 202.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="CopilotSlot" type="Control" parent="Root/Box"]
+custom_minimum_size = Vector2(105, 106)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Copilot" type="AnimatedSprite2D" parent="Root/Box/CopilotSlot"]
+unique_name_in_owner = true
+position = Vector2(52, 53)
+sprite_frames = ExtResource("2_frames")
+animation = &"talk"
+
+[node name="Message" type="PanelContainer" parent="Root/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_type_variation = &"MessageGood"
+
+[node name="MessageLabel" type="Label" parent="Root/Box/Message"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MessageLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PointsPopup" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 236.0
+offset_right = 80.0
+offset_bottom = 296.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"PointsPopup"
+horizontal_alignment = 1

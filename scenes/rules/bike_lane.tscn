@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/bike_lane.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lane"]
+resource_local_to_scene = true
+size = Vector2(768, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stretch"]
+resource_local_to_scene = true
+size = Vector2(768, 128)
+
+[node name="BikeLane" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Lane" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Lane"]
+position = Vector2(384, 32)
+shape = SubResource("RectangleShape2D_lane")
+
+[node name="Stretch" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stretch"]
+position = Vector2(384, 0)
+shape = SubResource("RectangleShape2D_stretch")

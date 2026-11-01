@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/blind_crossing.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/rules/blind_crossing_roofs.gd" id="2_roofs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_look"]
+resource_local_to_scene = true
+size = Vector2(160, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_entry"]
+resource_local_to_scene = true
+size = Vector2(8, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_box"]
+resource_local_to_scene = true
+size = Vector2(128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
+resource_local_to_scene = true
+size = Vector2(64, 126)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bottom"]
+resource_local_to_scene = true
+size = Vector2(64, 126)
+
+[node name="BlindCrossing" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Look" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Look"]
+position = Vector2(-144, 0)
+shape = SubResource("RectangleShape2D_look")
+
+[node name="Entry" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entry"]
+position = Vector2(-68, 0)
+shape = SubResource("RectangleShape2D_entry")
+
+[node name="Danger" type="Area2D" parent="."]
+
+[node name="Box" type="CollisionShape2D" parent="Danger"]
+shape = SubResource("RectangleShape2D_box")
+
+[node name="Top" type="CollisionShape2D" parent="Danger"]
+position = Vector2(-32, -127)
+shape = SubResource("RectangleShape2D_top")
+
+[node name="Bottom" type="CollisionShape2D" parent="Danger"]
+position = Vector2(32, 127)
+shape = SubResource("RectangleShape2D_bottom")
+
+[node name="Roofs" type="Node2D" parent="."]
+z_index = 10
+script = ExtResource("2_roofs")
