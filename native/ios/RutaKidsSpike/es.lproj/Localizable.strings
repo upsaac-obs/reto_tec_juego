@@ -119,3 +119,5 @@
 "MENU_MUSICA" = "Música";
 "MENU_CERRAR" = "Cerrar";
 "MENU_DESBLOQUEAR" = "Saca una estrella en el nivel anterior para abrir este.";
+"FALTA_PACIENCIA" = "Hay quien necesita más tiempo. Aunque el semáforo esté en verde, espera a que todos terminen de cruzar.";
+"BIEN_PACIENCIA" = "¡Muy bien! Esperaste a que todos terminaran de cruzar con calma.";

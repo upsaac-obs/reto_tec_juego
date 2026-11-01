@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/patience_zone.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="2_light"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+resource_local_to_scene = true
+size = Vector2(80, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_approach"]
+resource_local_to_scene = true
+size = Vector2(448, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_line"]
+resource_local_to_scene = true
+size = Vector2(8, 128)
+
+[node name="PatienceZone" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Zone" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zone"]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Approach" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Approach"]
+shape = SubResource("RectangleShape2D_approach")
+
+[node name="Line" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line"]
+shape = SubResource("RectangleShape2D_line")
+
+[node name="Light" parent="." instance=ExtResource("2_light")]
+position = Vector2(-88, 0)
+start_light = 2
+check_yellow = false
+give_points = false
+green_time = 99999.0
+yellow_time = 99999.0
+red_time = 99999.0
+
+[node name="Start" type="Marker2D" parent="."]
+position = Vector2(0, -84)
+
+[node name="End" type="Marker2D" parent="."]
+position = Vector2(0, 108)
+
+[node name="Exit" type="Marker2D" parent="."]
+position = Vector2(0, 230)
