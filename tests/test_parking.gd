@@ -55,6 +55,13 @@ func wait_until(condition: Callable, timeout: float) -> bool:
 
 
 func run() -> void:
+	# 0. La meta ya no está al final de la calle: está en el cajón
+	await open_level(GameState.MODE_GRANDE)
+	var ground := level.get_node("Ground") as TileMapLayer
+	check(ground.get_used_cells_by_id(0, Vector2i(4, 1)).is_empty(), "no quedan losas de meta al final de la calle")
+	check(spot.show_finish_line, "el cajón trae los cuadros de meta")
+	await close_level()
+
 	# 1. Modo grande: llega rápido, el cajón lo frena y lo deja en el centro
 	await open_level(GameState.MODE_GRANDE)
 	car.restart_at(5000.0)

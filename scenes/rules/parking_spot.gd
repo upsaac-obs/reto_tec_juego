@@ -45,6 +45,15 @@ signal parked
 ## Qué tan cerca (px) del carril del cajón tiene que estar el auto.
 @export var lane_tolerance: float = 3.0
 @export var line_width: float = 4.0
+## Cuadros de meta pintados al fondo del cajón: aquí termina el nivel.
+@export var show_finish_line: bool = true:
+	set(value):
+		show_finish_line = value
+		queue_redraw()
+@export var finish_square: float = 8.0:
+	set(value):
+		finish_square = value
+		queue_redraw()
 
 @onready var _approach: Area2D = $Approach
 
@@ -120,12 +129,19 @@ func _refresh() -> void:
 	queue_redraw()
 
 
-## Cajón pintado en el piso: tres rayas, abierto del lado por donde llega el auto.
+## Cajón pintado en el piso: tres rayas, abierto del lado por donde llega el auto,
+## y cuadros de meta al fondo.
 func _draw() -> void:
 	var left := -bay_length / 2.0
 	var right := bay_length / 2.0
 	var top := bay_offset - bay_width / 2.0
 	var bottom := bay_offset + bay_width / 2.0
+	if show_finish_line:
+		var rows := int(round(bay_width / finish_square))
+		for row in rows:
+			for col in 2:
+				var color := Palette.COLOR_WHITE if (row + col) % 2 == 0 else Palette.COLOR_DARK_PURPLE
+				draw_rect(Rect2(right - finish_square * (2 - col), top + row * finish_square, finish_square, finish_square), color)
 	draw_line(Vector2(left, top), Vector2(right, top), Palette.COLOR_WHITE, line_width)
 	draw_line(Vector2(left, bottom), Vector2(right, bottom), Palette.COLOR_WHITE, line_width)
 	draw_line(Vector2(right, top), Vector2(right, bottom), Palette.COLOR_WHITE, line_width)
