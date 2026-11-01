@@ -60,6 +60,8 @@ signal released
 	set(value):
 		finish_square = value
 		queue_redraw()
+## Clave de textos.csv que dice el copiloto al estacionarse. Vacía = no dice nada.
+@export var parked_message_key: String = "ESTACIONADO_AVISO"
 @export_group("Soltar el auto")
 ## Suelta el auto solo después de estacionarse (si es falso, alguien llama release()).
 @export var release_after_park: bool = false
@@ -124,7 +126,8 @@ func _physics_process(_delta: float) -> void:
 	if absf(_car.v_offset - bay_offset) <= lane_tolerance:
 		_parked = true
 		parked.emit()
-		Feedback.show_info("ESTACIONADO_AVISO")
+		if not parked_message_key.is_empty():
+			Feedback.show_info(parked_message_key)
 		if release_after_park:
 			_release_later()
 	elif not _warned:

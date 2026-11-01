@@ -54,17 +54,23 @@ func run() -> void:
 	await open_level()
 	spot.release_after_park = true
 	spot.release_delay = 1.0
+	spot.parked_message_key = ""
+	var bubble_box := Feedback._bubble.get_node("%Box") as Control
 	var released := [false]
 	spot.released.connect(func() -> void: released[0] = true)
 	car.restart_at(5000.0)
 	await wait_until(func() -> bool: return spot.is_parked(), 30.0)
 	check(absf(car.progress - SPOT_PROGRESS) <= 4.0, "se estaciona en el centro del cajón")
+	await frames(1)
+	check(not bubble_box.visible, "con parked_message_key vacía el copiloto no dice nada al estacionarse")
 	await wait(0.5)
 	check(not released[0] and car.speed == 0.0, "antes de release_delay sigue detenido")
 	await wait(0.8)
 	check(released[0] and spot.is_released(), "después de release_delay emite released")
 	var left := await wait_until(func() -> bool: return car.progress > SPOT_PROGRESS + 20.0, 5.0)
 	check(left, "el auto sigue la ruta después de soltarlo")
+	await wait(0.5)
+	check(spot.is_released() and car.speed > 0.0, "el cajón no vuelve a atrapar al auto en la misma pasada")
 	await close_level()
 
 	# 3. release() a mano: solo funciona estacionado y una vez
