@@ -1,17 +1,23 @@
 @tool
 class_name ParkingSpot
 extends RulePiece
-## Cajón de estacionamiento al final de la ruta (nivel 3). El origen es el centro
+## Cajón de estacionamiento (nivel 3 al final de la ruta; nivel 6 a medio camino). El origen es el centro
 ## del cajón sobre el centro de la calle y el auto llega desde -x (gira el nodo
 ## para otras direcciones).
 ## - Al acercarse, el auto baja la velocidad solo (en modo peque también limita
 ##   la velocidad de avance) y se detiene con su centro en el centro del cajón.
 ## - Si el auto está en otro carril, se queda esperando en la marca de parada
 ##   hasta que el niño se cambie con la flecha al carril del cajón.
-## - Cuando queda dentro del cajón emite parked. No da puntos ni faltas: el
-##   nivel termina cuando se abre la puerta (DoorExit).
+## - Cuando queda dentro del cajón emite parked. No da puntos ni faltas: en el
+##   nivel 3 el nivel termina cuando se abre la puerta (DoorExit).
+## - Para seguir la ruta después de estacionarse (cajón reutilizable): llamar
+##   release() (por ejemplo desde otra pieza al terminar su acción) o poner
+##   release_after_park = true para que suelte el auto solo tras release_delay.
+##   release() quita la petición de alto del cajón y emite released.
 
 signal parked
+## El cajón soltó al auto: puede seguir la ruta.
+signal released
 
 ## Distancia del centro de la calle al centro del cajón (+y = derecha del auto).
 ## Con 2 carriles de 64 px: 32 es el derecho y -32 el izquierdo.
@@ -54,6 +60,11 @@ signal parked
 	set(value):
 		finish_square = value
 		queue_redraw()
+@export_group("Soltar el auto")
+## Suelta el auto solo después de estacionarse (si es falso, alguien llama release()).
+@export var release_after_park: bool = false
+## Segundos detenido en el cajón antes de soltarlo cuando release_after_park.
+@export var release_delay: float = 1.5
 
 @onready var _approach: Area2D = $Approach
 
@@ -62,6 +73,9 @@ var _stop_progress: float = 0.0
 var _holding: bool = false
 var _parked: bool = false
 var _warned: bool = false
+var _released: bool = false
+## Cada pasada invalida el temporizador de release_after_park de la anterior.
+var _pass_id: int = 0
 
 
 func _ready() -> void:
@@ -74,6 +88,21 @@ func _ready() -> void:
 
 func is_parked() -> bool:
 	return _parked
+
+
+func is_released() -> bool:
+	return _released
+
+
+## Deja ir al auto que está estacionado en el cajón. No hace nada si el auto
+## todavía no se estaciona o si ya se soltó.
+func release() -> void:
+	if not _parked or _released or _car == null:
+		return
+	_released = true
+	_car.remove_stop_request(self)
+	_car.clear_speed_limit(self)
+	released.emit()
 
 
 func _physics_process(_delta: float) -> void:
@@ -96,10 +125,19 @@ func _physics_process(_delta: float) -> void:
 		_parked = true
 		parked.emit()
 		Feedback.show_info("ESTACIONADO_AVISO")
+		if release_after_park:
+			_release_later()
 	elif not _warned:
 		# Quedó en otro carril: se espera a que se cambie con la flecha.
 		_warned = true
 		Feedback.show_info("ESTACIONAR_CARRIL")
+
+
+func _release_later() -> void:
+	var id := _pass_id
+	await get_tree().create_timer(release_delay, false).timeout
+	if id == _pass_id:
+		release()
 
 
 func _on_approach_entered(area: Area2D) -> void:
@@ -120,6 +158,8 @@ func _on_car_restarted() -> void:
 	_holding = false
 	_parked = false
 	_warned = false
+	_released = false
+	_pass_id += 1
 
 
 func _refresh() -> void:
