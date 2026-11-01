@@ -4,16 +4,20 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import android.os.SystemClock
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.fundacionado.rutakids.RutaBridgePlugin
+import org.fundacionado.rutakids.data.Levels
 import org.fundacionado.rutakids.data.SettingsStore
 import org.json.JSONObject
 
@@ -49,6 +53,14 @@ sealed interface BridgeEvent {
     data class Error(val code: String, val detail: String) : BridgeEvent
 }
 
+/** Órdenes del ViewModel a la navegación del menú (las cumple RutaKidsApp). */
+sealed interface MenuCommand {
+    /** Volver a Inicio (kiosco: 60 s sin tocar, inactivity_timeout o recién activado). */
+    data object GoHome : MenuCommand
+    /** Abrir la lista de niveles (al salir del tutorial de la primera vez). */
+    data object OpenLevels : MenuCommand
+}
+
 /**
  * Envuelve el puente RutaBridge para que las pantallas no lo toquen directo:
  * solo llaman startLevel(id), abortLevel(), setMuted(...), etc.
@@ -69,6 +81,34 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
     private val _events = MutableSharedFlow<BridgeEvent>(extraBufferCapacity = 32)
     val events: SharedFlow<BridgeEvent> = _events.asSharedFlow()
 
+    private val _commands = MutableSharedFlow<MenuCommand>(extraBufferCapacity = 8)
+    val commands: SharedFlow<MenuCommand> = _commands.asSharedFlow()
+
+    /** Kiosco guardado, siempre a la mano (lo necesitan el atrás, el temporizador y Tutores). */
+    val kiosk: StateFlow<Boolean> = settings.kiosk.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    /** Primera vez en Jugar: al salir del tutorial se abre la lista de niveles. */
+    private var openLevelsAfterTutorial = false
+
+    /** Último toque en cualquier parte de la app (SystemClock.elapsedRealtime). */
+    @Volatile
+    var lastTouchMs: Long = SystemClock.elapsedRealtime()
+        private set
+
+    /** Lo llama MainActivity con cada toque real en la pantalla. */
+    fun onUserTouch() {
+        lastTouchMs = SystemClock.elapsedRealtime()
+    }
+
+    /** Kiosco: tiempo sin tocar desde el último toque. */
+    fun idleMs(): Long = SystemClock.elapsedRealtime() - lastTouchMs
+
+    /** Vuelve a Inicio y reinicia la cuenta de inactividad. */
+    fun goHome() {
+        onUserTouch()
+        _commands.tryEmit(MenuCommand.GoHome)
+    }
+
     /** Lo llama MainActivity cuando Godot crea el plugin. */
     fun attach(plugin: RutaBridgePlugin) {
         bridge = plugin
@@ -87,6 +127,20 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
             val muted = settings.muted.first()
             bridge?.startLevel(levelId, mode = mode, kiosk = kiosk, muted = muted)
         }
+    }
+
+    /**
+     * Botón Jugar después de elegir edad. Si toca el tutorial (primera vez y fuera del kiosco)
+     * lo abre en cuanto Godot esté listo y devuelve true; si no, devuelve false y se abre la lista.
+     */
+    suspend fun playTutorialIfNeeded(): Boolean {
+        if (kiosk.value || settings.tutorialDone.first()) return false
+        openLevelsAfterTutorial = true
+        viewModelScope.launch {
+            state.first { it.engineReady }
+            startLevel(Levels.TUTORIAL_ID)
+        }
+        return true
     }
 
     fun abortLevel() {
@@ -113,19 +167,32 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { settings.saveMode(mode) }
     }
 
+    /** Al activar el kiosco se cierra Tutores (y el nivel de abajo, si lo hay) y se vuelve a Inicio, como en iOS. */
     fun setKiosk(kiosk: Boolean) {
         viewModelScope.launch { settings.saveKiosk(kiosk) }
+        if (kiosk) {
+            if (_state.value.tutorsOverLevel) {
+                _state.update { it.copy(tutorsOverLevel = false) }
+                bridge?.abortLevel()
+            }
+            goHome()
+        }
     }
 
     fun resetProgress() {
         viewModelScope.launch { settings.resetProgress() }
     }
 
-    /** Cierra Tutores cuando se abrió desde dentro de un nivel y reanuda el juego. */
+    /** Cierra Tutores cuando se abrió desde dentro de un nivel: el juego sigue, o en kiosco se cierra (como iOS). */
     fun closeTutorsOverLevel() {
         if (!_state.value.tutorsOverLevel) return
         _state.update { it.copy(tutorsOverLevel = false) }
-        bridge?.resumeLevel()
+        if (kiosk.value) {
+            bridge?.abortLevel()
+            goHome()
+        } else {
+            bridge?.resumeLevel()
+        }
     }
 
     // --- Godot → nativo ---
@@ -171,24 +238,40 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
             // Solo aquí se esconde Godot. Puede llegar sin level_started antes (contrato).
-            is BridgeEvent.LevelExited -> _state.update {
-                it.copy(levelVisible = false, requestedLevel = null, tutorsOverLevel = false)
+            is BridgeEvent.LevelExited -> {
+                _state.update { it.copy(levelVisible = false, requestedLevel = null, tutorsOverLevel = false) }
+                onUserTouch()
+                if (openLevelsAfterTutorial) {
+                    openLevelsAfterTutorial = false
+                    _commands.tryEmit(MenuCommand.OpenLevels)
+                }
             }
             // Engrane de 3 s dentro del nivel: se pausa y se abre Tutores encima.
             is BridgeEvent.TutorRequested -> if (_state.value.levelVisible) {
                 bridge?.pauseLevel()
                 _state.update { it.copy(tutorsOverLevel = true) }
             }
-            is BridgeEvent.Error -> _state.update { s ->
-                val notBuilt = event.detail.toIntOrNull()
-                    ?.takeIf { event.code == "level_not_built" }
-                    ?.let { s.notBuiltLevels + it } ?: s.notBuiltLevels
-                // Si el error llegó antes de abrir el nivel, Godot no manda level_exited: se libera aquí.
-                if (s.levelVisible) s.copy(notBuiltLevels = notBuilt)
-                else s.copy(notBuiltLevels = notBuilt, requestedLevel = null)
+            is BridgeEvent.Error -> {
+                val beforeLevel = !_state.value.levelVisible
+                _state.update { s ->
+                    val notBuilt = event.detail.toIntOrNull()
+                        ?.takeIf { event.code == "level_not_built" }
+                        ?.let { s.notBuiltLevels + it } ?: s.notBuiltLevels
+                    // Si el error llegó antes de abrir el nivel, Godot no manda level_exited: se libera aquí.
+                    if (s.levelVisible) s.copy(notBuiltLevels = notBuilt)
+                    else s.copy(notBuiltLevels = notBuilt, requestedLevel = null)
+                }
+                // El tutorial no abrió: se pasa directo a la lista.
+                if (beforeLevel && openLevelsAfterTutorial) {
+                    openLevelsAfterTutorial = false
+                    _commands.tryEmit(MenuCommand.OpenLevels)
+                }
             }
-            // TODO(Ángel, tarea 20): en kiosco, abort_level y regresar a Inicio.
-            BridgeEvent.InactivityTimeout -> Unit
+            // Godot cuenta la inactividad dentro del nivel (solo en kiosco): se cierra y se vuelve a Inicio.
+            BridgeEvent.InactivityTimeout -> {
+                abortLevel()
+                goHome()
+            }
         }
     }
 
