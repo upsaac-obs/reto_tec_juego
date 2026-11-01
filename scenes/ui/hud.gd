@@ -4,8 +4,14 @@ extends CanvasLayer
 ## y destino; engrane; cinturón y flechas a la izquierda; pedales a la derecha.
 ## Los botones son TouchScreenButton con las acciones del auto (car_*), así
 ## funcionan con varios dedos a la vez y también con el teclado.
+## - Engrane: mantenerlo presionado tutor_hold_time segundos pide la pantalla de
+##   tutores al nativo (BridgeClient.request_tutor). Un toque corto no hace nada.
+##   Mientras se mantiene, el engrane gira y se pinta de dorado poco a poco.
 
-signal settings_pressed
+## Se completó la presión larga del engrane (ya se llamó a BridgeClient.request_tutor).
+signal tutor_requested
+
+const Palette := preload("res://autoload/game_state.gd")
 
 @export var car: PlayerCar
 @export var rule_manager: RuleManager
@@ -16,6 +22,10 @@ signal settings_pressed
 ## El cinturón parpadea hasta que se lo ponen.
 @export var seatbelt_pulse_time: float = 0.5
 @export var seatbelt_done_tint: Color = Color(0.55, 0.55, 0.6, 1.0)
+## Segundos que hay que mantener el engrane para abrir la pantalla de tutores.
+@export var tutor_hold_time: float = 3.0
+## Color al que llega el engrane al completar la presión larga.
+@export var gear_hold_tint: Color = Palette.COLOR_GOLD
 
 @onready var _level_name: Label = %LevelName
 @onready var _points: Label = %Points
@@ -25,6 +35,7 @@ signal settings_pressed
 @onready var _gear: TextureButton = %Gear
 
 var _pulse: Tween
+var _gear_hold: Tween
 
 
 func _ready() -> void:
@@ -37,7 +48,8 @@ func _ready() -> void:
 	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas]:
 		button.pressed.connect(func() -> void: button.self_modulate = pressed_tint)
 		button.released.connect(func() -> void: button.self_modulate = Color.WHITE)
-	_gear.pressed.connect(settings_pressed.emit)
+	_gear.button_down.connect(_on_gear_down)
+	_gear.button_up.connect(_cancel_gear_hold)
 	if rule_manager != null:
 		rule_manager.infraction_reported.connect(func(_id: StringName, _grave: bool) -> void: _refresh_score())
 		rule_manager.good_action_reported.connect(func(_id: StringName, _points_won: int) -> void: _refresh_score())
@@ -69,3 +81,29 @@ func _on_seatbelt_fastened() -> void:
 		_pulse.kill()
 	_seatbelt.modulate = seatbelt_done_tint
 	Feedback.show_good_action("CINTURON_LISTO", 0)
+
+
+## Empieza a contar la presión larga. Corre aunque el juego esté en pausa (falta).
+func _on_gear_down() -> void:
+	_cancel_gear_hold()
+	_gear.pivot_offset = _gear.size / 2.0
+	_gear_hold = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel()
+	_gear_hold.tween_property(_gear, ^"rotation", TAU / 2.0, tutor_hold_time)
+	_gear_hold.tween_property(_gear, ^"self_modulate", gear_hold_tint, tutor_hold_time)
+	_gear_hold.chain().tween_callback(_on_gear_held)
+
+
+func _cancel_gear_hold() -> void:
+	if _gear_hold != null:
+		_gear_hold.kill()
+		_gear_hold = null
+	_gear.rotation = 0.0
+	_gear.self_modulate = Color.WHITE
+
+
+func _on_gear_held() -> void:
+	_gear_hold = null
+	_gear.rotation = 0.0
+	_gear.self_modulate = Color.WHITE
+	BridgeClient.request_tutor()
+	tutor_requested.emit()
