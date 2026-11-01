@@ -74,6 +74,12 @@
     <string name="FALTA_MIRA">¡Alto! Antes del cruce hay que detenerse en los ojos y mirar a los dos lados.</string>
     <string name="FALTA_MIRA_OCUPADO">¡Espera! Venía un auto. Después de mirar, espera a que el cruce esté libre.</string>
     <string name="BIEN_MIRA">¡Bien! Miraste dos veces y cruzaste seguro.</string>
+    <string name="DESTINO_CASA_ABUELA">Casa de la abuela</string>
+    <string name="ESTACIONADO_AVISO">¡Bien estacionado! Cuando sea seguro, toca Abrir puerta.</string>
+    <string name="ESTACIONAR_CARRIL">Muévete con la flecha al carril del cajón para estacionarte.</string>
+    <string name="BOTON_ABRIR_PUERTA">Abrir puerta</string>
+    <string name="FALTA_PUERTA">¡Cuidado! Venía una bici. Antes de abrir la puerta, mira dos veces y espera a que pase.</string>
+    <string name="BIEN_PUERTA">¡Bien! Miraste y esperaste a que pasara la bici.</string>
     <string name="MENU_EDAD_TITULO">¿Quién va a manejar?</string>
     <string name="MENU_PEQUE">Peque</string>
     <string name="MENU_PEQUE_EDADES">4 a 7 años</string>
@@ -111,4 +117,8 @@
     <string name="REGLA_DISTANCE">Distancia con ciclista</string>
     <string name="REGLA_AMBULANCE">Ambulancia</string>
     <string name="REGLA_CRASH">Choque</string>
+    <string name="MENU_OPCIONES">Opciones</string>
+    <string name="MENU_MUSICA">Música</string>
+    <string name="MENU_CERRAR">Cerrar</string>
+    <string name="MENU_DESBLOQUEAR">Saca una estrella en el nivel anterior para abrir este.</string>
 </resources>

@@ -6,7 +6,8 @@ Uso (desde cualquier carpeta):
     python tools/gen_strings.py --check    # no escribe; falla si están desactualizados
 
 Salidas:
-    iOS:     native/ios/RutaKidsSpike/es.lproj/Localizable.strings
+    iOS:     native/ios/RutaKidsSpike/es.lproj/Localizable.strings (spike)
+             native/ios/RutaKids/Resources/es.lproj/Localizable.strings (app)
     Android: native/android/app/src/main/res/values/strings.xml
 
 El CSV es la única fuente de textos (hallazgo H8). No edites a mano los archivos generados.
@@ -18,7 +19,8 @@ from xml.sax.saxutils import escape
 
 RAIZ = Path(__file__).resolve().parent.parent
 CSV = RAIZ / "i18n" / "textos.csv"
-IOS = RAIZ / "native" / "ios" / "RutaKidsSpike" / "es.lproj" / "Localizable.strings"
+IOS_SPIKE = RAIZ / "native" / "ios" / "RutaKidsSpike" / "es.lproj" / "Localizable.strings"
+IOS_APP = RAIZ / "native" / "ios" / "RutaKids" / "Resources" / "es.lproj" / "Localizable.strings"
 ANDROID = RAIZ / "native" / "android" / "app" / "src" / "main" / "res" / "values" / "strings.xml"
 
 AVISO = "Generado por tools/gen_strings.py desde i18n/textos.csv. No editar a mano."
@@ -68,7 +70,8 @@ def generar_ios(textos: dict[str, str]) -> str:
 def main() -> int:
     revisar = "--check" in sys.argv[1:]
     textos = leer_textos()
-    salidas = {ANDROID: generar_android(textos), IOS: generar_ios(textos)}
+    texto_ios = generar_ios(textos)
+    salidas = {ANDROID: generar_android(textos), IOS_SPIKE: texto_ios, IOS_APP: texto_ios}
     desactualizados = []
     for ruta, contenido in salidas.items():
         actual = ruta.read_text(encoding="utf-8") if ruta.exists() else None
