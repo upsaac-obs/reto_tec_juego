@@ -15,6 +15,7 @@ signal arrived
 var _target: Vector2 = Vector2.ZERO
 var _walking: bool = false
 var _scared: bool = false
+var _fade: Tween
 
 
 func _ready() -> void:
@@ -39,9 +40,21 @@ func scare() -> void:
 
 
 func fade_out() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, ^"modulate:a", 0.0, fade_time)
-	tween.tween_callback(hide)
+	_fade = create_tween()
+	_fade.tween_property(self, ^"modulate:a", 0.0, fade_time)
+	_fade.tween_callback(hide)
+
+
+## Vuelve a estar quieto y visible en otra posición (al regresar a un punto de control).
+func reset_at(target: Vector2) -> void:
+	if _fade != null:
+		_fade.kill()
+	_walking = false
+	_scared = false
+	position = target
+	modulate.a = 1.0
+	show()
+	_sprite.play(&"idle")
 
 
 func _physics_process(delta: float) -> void:

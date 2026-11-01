@@ -2,6 +2,8 @@
 
 Juego móvil 2D (Android e iOS) hecho en Godot 4 para Fundación ADO. Niñas y niños de 4 a 13 años manejan un auto visto desde arriba por una ciudad basada en Puebla. Cada nivel enseña un punto del decálogo de movilidad. El diseño completo está en `docs/diseno.md` y las tareas están en `PLAN.md`.
 
+> **Arquitectura en evaluación:** ver `docs/arquitectura.md` (app nativa + Godot solo para niveles, puente `RutaBridge`). Mientras dura el spike, no hagas menús, SaveData, kiosco ni pantalla de tutores en Godot. Los niveles terminan con `BridgeClient.exit_level()`, nunca cambiando de escena directo.
+
 ## Reglas que nunca se rompen
 
 - Nada de internet: sin peticiones HTTP, sin SDKs de anuncios ni de analíticas, sin servicios en línea (REQ-5).
@@ -15,6 +17,7 @@ Juego móvil 2D (Android e iOS) hecho en Godot 4 para Fundación ADO. Niñas y n
 - Haz una tarea de `PLAN.md` por sesión, en una rama `feature/<nombre-corto>`.
 - Antes de empezar, lee la tarea y su criterio de terminado. Si algo no está claro, pregunta en vez de inventar reglas del juego.
 - Al terminar, explica cómo probarla en el editor de Godot (qué escena abrir y qué hacer), porque el equipo la prueba a mano antes de aceptarla.
+- Antes de entregar, corre `tests/run_tests.sh` (pruebas automáticas sin abrir el editor; deja el log con el commit en `tests/resultados/`). Todas deben pasar. Si agregas una regla o un nivel, agrega su prueba en `tests/test_*.gd`.
 - Marca la tarea en `PLAN.md` solo cuando el equipo confirme que funciona.
 - No cambies las decisiones técnicas de abajo sin preguntar.
 
@@ -56,11 +59,11 @@ res://
 
 ## Cómo funciona un nivel
 
-1. `level.tscn` es la escena base. Cada nivel la hereda y agrega su `TileMapLayer`, su ruta y sus piezas de reglas.
+1. `scenes/level/level.tscn` es la escena base: ya trae `Ground` (TileMapLayer), `Rules`, `Route` con `PlayerCar`, `FollowCamera`, `RuleManager`, `Hud` y `HabitCard` conectados. Un nivel nuevo se crea con *Escena → Nueva escena heredada* desde `level.tscn`; ahí se pinta `Ground`, se le da a `Route` su propia curva (Nuevo Curve2D) y se ponen las piezas dentro de `Rules`. Después se apunta `scene_path` en su `data/level_XX.tres`. Ejemplo: `levels/test_street.tscn`.
 2. El auto (`PlayerCar`) sigue la ruta (`DrivingRoute`, un `Path2D`) con un `PathFollow2D`. `progress` avanza con la velocidad. Cambiar de carril es animar `v_offset` con un tween; cada calle define sus carriles con `StreetSection`. Los giros están en la ruta y se marcan con `TurnPoint`: el niño elige girar tocando la flecha que marca el piso; si no la toca, el auto se detiene antes del cruce y espera (las otras flechas no hacen nada ahí). El auto pone la direccional 1 segundo antes de cada giro y cada cambio de carril. Para mover el auto a un punto de control usa `restart_at()`, no cambies `progress` directo.
 3. Cada pieza de regla es un `Area2D` que detecta al auto (grupo `player`), revisa su estado (velocidad, luces, cinturón) y llama al `RuleManager`. Cada pieza reporta como máximo una falta por pasada.
 4. `RuleManager` cuenta faltas y puntos, guarda el último punto de control y calcula las estrellas al llegar a la meta.
-5. `Feedback` (autoload con `process_mode = ALWAYS`) pausa el juego 2 segundos, muestra al copiloto con el texto y reproduce `assets/audio/voz/<CLAVE>.ogg` si existe.
+5. `Feedback` (autoload con `process_mode = ALWAYS`) muestra al copiloto con el texto y reproduce `assets/audio/voz/<CLAVE>.ogg` si existe. `show_infraction()` pausa el juego 2 segundos; `show_good_action()` suena alegre y muestra "+10" sin pausar; `show_info()` solo habla. El `RuleManager` lo llama solo; las piezas de reglas no lo usan directo.
 
 API del RuleManager:
 

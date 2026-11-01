@@ -1,0 +1,39 @@
+# Proyecto de Xcode del spike de iOS. Se genera en la Mac con:
+#   brew install xcodegen && xcodegen generate
+name: RutaKidsSpike
+options:
+  bundleIdPrefix: org.fundacionado.rutakids
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  SwiftGodotKit:
+    url: https://github.com/migueldeicaza/SwiftGodotKit
+    branch: swiftgodotkit-4.7
+targets:
+  RutaKidsSpike:
+    type: application
+    platform: iOS
+    sources:
+      - path: RutaKidsSpike
+        excludes:
+          - "main.pck"
+      - path: RutaKidsSpike/main.pck
+        buildPhase: resources
+    dependencies:
+      - package: SwiftGodotKit
+        product: SwiftGodotKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.fundacionado.rutakids.spike
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: RutaKids spike
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIRequiresFullScreen: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # Poner aquí el Team ID de la cuenta de Apple de quien compile (o elegirlo en Xcode).
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic

@@ -122,29 +122,6 @@ texture_normal = ExtResource("5_gear")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Message" type="PanelContainer" parent="Root"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -380.0
-offset_top = 104.0
-offset_right = 380.0
-offset_bottom = 184.0
-grow_horizontal = 2
-mouse_filter = 2
-theme_type_variation = &"MessageBad"
-
-[node name="MessageLabel" type="Label" parent="Root/Message"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"MessageLabel"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
-
 [node name="LeftControls" type="Control" parent="Root"]
 layout_mode = 1
 anchors_preset = 2
