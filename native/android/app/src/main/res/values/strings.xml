@@ -121,4 +121,6 @@
     <string name="MENU_MUSICA">Música</string>
     <string name="MENU_CERRAR">Cerrar</string>
     <string name="MENU_DESBLOQUEAR">Saca una estrella en el nivel anterior para abrir este.</string>
+    <string name="FALTA_PACIENCIA">Hay quien necesita más tiempo. Aunque el semáforo esté en verde, espera a que todos terminen de cruzar.</string>
+    <string name="BIEN_PACIENCIA">¡Muy bien! Esperaste a que todos terminaran de cruzar con calma.</string>
 </resources>

@@ -12,12 +12,14 @@ var respect_limits := true
 var respect_signals := true
 var spot: ParkingSpot
 var door: DoorExit
-const LEVELS: Array[int] = [0, 1, 2, 3]
+const LEVELS: Array[int] = [0, 1, 2, 3, 4]
 
 
 func must_wait(piece: Node) -> bool:
 	if piece is Crosswalk:
 		return (piece as Crosswalk).is_occupied()
+	if piece is PatienceZone:
+		return not (piece as PatienceZone).can_go()
 	if not respect_signals:
 		return false
 	if piece is BlindCrossing:
@@ -82,6 +84,8 @@ func play(id: int) -> Variant:
 			door = piece
 		if piece is Crosswalk:
 			stops.append([x - piece.crosswalk_width / 2.0 - piece.fault_margin - 40.0, piece])
+		elif piece is PatienceZone:
+			stops.append([x - piece.crosswalk_width / 2.0 - piece.light_gap - 45.0, piece])
 		elif piece is BlindCrossing:
 			# Se detiene sobre los ojos, antes de la línea de "mira".
 			stops.append([x - piece.cross_width / 2.0 - 60.0, piece])

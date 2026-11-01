@@ -44,6 +44,8 @@ const LAMP_RADIUS := 9.0
 ## Velocidad (px/s) por debajo de la cual el auto cuenta como detenido.
 @export var stop_speed: float = 10.0
 @export var points: int = 10
+## Falso cuando otra pieza (patience_zone) decide si hay puntos al cruzar con verde.
+@export var give_points: bool = true
 @export var line_width: float = 8.0
 ## Dónde va la base del poste, del lado derecho del auto (+y).
 @export var light_offset: Vector2 = Vector2(-28.0, 196.0):
@@ -122,7 +124,7 @@ func _on_line_entered(area: Area2D) -> void:
 	_evaluated = true
 	if light == Light.RED:
 		_report_infraction(&"red_light", "FALTA_ROJO")
-	elif light == Light.GREEN and _waited:
+	elif light == Light.GREEN and _waited and give_points:
 		_report_good_action(&"red_light", "BIEN_ROJO", points)
 
 
