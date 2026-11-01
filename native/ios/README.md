@@ -1,5 +1,9 @@
 # Spike de iOS — RutaKids (app nativa + Godot)
 
+> **Hay dos apps en este proyecto de Xcode.** `RutaKidsSpike/` es la prueba técnica del puente (pasos de abajo).
+> `RutaKids/` es la app real con el menú nativo: ver la sección "La app RutaKids" al final.
+> Los dos targets se compilan igual (sección 3); en Xcode se elige cuál correr en el selector de arriba.
+
 Esta carpeta es la mitad de iOS del spike de `docs/arquitectura.md` (sección 6). La mitad de Android ya pasó en un Samsung Galaxy A15 (`native/android/`). Aquí se prueba lo mismo en un iPhone o iPad **real**:
 
 1. Godot arranca dentro de una app de SwiftUI y avisa `engine_ready`.
@@ -40,15 +44,15 @@ Para subir los resultados: `git push -u origin feature/spike-ios`. GitHub pide u
 
 ```bash
 cd native/ios
-GODOT=/Applications/Godot.app/Contents/MacOS/Godot ./export_pck.sh   # crea RutaKidsSpike/main.pck
-xcodegen generate                                                     # crea RutaKidsSpike.xcodeproj
-open RutaKidsSpike.xcodeproj
+GODOT=/Applications/Godot.app/Contents/MacOS/Godot ./export_pck.sh   # crea main.pck (en RutaKids/ y en RutaKidsSpike/)
+xcodegen generate                                                     # crea RutaKids.xcodeproj (con las dos apps)
+open RutaKids.xcodeproj
 ```
 
 En Xcode:
 
 1. Esperar a que baje el paquete **SwiftGodotKit** (rama `swiftgodotkit-4.7`; descarga también `libgodot-ios`, tarda la primera vez).
-2. Target RutaKidsSpike → *Signing & Capabilities* → elegir el **Team** (la cuenta de Apple).
+2. Target RutaKidsSpike (o RutaKids, la app real) → *Signing & Capabilities* → elegir el **Team** (la cuenta de Apple).
 3. Conectar el iPhone por cable, elegirlo arriba como destino y presionar ▶︎.
 
 > El simulador sirve para revisar que compile, pero **las mediciones solo cuentan en un iPhone o iPad real** (H3).
@@ -92,3 +96,49 @@ de subir cambios a GitHub.
 ```
 
 El agente de la Mac sigue `native/ios/CLAUDE.md`.
+
+---
+
+## La app RutaKids (menú nativo)
+
+Carpeta `RutaKids/`. Es el menú de `whoisdiego/menuIOS` conectado al juego. Los dibujos están en
+`ASSETS de menu de IOS/` (ahí también está la lista de lo que falta).
+
+```text
+RutaKids/
+  App/RutaKidsApp.swift        arranque: Godot siempre vivo y el menú encima mientras no hay nivel
+  Bridge/RutaBridge.swift      puente con Godot; solo manda comandos y avisa con closures
+  Model/ProgressStore.swift    guardado en UserDefaults (estrellas, puntos, faltas, modo, kiosco)
+  Model/AppModel.swift         une puente, guardado y pantallas (tutorial, Tutores, kiosco, segundo plano)
+  Menu/                        Inicio, Niveles, Opciones, Edad, Tutores, Audio y colores
+  Resources/es.lproj/          Localizable.strings (lo genera tools/gen_strings.py; no se edita a mano)
+```
+
+Cómo se usa:
+
+- **Primera vez:** pide Peque o Grande (dos dibujos). Después, el primer Jugar abre el nivel 0 (tutorial)
+  y al salir muestra la lista de niveles. El nivel 1 está abierto; cada nivel se abre con 1 estrella en el anterior.
+- **Estrellas:** cada tarjeta muestra abajo las estrellas ganadas (llenas) y las que faltan (vacías).
+- **Tutores:** mantener presionado **Opciones 3 segundos** (en el menú) o el **engrane 3 segundos** (dentro de un nivel).
+  Ahí se ven las estrellas y faltas por nivel, se cambia el modo, se activa el kiosco y se borra el progreso.
+- **Kiosco:** todos los niveles abiertos, no se guarda nada y a los 60 segundos sin tocar se vuelve al inicio.
+  Se desactiva en Tutores (mantener Opciones 3 segundos).
+- **Segundo plano:** al salir de la app el nivel se pausa y, al volver, sigue.
+- **Textos:** salen de `i18n/textos.csv`. Después de cambiarlo, corre `python tools/gen_strings.py`.
+
+### Acceso Guiado en el iPad (kiosco)
+
+El bloqueo de pantalla lo activa el personal en el iPad; la app no puede hacerlo sola.
+
+1. Ajustes → Accesibilidad → **Acceso guiado** → activarlo y poner un código.
+2. Abrir RutaKids. Presionar tres veces el botón lateral (iPad con Face ID) o el botón de inicio.
+3. Tocar **Comenzar** (arriba a la derecha). Ya no se puede salir de la app sin el código.
+4. Para terminar: presionar tres veces el mismo botón, poner el código y tocar **Terminar**.
+5. Dentro de RutaKids, activar el **modo kiosco** en Tutores antes de dejar el iPad.
+
+### Pendiente en la Mac
+
+Este código se escribió en Linux **sin poder compilarlo** (igual que el spike). Lo primero es compilar el target
+`RutaKids` y corregir lo que diga Xcode; después, probar en un iPhone o iPad real el recorrido completo:
+edad → tutorial → niveles → estrellas guardadas → Tutores → kiosco → segundo plano.
+
