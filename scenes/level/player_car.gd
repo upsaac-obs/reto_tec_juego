@@ -29,6 +29,8 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 ## Segundos con la direccional encendida antes de cambiar de carril o girar.
 @export var signal_time: float = 1.0
 @export var lane_change_time: float = 0.4
+## Modo peque: velocidad (px/s) a partir de la cual el auto cuenta como avanzando.
+@export var moving_speed: float = 10.0
 ## Carril inicial. El 0 es el de la izquierda.
 @export var start_lane: int = 0
 @export_group("Dibujo")
@@ -50,9 +52,13 @@ var lane_index: int = 0
 ## -1 izquierda, 0 apagada, 1 derecha.
 var turn_signal: int = 0
 var is_braking: bool = false
-## true mientras el niño pisa el pedal verde (lo revisa el semáforo en amarillo).
-## En modo peque siempre es false: acelerar solo no es decisión del niño.
+## true mientras el niño pisa el pedal verde (física del modo grande).
+## En modo peque siempre es false: el auto acelera solo.
 var is_accelerating: bool = false
+## true si el niño "deja avanzar" el auto: en modo grande, pisa el pedal verde;
+## en modo peque, no frena y el auto se mueve. Es lo que revisan las reglas de
+## decisión (amarillo): las dos edades tienen las mismas reglas.
+var is_pushing_forward: bool = false
 ## Modo peque: el auto avanza solo. Se toma de GameState.mode al empezar.
 var auto_drive: bool = false
 
@@ -229,7 +235,10 @@ func _update_speed(delta: float) -> void:
 	if not _stop_requests.is_empty():
 		speed = 0.0
 		is_braking = true
+		is_pushing_forward = false
 		return
+	is_pushing_forward = is_accelerating if not auto_drive \
+		else seatbelt_on and not is_braking and speed > moving_speed
 
 	# Frena solo antes de un giro que todavía no se ha indicado con la flecha.
 	var stop := _stop_progress()

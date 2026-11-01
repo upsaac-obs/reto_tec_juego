@@ -4,9 +4,12 @@ extends RulePiece
 ## Semáforo. El origen es el centro de la línea de alto y el auto llega desde -x
 ## (gira el nodo para otras direcciones; el semáforo se sigue dibujando derecho).
 ## - Falta si el auto cruza la línea con luz roja (red_light).
-## - Si check_yellow (nivel 5 en adelante): falta si sigue acelerando con luz
-##   amarilla dentro de la zona después de reaction_time (yellow). Cruzar en
-##   amarillo no es falta: a veces ya no da tiempo de frenar.
+## - Si check_yellow (nivel 5 en adelante): falta si deja avanzar el auto con luz
+##   amarilla dentro de la zona después de reaction_time (yellow). "Dejar
+##   avanzar" es PlayerCar.is_pushing_forward: en modo grande pisar el pedal
+##   verde; en modo peque no frenar mientras el auto avanza solo (las dos
+##   edades tienen la misma regla). Cruzar en amarillo sin acelerar no es
+##   falta: a veces ya no da tiempo de frenar.
 ## - Da puntos si el auto se detuvo en rojo o amarillo y cruza con verde.
 ## Las luces se distinguen por posición (rojo arriba, amarillo en medio, verde
 ## abajo) y no solo por color: las apagadas se siguen viendo.
@@ -29,7 +32,7 @@ const LAMP_RADIUS := 9.0
 		if not is_node_ready() or Engine.is_editor_hint():
 			light = value
 		queue_redraw()
-## Revisa que no acelere en amarillo. Se activa desde el nivel 5.
+## Revisa que no deje avanzar el auto en amarillo. Se activa desde el nivel 5.
 @export var check_yellow: bool = false
 ## Segundos para reaccionar cuando cambia a amarillo antes de contar la falta.
 @export var reaction_time: float = 0.6
@@ -91,7 +94,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if light != Light.GREEN and _car.speed <= stop_speed:
 		_waited = true
-	if check_yellow and light == Light.YELLOW and _car.is_accelerating and not _faulted_yellow:
+	if check_yellow and light == Light.YELLOW and _car.is_pushing_forward and not _faulted_yellow:
 		_yellow_gas_time += delta
 		if _yellow_gas_time >= reaction_time:
 			_faulted_yellow = true
