@@ -6,3 +6,8 @@ local.properties
 *.iml
 # Lo genera sync_godot.sh a partir del proyecto de Godot
 app/src/main/assets/
+
+# Llave de release: nunca en git (ver README.md)
+keystore.properties
+*.jks
+*.keystore
