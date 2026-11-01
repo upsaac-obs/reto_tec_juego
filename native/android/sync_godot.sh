@@ -12,6 +12,6 @@ godot --headless --path "$godot_project" --export-debug "Android" "$tmp/godot.ap
 dest="$here/app/src/main/assets"
 rm -rf "$dest"
 mkdir -p "$dest"
-unzip -q "$tmp/godot.apk" 'assets/*' -d "$tmp/x"
+unzip -q "$tmp/godot.apk" -d "$tmp/x"
 cp -r "$tmp/x/assets/." "$dest/"
 echo "Assets de Godot copiados a $dest ($(du -sh "$dest" | cut -f1))"
