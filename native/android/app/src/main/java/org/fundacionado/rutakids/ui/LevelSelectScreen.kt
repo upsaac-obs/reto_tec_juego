@@ -6,8 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,13 +15,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +39,9 @@ import org.fundacionado.rutakids.data.Levels
 import org.fundacionado.rutakids.data.Progress
 
 /**
- * Selección de niveles (diseño del mockup de Paulo): 11 tarjetas con su número y sus estrellas.
- * - El 0 siempre está abierto y cada nivel se abre con 1 estrella en el anterior.
+ * Selección de niveles (diseño del mockup de Paulo): tarjetas 1 a 8 con su número y sus estrellas.
+ * El 0 (tutorial) no sale aquí: se abre solo la primera vez que se toca Jugar.
+ * - El 1 siempre está abierto y cada nivel se abre con 1 estrella en el anterior.
  * - En kiosco todo está abierto.
  * - Si Godot respondió level_not_built, la tarjeta sale bloqueada ("Muy pronto").
  */
@@ -64,32 +64,51 @@ fun LevelSelectScreen(
                 StarsBanner(progress.totalStars, Levels.maxStars)
                 Box(Modifier.size(60.dp))
             }
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 120.dp),
-                contentPadding = PaddingValues(start = 48.dp, end = 48.dp, bottom = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            // 8 tarjetas en 2 filas de 4, del tamaño que quepa sin scroll (como iOS).
+            BoxWithConstraints(
+                Modifier.fillMaxSize().padding(start = 48.dp, end = 48.dp, bottom = 16.dp),
+                contentAlignment = Alignment.Center,
             ) {
-                items(Levels.all, key = { it.id }) { level ->
-                    val notBuilt = level.id in godot.notBuiltLevels
-                    val unlocked = kiosk || progress.isUnlocked(level.id)
-                    LevelCard(
-                        level = level,
-                        stars = progress.starsFor(level.id),
-                        locked = !unlocked || notBuilt,
-                        notBuilt = notBuilt,
-                        loading = !godot.engineReady || godot.requestedLevel == level.id,
-                        onClick = {
-                            if (unlocked && !notBuilt && godot.engineReady && godot.requestedLevel == null) {
-                                onLevelSelected(level.id)
+                val rows = Levels.menu.chunked(COLUMNS)
+                val byWidth = (maxWidth - CARD_GAP * (COLUMNS - 1)) / COLUMNS
+                val byHeight = ((maxHeight - ROW_GAP * (rows.size - 1)) / rows.size - STARS_HEIGHT) * CARD_ASPECT
+                val cardWidth = minOf(byWidth, byHeight, MAX_CARD_WIDTH)
+                Column(verticalArrangement = Arrangement.spacedBy(ROW_GAP)) {
+                    rows.forEach { row ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(CARD_GAP)) {
+                            row.forEach { level ->
+                                key(level.id) {
+                                    val notBuilt = level.id in godot.notBuiltLevels
+                                    val unlocked = kiosk || progress.isUnlocked(level.id)
+                                    LevelCard(
+                                        level = level,
+                                        stars = progress.starsFor(level.id),
+                                        locked = !unlocked || notBuilt,
+                                        notBuilt = notBuilt,
+                                        loading = !godot.engineReady || godot.requestedLevel == level.id,
+                                        onClick = {
+                                            if (unlocked && !notBuilt && godot.engineReady && godot.requestedLevel == null) {
+                                                onLevelSelected(level.id)
+                                            }
+                                        },
+                                        modifier = Modifier.width(cardWidth),
+                                    )
+                                }
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+private const val COLUMNS = 4
+private const val CARD_ASPECT = 130f / 134f
+private val CARD_GAP = 20.dp
+private val ROW_GAP = 12.dp
+private val STARS_HEIGHT = 30.dp
+private val MAX_CARD_WIDTH = 180.dp
 
 @Composable
 private fun LevelCard(
@@ -99,13 +118,14 @@ private fun LevelCard(
     notBuilt: Boolean,
     loading: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val name = stringResource(level.nameRes)
     Column(
-        Modifier.clickable(enabled = !locked, onClick = onClick),
+        modifier.clickable(enabled = !locked, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(Modifier.fillMaxWidth().aspectRatio(130f / 134f)) {
+        Box(Modifier.fillMaxWidth().aspectRatio(CARD_ASPECT)) {
             if (level.iconRes != null) {
                 Image(
                     painterResource(level.iconRes),
@@ -154,7 +174,7 @@ private fun LevelCard(
                 )
             }
         }
-        StarsRow(stars, Modifier.height(30.dp))
+        StarsRow(stars, Modifier.height(STARS_HEIGHT))
     }
 }
 

@@ -5,8 +5,8 @@ import androidx.annotation.StringRes
 import org.fundacionado.rutakids.R
 
 /**
- * Las 11 tarjetas del menú. El id es el level_id del juego (data/level_XX.tres),
- * así que no se puede reordenar: el 0 siempre abre "Abróchate y arranca".
+ * Niveles de la entrega: del 0 al 8 (docs/plan_cierre.md). El id es el level_id del juego
+ * (data/level_XX.tres), así que no se puede reordenar: el 0 siempre abre "Abróchate y arranca".
  */
 data class LevelInfo(
     val id: Int,
@@ -26,9 +26,14 @@ object Levels {
         LevelInfo(6, R.string.NIVEL_06_NOMBRE, null),
         LevelInfo(7, R.string.NIVEL_07_NOMBRE, null),
         LevelInfo(8, R.string.NIVEL_08_NOMBRE, R.drawable.icon_bike),
-        LevelInfo(9, R.string.NIVEL_09_NOMBRE, null),
-        LevelInfo(10, R.string.NIVEL_10_NOMBRE, null),
     )
 
-    val maxStars = all.size * 3
+    /** El 0 es el tutorial: se abre solo la primera vez que se toca Jugar (fuera del kiosco). */
+    const val TUTORIAL_ID = 0
+
+    /** Tarjetas de la lista de niveles y de Tutores (igual que iOS: del 1 al 8). */
+    val menu = all.filter { it.id != TUTORIAL_ID }
+
+    /** Las estrellas de la barra solo cuentan los niveles de la lista. */
+    val maxStars = menu.size * 3
 }
