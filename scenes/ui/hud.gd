@@ -22,6 +22,11 @@ const Palette := preload("res://autoload/game_state.gd")
 ## El cinturón parpadea hasta que se lo ponen.
 @export var seatbelt_pulse_time: float = 0.5
 @export var seatbelt_done_tint: Color = Color(0.55, 0.55, 0.6, 1.0)
+## Botón de luces (nivel 7). Un nivel lo muestra poniendo esta propiedad en true
+## en su nodo Hud (escena heredada). Prende y apaga las luces del auto (car_lights).
+@export var show_lights_button: bool = false
+## Color del botón de luces mientras están encendidas.
+@export var lights_on_tint: Color = Palette.COLOR_GOLD
 ## Segundos que hay que mantener el engrane para abrir la pantalla de tutores.
 @export var tutor_hold_time: float = 3.0
 ## Color al que llega el engrane al completar la presión larga.
@@ -33,6 +38,7 @@ const Palette := preload("res://autoload/game_state.gd")
 @onready var _destination: Label = %Destination
 @onready var _seatbelt: TouchScreenButton = %Seatbelt
 @onready var _gear: TextureButton = %Gear
+@onready var _lights: TouchScreenButton = %Lights
 
 var _pulse: Tween
 var _gear_hold: Tween
@@ -45,7 +51,7 @@ func _ready() -> void:
 	_destination.text = tr(destination)
 	# Sin destino decidido todavía, no se muestra la pastilla vacía.
 	_destination.get_parent().visible = not destination.is_empty()
-	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas]:
+	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas, %Lights]:
 		button.pressed.connect(func() -> void: button.self_modulate = pressed_tint)
 		button.released.connect(func() -> void: button.self_modulate = Color.WHITE)
 	_gear.button_down.connect(_on_gear_down)
@@ -56,6 +62,8 @@ func _ready() -> void:
 	if car != null:
 		car.seatbelt_fastened.connect(_on_seatbelt_fastened)
 		car.blocked_without_seatbelt.connect(Feedback.show_info.bind("PONTE_CINTURON"))
+		car.headlights_changed.connect(_on_headlights_changed)
+	_lights.visible = show_lights_button
 	# Modo peque: el auto avanza solo; el niño solo tiene freno y flechas.
 	%Gas.visible = GameState.mode != GameState.MODE_PEQUE
 	_refresh_score()
@@ -68,6 +76,10 @@ func _refresh_score() -> void:
 	_points.text = str(points)
 	for i in _stars.get_child_count():
 		(_stars.get_child(i) as TextureRect).texture = star_full if i < stars else star_empty
+
+
+func _on_headlights_changed(on: bool) -> void:
+	_lights.modulate = lights_on_tint if on else Color.WHITE
 
 
 func _start_seatbelt_pulse() -> void:

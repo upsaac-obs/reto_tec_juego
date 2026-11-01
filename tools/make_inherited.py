@@ -4,7 +4,7 @@
 Godot solo escribe escenas heredadas desde el editor; los niveles armados por
 script (tools/level_builder.gd) salen como copia completa. Esto deja solo lo
 propio del nivel: el mapa (Ground), Decor, las piezas de Rules, la curva de
-Route y el carril inicial del auto. También quita las líneas `script =` de las
+Route, el carril inicial del auto y show_lights_button del Hud. También quita las líneas `script =` de las
 piezas instanciadas, que reinician sus ajustes.
 
 Uso: python3 tools/make_inherited.py levels/level_03.tscn
@@ -13,9 +13,9 @@ import re
 import sys
 
 BASE = "res://scenes/level/level.tscn"
-KEEP_OVERRIDES = {"Ground": ["tile_map_data"], "Route": ["curve"], "Route/PlayerCar": ["start_lane"]}
+KEEP_OVERRIDES = {"Ground": ["tile_map_data"], "Route": ["curve"], "Route/PlayerCar": ["start_lane"], "Hud": ["show_lights_button"]}
 BASE_NODES = {".", "Ground", "Rules", "Route", "Route/PlayerCar", "FollowCamera", "RuleManager", "Hud", "HabitCard"}
-INDEX = {"Ground": ' index="0"', "Route": "", "Route/PlayerCar": ' index="0"'}
+INDEX = {"Ground": ' index="0"', "Route": "", "Route/PlayerCar": ' index="0"', "Hud": ""}
 
 
 def node_path(section: str) -> str:
