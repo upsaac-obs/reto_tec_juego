@@ -261,31 +261,31 @@ Rama `feature/menu-android-tutores`, sobre la navegación base de Paulo.
 
 El avance es al 15 de octubre.
 
-| # | Tarea | Responsable | Avance | Entrega |
-| --- | --- | --- | ---: | --- |
-| 1 | iOS: compilar el spike en iPhone/iPad y medir arranque, memoria y tamaño | Diego Sánchez | 20 % | 17/10/26 |
-| 2 | Nivel 3: destino, estacionarse y abrir la puerta sin ciclista (`parking_spot`, `door_exit`) | Diego Sánchez | 80 % | 17/10/26 |
-| 3 | iOS: navegación, Inicio y Selección de edad | Diego Sánchez | 5 % | 20/10/26 |
-| 4 | iOS: Selección de niveles con estrellas, desbloqueo y guardado (`UserDefaults`) | Diego Sánchez | 0 % | 22/10/26 |
-| 5 | iOS: pantalla de Tutores | Diego Sánchez | 0 % | 23/10/26 |
-| 6 | iOS: kiosco (60 s, `inactivity_timeout`, Acceso Guiado), segundo plano y sonido | Diego Sánchez | 0 % | 25/10/26 |
-| 7 | iOS: integración con los niveles 0 a 8 | Diego Sánchez | 0 % | 28/10/26 |
-| 8 | Android: navegación base en Compose y `BridgeViewModel` | Paulo Vélez | 15 % | 18/10/26 |
-| 9 | Android: Inicio y Selección de edad | Paulo Vélez | 0 % | 18/10/26 |
-| 10 | Nivel 4, Con calma: peatones lentos, semáforo peatonal, `patience_zone` | Paulo Vélez | 10 % | 18/10/26 |
-| 11 | Script de textos `textos.csv` → iOS y Android | Paulo Vélez | 0 % | 19/10/26 |
-| 12 | Android: guardado con DataStore | Paulo Vélez | 0 % | 20/10/26 |
-| 13 | Nivel 5, Sin prisa: reloj, amarillos, `ball_event`, terminal | Paulo Vélez | 10 % | 21/10/26 |
-| 14 | Android: Selección de niveles con estrellas y desbloqueo | Paulo Vélez | 0 % | 22/10/26 |
-| 15 | Nivel 8, Comparte el camino: motos, `cyclist_distance`, `bus_stop` | Paulo Vélez | 10 % | 24/10/26 |
-| 16 | Android: integración con los niveles 0 a 8 | Paulo Vélez | 0 % | 28/10/26 |
-| 17 | Nivel 6, Ojos en el camino: `phone_event` y contestar estacionado | Ángel Mael | 10 % | 20/10/26 |
-| 18 | Android: pantalla de Tutores | Ángel Mael | 0 % | 21/10/26 |
-| 19 | Nivel 7, Hazte visible: botón de luces, `dark_zone`, túnel y lluvia | Ángel Mael | 10 % | 23/10/26 |
-| 20 | Android: kiosco con lock task, segundo plano y sonido | Ángel Mael | 0 % | 23/10/26 |
-| 21 | Audio: efectos, música y voces con IA | Ángel Mael | 5 % | 24/10/26 |
-| 22 | Android: build *release* firmado con llave propia, sin `INTERNET` | Ángel Mael | 50 % | 25/10/26 |
-| 23 | Android: integración con los niveles 0 a 8 | Ángel Mael | 0 % | 28/10/26 |
+| #   | Tarea                                                                                       | Responsable   | Avance | Entrega  |
+| --- | ------------------------------------------------------------------------------------------- | ------------- | -----: | -------- |
+| 1   | iOS: compilar el spike en iPhone/iPad y medir arranque, memoria y tamaño                    | Diego Sánchez |   20 % | 17/10/26 |
+| 2   | Nivel 3: destino, estacionarse y abrir la puerta sin ciclista (`parking_spot`, `door_exit`) | Diego Sánchez |   80 % | 17/10/26 |
+| 3   | iOS: navegación, Inicio y Selección de edad                                                 | Diego Sánchez |    5 % | 20/10/26 |
+| 4   | iOS: Selección de niveles con estrellas, desbloqueo y guardado (`UserDefaults`)             | Diego Sánchez |    0 % | 22/10/26 |
+| 5   | iOS: pantalla de Tutores                                                                    | Diego Sánchez |    0 % | 23/10/26 |
+| 6   | iOS: kiosco (60 s, `inactivity_timeout`, Acceso Guiado), segundo plano y sonido             | Diego Sánchez |    0 % | 25/10/26 |
+| 7   | iOS: integración con los niveles 0 a 8                                                      | Diego Sánchez |    0 % | 28/10/26 |
+| 8   | Android: navegación base en Compose y `BridgeViewModel`                                     | Paulo Vélez   |   15 % | 18/10/26 |
+| 9   | Android: Inicio y Selección de edad                                                         | Paulo Vélez   |    0 % | 18/10/26 |
+| 10  | Nivel 4, Con calma: peatones lentos, semáforo peatonal, `patience_zone`                     | Paulo Vélez   |   10 % | 18/10/26 |
+| 11  | Script de textos `textos.csv` → iOS y Android                                               | Paulo Vélez   |    0 % | 19/10/26 |
+| 12  | Android: guardado con DataStore                                                             | Paulo Vélez   |    0 % | 20/10/26 |
+| 13  | Nivel 5, Sin prisa: reloj, amarillos, `ball_event`, terminal                                | Paulo Vélez   |   10 % | 21/10/26 |
+| 14  | Android: Selección de niveles con estrellas y desbloqueo                                    | Paulo Vélez   |    0 % | 22/10/26 |
+| 15  | Nivel 8, Comparte el camino: motos, `cyclist_distance`, `bus_stop`                          | Paulo Vélez   |   10 % | 24/10/26 |
+| 16  | Android: integración con los niveles 0 a 8                                                  | Paulo Vélez   |    0 % | 28/10/26 |
+| 17  | Nivel 6, Ojos en el camino: `phone_event` y contestar estacionado                           | Ángel Mael    |   10 % | 20/10/26 |
+| 18  | Android: pantalla de Tutores                                                                | Ángel Mael    |    0 % | 21/10/26 |
+| 19  | Nivel 7, Hazte visible: botón de luces, `dark_zone`, túnel y lluvia                         | Ángel Mael    |   10 % | 23/10/26 |
+| 20  | Android: kiosco con lock task, segundo plano y sonido                                       | Ángel Mael    |    0 % | 23/10/26 |
+| 21  | Audio: efectos, música y voces con IA                                                       | Ángel Mael    |    5 % | 24/10/26 |
+| 22  | Android: build *release* firmado con llave propia, sin `INTERNET`                           | Ángel Mael    |   50 % | 25/10/26 |
+| 23  | Android: integración con los niveles 0 a 8                                                  | Ángel Mael    |    0 % | 28/10/26 |
 
 **Cómo se calculó el avance:**
 
