@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/icons/arrow_right.png" id="8_right"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/brake_pedal.png" id="9_brake"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/gas_pedal.png" id="10_gas"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/lights.png" id="11_lights"]
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_script")
@@ -175,3 +176,11 @@ position = Vector2(-148, -228)
 scale = Vector2(4, 4)
 texture_normal = ExtResource("10_gas")
 action = "car_accelerate"
+
+[node name="Lights" type="TouchScreenButton" parent="Root/RightControls"]
+unique_name_in_owner = true
+visible = false
+position = Vector2(-160, -392)
+scale = Vector2(3, 3)
+texture_normal = ExtResource("11_lights")
+action = "car_lights"
