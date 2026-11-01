@@ -1,3 +1,4 @@
+import Foundation
 import SwiftGodot
 import SwiftGodotKit
 import SwiftUI
@@ -22,7 +23,7 @@ struct RootView: View {
     let model: AppModel
     @Environment(\.scenePhase) private var scenePhase
 
-    private let secondTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let secondTimer = Foundation.Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
