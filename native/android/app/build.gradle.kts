@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
@@ -10,25 +12,43 @@ android {
     compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
-        applicationId = "org.fundacionado.rutakids.spike"
+        applicationId = "org.fundacionado.rutakids"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "0.1-spike"
+        versionName = "1.0"
         // Igual que el export de Godot: celulares viejos (armv7) y nuevos (arm64).
-        // x86_64 solo para el emulador. Para instalar más rápido en un solo
-        // celular: ./gradlew assembleDebug -Pabis=arm64-v8a
+        // x86_64 (emulador) solo si se pide: -Pabis=x86_64. Para instalar más
+        // rápido en un solo celular: ./gradlew assembleDebug -Pabis=arm64-v8a
         val abis = (findProperty("abis") as String?)?.split(",")
-            ?: listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+            ?: listOf("arm64-v8a", "armeabi-v7a")
         ndk { abiFilters += abis }
+    }
+
+    // La llave de release NO va en git: se lee de keystore.properties (ver README.md).
+    val keystoreFile = rootProject.file("keystore.properties")
+    val releaseKeys = Properties().apply { if (keystoreFile.exists()) keystoreFile.inputStream().use { load(it) } }
+    signingConfigs {
+        if (keystoreFile.exists()) {
+            create("release") {
+                storeFile = rootProject.file(releaseKeys.getProperty("storeFile"))
+                storePassword = releaseKeys.getProperty("storePassword")
+                keyAlias = releaseKeys.getProperty("keyAlias")
+                keyPassword = releaseKeys.getProperty("keyPassword")
+            }
+        }
     }
 
     buildFeatures { compose = true }
 
     buildTypes {
         release {
-            // Spike: se firma con la llave de depuración para poder instalarla y medirla.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keystoreFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("AVISO: falta native/android/keystore.properties; el release se firma con la llave de DEPURACIÓN (no sirve para publicar).")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 
