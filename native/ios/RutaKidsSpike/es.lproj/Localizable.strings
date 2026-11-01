@@ -72,6 +72,12 @@
 "FALTA_MIRA" = "¡Alto! Antes del cruce hay que detenerse en los ojos y mirar a los dos lados.";
 "FALTA_MIRA_OCUPADO" = "¡Espera! Venía un auto. Después de mirar, espera a que el cruce esté libre.";
 "BIEN_MIRA" = "¡Bien! Miraste dos veces y cruzaste seguro.";
+"DESTINO_CASA_ABUELA" = "Casa de la abuela";
+"ESTACIONADO_AVISO" = "¡Bien estacionado! Cuando sea seguro, toca Abrir puerta.";
+"ESTACIONAR_CARRIL" = "Muévete con la flecha al carril del cajón para estacionarte.";
+"BOTON_ABRIR_PUERTA" = "Abrir puerta";
+"FALTA_PUERTA" = "¡Cuidado! Venía una bici. Antes de abrir la puerta, mira dos veces y espera a que pase.";
+"BIEN_PUERTA" = "¡Bien! Miraste y esperaste a que pasara la bici.";
 "MENU_EDAD_TITULO" = "¿Quién va a manejar?";
 "MENU_PEQUE" = "Peque";
 "MENU_PEQUE_EDADES" = "4 a 7 años";
@@ -109,3 +115,7 @@
 "REGLA_DISTANCE" = "Distancia con ciclista";
 "REGLA_AMBULANCE" = "Ambulancia";
 "REGLA_CRASH" = "Choque";
+"MENU_OPCIONES" = "Opciones";
+"MENU_MUSICA" = "Música";
+"MENU_CERRAR" = "Cerrar";
+"MENU_DESBLOQUEAR" = "Saca una estrella en el nivel anterior para abrir este.";
