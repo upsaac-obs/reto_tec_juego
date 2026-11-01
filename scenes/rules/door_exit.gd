@@ -6,12 +6,21 @@ extends RulePiece
 ##   "Abrir puerta" y empiezan a pasar ciclistas por la orilla, hacia +x.
 ## - Abrir con un ciclista cerca es falta (look): el copiloto explica y la puerta
 ##   se queda cerrada hasta que el ciclista se aleje.
-## - Abrir cuando no hay ciclistas cerca da puntos y termina el nivel.
+## - Abrir cuando no hay ciclistas cerca da puntos y termina el nivel (o, con
+##   finish_level_on_open = false, suelta el auto con spot.release() para que siga).
 ## - Modo peque: pasa un solo ciclista. Modo grande: pasan varios, cada pocos segundos.
+## - Su cajón es `spot` (asígnalo en el inspector). Solo si está vacío usa el
+##   ParkingSpot más cercano del grupo "parking_spot".
+
+## Se abrió la puerta sin ciclistas cerca.
+signal door_opened
 
 const CYCLIST_SCENE := preload("res://scenes/actors/cyclist.tscn")
 
+## El cajón de esta puerta. Si está vacío, el ParkingSpot más cercano.
 @export var spot: ParkingSpot
+## true (nivel 3): abrir bien termina el nivel. false: suelta el auto del cajón.
+@export var finish_level_on_open: bool = true
 ## Distancia (px, hacia adelante o hacia atrás de la puerta) a la que un ciclista
 ## cuenta como "cerca". Con 150 px/s son unos 3 segundos de peligro por ciclista.
 @export var near_distance: float = 220.0
@@ -49,7 +58,7 @@ func _ready() -> void:
 		return
 	_button.pressed.connect(open_door)
 	if spot == null:
-		spot = get_tree().get_first_node_in_group(&"parking_spot") as ParkingSpot
+		spot = _nearest_spot()
 	if spot != null:
 		spot.parked.connect(_on_parked)
 
@@ -90,7 +99,12 @@ func open_door() -> void:
 	_done = true
 	_layer.visible = false
 	_report_good_action(&"look", "BIEN_PUERTA", points)
+	door_opened.emit()
 	await get_tree().create_timer(finish_delay).timeout
+	if not finish_level_on_open:
+		if _done and spot != null:
+			spot.release()
+		return
 	var manager := _rule_manager()
 	if manager != null:
 		manager.finish_level()
@@ -104,6 +118,30 @@ func _on_parked() -> void:
 		_spawn_left = INF
 	else:
 		_spawn_left = randf_range(interval_min, interval_max)
+
+
+func _on_car_restarted() -> void:
+	_parked = false
+	_done = false
+	_locked = false
+	_button.disabled = false
+	_layer.visible = false
+	for cyclist in _cyclists:
+		if is_instance_valid(cyclist):
+			cyclist.queue_free()
+	_cyclists.clear()
+
+
+func _nearest_spot() -> ParkingSpot:
+	var best: ParkingSpot = null
+	for node in get_tree().get_nodes_in_group(&"parking_spot"):
+		var candidate := node as ParkingSpot
+		if candidate == null:
+			continue
+		if best == null or candidate.global_position.distance_squared_to(global_position) \
+				< best.global_position.distance_squared_to(global_position):
+			best = candidate
+	return best
 
 
 func _spawn_cyclist(distance: float = start_distance) -> void:
