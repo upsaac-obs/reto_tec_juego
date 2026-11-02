@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/ball_event.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/actors/pedestrian.tscn" id="2_pedestrian"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+resource_local_to_scene = true
+size = Vector2(80, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_approach"]
+resource_local_to_scene = true
+size = Vector2(232, 128)
+
+[node name="BallEvent" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Zone" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zone"]
+position = Vector2(-8, 0)
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Approach" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Approach"]
+position = Vector2(-164, 0)
+shape = SubResource("RectangleShape2D_approach")
+
+[node name="ChildStart" type="Marker2D" parent="."]
+position = Vector2(0, 100)
+
+[node name="ChildEnd" type="Marker2D" parent="."]
+position = Vector2(0, -120)
+
+[node name="ChildExit" type="Marker2D" parent="."]
+position = Vector2(200, -120)
+
+[node name="Child" parent="." instance=ExtResource("2_pedestrian")]
+z_index = 1
+position = Vector2(0, 100)

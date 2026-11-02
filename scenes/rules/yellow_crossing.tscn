@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/yellow_crossing.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="2_light"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+resource_local_to_scene = true
+size = Vector2(420, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_line"]
+resource_local_to_scene = true
+size = Vector2(8, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_box"]
+resource_local_to_scene = true
+size = Vector2(128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_guard"]
+resource_local_to_scene = true
+size = Vector2(216, 128)
+
+[node name="YellowCrossing" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Trigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trigger"]
+position = Vector2(-210, 0)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="Line" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Line"]
+position = Vector2(-4, 0)
+shape = SubResource("RectangleShape2D_line")
+
+[node name="Box" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box"]
+position = Vector2(88, 0)
+shape = SubResource("RectangleShape2D_box")
+
+[node name="Guard" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guard"]
+position = Vector2(44, 0)
+shape = SubResource("RectangleShape2D_guard")
+
+[node name="Light" parent="." instance=ExtResource("2_light")]
+check_yellow = true
+give_points = false
+reaction_time = 1.0
+zone_length = 320.0
+green_time = 99999.0
+yellow_time = 99999.0
+red_time = 99999.0
