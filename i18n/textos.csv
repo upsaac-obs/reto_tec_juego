@@ -121,3 +121,14 @@ MENU_CERRAR,Cerrar
 MENU_DESBLOQUEAR,Saca una estrella en el nivel anterior para abrir este.
 FALTA_PACIENCIA,"Hay quien necesita más tiempo. Aunque el semáforo esté en verde, espera a que todos terminen de cruzar."
 BIEN_PACIENCIA,"¡Muy bien! Esperaste a que todos terminaran de cruzar con calma."
+L08_INICIO,"¡Qué avenida tan grande! Hoy la compartimos con bicis, motos y camiones."
+L08_BICI,"Ahí va una bici. Toca la flecha para alejarnos y darle espacio."
+L08_CAMION,"El camión va a su parada. Cuando se detenga, esperamos detrás de él."
+L08_CAMION_PEQUE,"Cuando el camión se detenga, mantén el freno hasta que arranque."
+L08_CLIMAX,"Otra parada, y viene una bici. Piensa: ¿quién necesita espacio?"
+L08_CLIMAX_PEQUE,"Otra parada y viene una bici. Frena y esperamos detrás del camión."
+FALTA_DISTANCIA_BICI,"¡Muy pegadito a la bici! Deja un carril libre para que vaya segura."
+BIEN_DISTANCIA_BICI,"¡Bien! Le dejaste un carril de espacio a la bici."
+FALTA_CAMION,"Con el camión detenido, alguien puede cruzar por enfrente. Esperamos detrás."
+BIEN_CAMION,"¡Qué paciencia! Esperaste detrás del camión mientras la gente subía y bajaba."
+DESTINO_BIBLIOTECA,Biblioteca
