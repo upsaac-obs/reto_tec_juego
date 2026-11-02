@@ -21,11 +21,11 @@ El repositorio está en GitHub: https://github.com/upsaac-obs/reto_tec_juego (pe
 
 ```bash
 git clone https://github.com/upsaac-obs/reto_tec_juego.git rutakids
-cd rutakids
-git switch -c feature/spike-ios origin/feature/modo-peque   # trae el kit de iOS y los niveles 0 a 3
+cd rutakids        # ya en main: trae el menú nativo de iOS y los niveles 0 a 8
 ```
 
-Para subir los resultados: `git push -u origin feature/spike-ios`. GitHub pide usuario y un *personal access token* (no la contraseña), con permiso *Contents: Read and write* en el repositorio.
+Si ya lo tenías clonado: `git switch main && git pull`. Para cambios propios, crea una rama desde `main`
+(`git switch -c feature/<nombre-corto>`) y súbela con `git push -u origin feature/<nombre-corto>`. GitHub pide usuario y un *personal access token* (no la contraseña), con permiso *Contents: Read and write* en el repositorio.
 
 ---
 
