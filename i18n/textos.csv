@@ -144,3 +144,15 @@ CELULAR_CONTESTA,"¡Ya estamos estacionados! Ahora sí puedes contestar el celul
 BIEN_CONTESTAR,"¡Excelente! Primero te estacionaste y luego contestaste."
 CELULAR_PRIMOS,"Son tus primos: ya nos esperan. ¡Vamos con calma!"
 CELULAR_LUEGO,"Les llamamos al llegar. ¡Seguimos con calma!"
+DESTINO_CASA,Nuestra casa
+LUCES_INTRO,Se está haciendo de noche. Toca el botón para prender las luces.
+LUCES_REFLEJANTE,Las bicis traen chaleco que brilla cuando tus luces lo alumbran.
+LUCES_TUNEL,Ahí viene el túnel y adentro está oscuro. ¿Ya prendiste tus luces?
+LUCES_LLUVIA,"Empezó a llover y se ve poquito. Con luces, todos te ven."
+FALTA_LUCES,¡Está oscuro! Prende las luces para que las bicis te vean.
+BIEN_LUCES,"¡Muy bien! Con tus luces prendidas, todos te ven."
+FALTA_LUCES_TUNEL,En el túnel está oscuro. Prende las luces para que te vean.
+BIEN_LUCES_TUNEL,"¡Bien! En el túnel, tus luces avisan que ahí vas."
+FALTA_LUCES_LLUVIA,Con lluvia cuesta ver. Prende las luces para que te cuiden.
+BIEN_LUCES_LLUVIA,"¡Eso! Con lluvia, tus luces te hacen visible."
+BOTON_LUCES,Luces
