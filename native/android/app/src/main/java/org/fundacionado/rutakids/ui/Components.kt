@@ -13,9 +13,12 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,7 +46,10 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.fundacionado.rutakids.R
 
-/** Fondo de todos los menús (arte de Paulo) con el contenido encima. */
+/**
+ * Fondo de todos los menús (arte de Paulo) con el contenido encima. El fondo llena toda la
+ * pantalla; los botones se apartan de la cámara (notch) para que no queden tapados.
+ */
 @Composable
 fun MenuBackground(content: @Composable BoxScope.() -> Unit) {
     Box(Modifier.fillMaxSize().background(Palette.DarkPurple)) {
@@ -53,7 +59,7 @@ fun MenuBackground(content: @Composable BoxScope.() -> Unit) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-        content()
+        Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.displayCutout), content = content)
     }
 }
 

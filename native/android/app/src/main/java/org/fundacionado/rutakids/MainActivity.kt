@@ -1,12 +1,17 @@
 package org.fundacionado.rutakids
 
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +43,7 @@ class MainActivity : FragmentActivity(), GodotHost {
         root.addView(godotContainer)
         root.addView(menu)
         setContentView(root)
+        enterImmersiveMode()
 
         godotFragment = supportFragmentManager.findFragmentById(godotContainer.id) as? GodotFragment
         if (godotFragment == null) {
@@ -55,6 +61,26 @@ class MainActivity : FragmentActivity(), GodotHost {
                 }
             }
         }
+    }
+
+    // Pantalla completa: sin barra de estado ni de navegación (con targetSdk 35+ Android dibuja
+    // de borde a borde y la barra tapaba el engrane). Un deslizamiento desde el borde las muestra
+    // un momento; al regresar el foco se vuelven a esconder.
+    private fun enterImmersiveMode() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) enterImmersiveMode()
     }
 
     // Cuenta cada toque real en toda la app (menús y nivel) para el kiosco de 60 s.
