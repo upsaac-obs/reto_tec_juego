@@ -53,7 +53,7 @@ DESTINO_HOSPITAL,Hospital
 DESTINO_TERMINAL,Terminal
 FALTA_ROJO,"¡Alto! Con la luz roja hay que esperar antes de la línea."
 BIEN_ROJO,"¡Bien, esperaste la luz verde!"
-FALTA_AMARILLO,"La luz amarilla avisa que viene el rojo: hay que frenar, no acelerar."
+FALTA_AMARILLO,"La luz amarilla avisa que viene el rojo. Ahí frenamos con calma."
 FALTA_VELOCIDAD,"¡Más despacio! Ibas más rápido que el límite de la calle."
 BIEN_VELOCIDAD,"¡Bien, respetaste el límite!"
 FALTA_ZONA_ESCOLAR,"En la zona escolar hay que ir despacio: puede salir un niño en cualquier momento."
@@ -121,3 +121,15 @@ MENU_CERRAR,Cerrar
 MENU_DESBLOQUEAR,Saca una estrella en el nivel anterior para abrir este.
 FALTA_PACIENCIA,"Hay quien necesita más tiempo. Aunque el semáforo esté en verde, espera a que todos terminen de cruzar."
 BIEN_PACIENCIA,"¡Muy bien! Esperaste a que todos terminaran de cruzar con calma."
+PRISA_INTRO,"¡Vamos a la terminal! Nuestro autobús va a tiempo, así que sin prisa."
+PRISA_AMARILLO_AVISO,"Si ves la luz amarilla, deja de acelerar y frena: viene el rojo."
+PRISA_AMARILLO_AVISO_PEQUE,"Si ves la luz amarilla, toca el freno. ¡Ya viene el rojo!"
+BIEN_AMARILLO,"¡Bien! Frenaste con la amarilla. Esperar un ratito nos cuida a todos."
+PRISA_TABLERO_AVISO,"Mira el tablero: seguimos a tiempo. Manejando bien, siempre llegamos."
+PELOTA_CALLE_AVISO,"Calle con autos estacionados. Despacio: alguien podría salir de entre ellos."
+FALTA_PELOTA,"¡Uy! Detrás de una pelota casi siempre viene alguien. Despacio sí alcanzamos a frenar."
+BIEN_PELOTA,"¡Así se hace! Frenaste a tiempo y la niña recuperó su pelota."
+LLEGADA_A_TIEMPO,"¡Llegamos a tiempo! Y llegamos bien, que es lo más importante."
+TABLERO_TITULO,Salidas
+TABLERO_AUTOBUS,Nuestro autobús
+TABLERO_A_TIEMPO,A tiempo
