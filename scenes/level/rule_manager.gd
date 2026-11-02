@@ -29,6 +29,7 @@ var _finished: bool = false
 
 func _ready() -> void:
 	add_to_group(&"rule_manager")
+	AudioManager.play_music()
 	if car != null:
 		_checkpoint = car.progress
 		car.route_finished.connect(finish_level)
@@ -40,6 +41,7 @@ func report_infraction(rule_id: StringName, message_key: String, grave := false)
 	faults += 1
 	infractions[rule_id] = infractions.get(rule_id, 0) + 1
 	infraction_reported.emit(rule_id, grave)
+	AudioManager.play_sfx(&"fault")
 	Feedback.show_infraction(message_key)
 	if grave:
 		_return_to_checkpoint()
@@ -75,6 +77,8 @@ func finish_level() -> void:
 	if _finished:
 		return
 	_finished = true
+	AudioManager.stop_music()
+	AudioManager.play_sfx(&"celebration")
 	Feedback.show_good_action("META_LLEGASTE", 0)
 	level_finished.emit(get_stars())
 
