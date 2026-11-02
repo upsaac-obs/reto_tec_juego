@@ -130,7 +130,7 @@ fun TutorsScreen(
                     }
                 }
 
-                items(Levels.all, key = { it.id }) { level ->
+                items(Levels.menu, key = { it.id }) { level ->
                     val stars = progress.starsFor(level.id)
                     val infractions = progress.infractions[level.id].orEmpty()
                     TutorCard {
