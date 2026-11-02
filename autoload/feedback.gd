@@ -20,6 +20,9 @@ signal voice_played(message_key: String, length: float)
 @export var message_time: float = 2.5
 ## Segundos extra después de la voz antes de quitar la pausa de una falta.
 @export var voice_margin: float = 0.3
+## Tope de la pausa de una falta aunque la voz dure más: la voz sigue sonando
+## con el juego en marcha (un niño chico no aguanta 6 a 9 s congelado).
+@export var max_infraction_pause: float = 3.0
 
 var _bubble: CopilotBubble
 var _voice: AudioStreamPlayer
@@ -60,7 +63,7 @@ func infraction_pause_time(message_key: String) -> float:
 	var voice := _voice_for(message_key)
 	if voice == null:
 		return pause_time
-	return maxf(pause_time, voice.get_length() + voice_margin)
+	return clampf(voice.get_length() + voice_margin, pause_time, maxf(pause_time, max_infraction_pause))
 
 
 func show_good_action(message_key: String, points := 10) -> void:

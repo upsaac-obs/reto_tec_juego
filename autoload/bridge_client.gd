@@ -156,6 +156,7 @@ func _on_pause_level() -> void:
 	if _bridge_paused:
 		return
 	_bridge_paused = true
+	AudioManager.set_paused(true)
 	# La pausa de una falta se quitaría sola a los 2 s; aquí se toma esta pausa.
 	_paused_before = get_tree().paused and not Feedback.is_pausing()
 	Feedback.clear()
@@ -166,6 +167,7 @@ func _on_resume_level() -> void:
 	if not _bridge_paused:
 		return
 	_bridge_paused = false
+	AudioManager.set_paused(false)
 	get_tree().paused = _paused_before
 
 
@@ -184,6 +186,7 @@ func _load_level(level: LevelData) -> void:
 	level_id = level.id
 	GameState.level = level
 	_reset_attempt()
+	AudioManager.stop_level_audio()
 	get_tree().change_scene_to_file(level.scene_path)
 
 
@@ -192,6 +195,7 @@ func _go_idle() -> void:
 	level_id = -1
 	GameState.level = null
 	_reset_attempt()
+	AudioManager.stop_level_audio()
 	get_tree().change_scene_to_file(IDLE_SCENE)
 
 

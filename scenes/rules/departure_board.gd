@@ -52,6 +52,15 @@ func _ready() -> void:
 		return
 	if show_widget and (show_in_peque or GameState.mode != GameState.MODE_PEQUE):
 		_build_widget()
+	# El copiloto lo dice al llegar en lugar de META_LLEGASTE (lo dice el
+	# RuleManager). Diferido: el RuleManager entra a su grupo en su propio _ready.
+	_set_finish_message.call_deferred()
+
+
+func _set_finish_message() -> void:
+	var manager := _rule_manager()
+	if manager != null:
+		manager.finish_message_key = arrival_message_key
 
 
 func _connect_rule_manager() -> void:
@@ -74,7 +83,6 @@ func widget_texts() -> PackedStringArray:
 
 
 func _on_level_finished(_stars: int) -> void:
-	Feedback.show_good_action(arrival_message_key, 0)
 	if _panel != null:
 		_panel.pivot_offset = _panel.size / 2.0
 		_panel.scale = Vector2.ONE * pop_scale

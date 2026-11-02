@@ -27,6 +27,11 @@ var _returning: bool = false
 var _finished: bool = false
 
 
+## Lo que dice el copiloto al llegar a la meta. Una pieza puede cambiarlo (el
+## tablero de salidas del nivel 5 pone "¡Llegamos a tiempo!").
+var finish_message_key: String = "META_LLEGASTE"
+
+
 func _ready() -> void:
 	add_to_group(&"rule_manager")
 	AudioManager.play_music()
@@ -79,7 +84,7 @@ func finish_level() -> void:
 	_finished = true
 	AudioManager.stop_music()
 	AudioManager.play_sfx(&"celebration")
-	Feedback.show_good_action("META_LLEGASTE", 0)
+	Feedback.show_good_action(finish_message_key, 0)
 	level_finished.emit(get_stars())
 
 

@@ -28,13 +28,17 @@ func run() -> void:
 	Feedback._voices["FALTA_ALTO"] = fake_voice(1.0)
 	check(is_equal_approx(Feedback.infraction_pause_time("FALTA_ALTO"), Feedback.pause_time), "con voz corta la pausa sigue siendo pause_time")
 
-	# Voz larga: la pausa y el mensaje la esperan.
-	Feedback._voices["FALTA_ALTO"] = fake_voice(3.5)
-	var expected := 3.5 + Feedback.voice_margin
-	check(is_equal_approx(Feedback.infraction_pause_time("FALTA_ALTO"), expected), "con voz de 3.5 s la pausa dura la voz más el margen")
+	# Voz muy larga: la pausa tiene tope (la voz sigue con el juego en marcha).
+	Feedback._voices["FALTA_ALTO"] = fake_voice(8.0)
+	check(is_equal_approx(Feedback.infraction_pause_time("FALTA_ALTO"), Feedback.max_infraction_pause), "con voz de 8 s la pausa se queda en max_infraction_pause")
+
+	# Voz algo larga: la pausa y el mensaje la esperan.
+	Feedback._voices["FALTA_ALTO"] = fake_voice(2.5)
+	var expected := 2.5 + Feedback.voice_margin
+	check(is_equal_approx(Feedback.infraction_pause_time("FALTA_ALTO"), expected), "con voz de 2.5 s la pausa dura la voz más el margen")
 	Feedback.show_infraction("FALTA_ALTO")
 	await frames(1)
-	check(played.size() == 1 and played[0][0] == "FALTA_ALTO" and is_equal_approx(played[0][1], 3.5), "voice_played avisa la clave y lo que dura la voz")
+	check(played.size() == 1 and played[0][0] == "FALTA_ALTO" and is_equal_approx(played[0][1], 2.5), "voice_played avisa la clave y lo que dura la voz")
 	await wait(expected - 0.3)
 	check(get_tree().paused and box.visible, "sigue en pausa y con mensaje mientras habla")
 	await wait(0.5)
