@@ -12,6 +12,8 @@ enum State { IDLE, PLAYING }
 const PROTOCOL_VERSION := 1
 const IDLE_SCENE := "res://scenes/bridge/idle.tscn"
 const MODES: Array[String] = [GameState.MODE_PEQUE, GameState.MODE_GRANDE]
+## Lo escribe tools/export_all.sh con el commit del build; si falta, "dev".
+const BUILD_INFO_PATH := "res://build_info.gd"
 
 ## Segundos sin tocar la pantalla dentro de un nivel en kiosco antes de avisar.
 @export var inactivity_limit: float = 60.0
@@ -96,6 +98,15 @@ func retry_level() -> void:
 	if state != State.PLAYING:
 		return
 	_load_level(GameState.level)
+
+
+## Commit del build exportado (tools/export_all.sh) o "dev" en el editor.
+static func build_stamp() -> String:
+	if ResourceLoader.exists(BUILD_INFO_PATH):
+		var info := load(BUILD_INFO_PATH) as Script
+		if info != null:
+			return str(info.get_script_constant_map().get("BUILD", "dev"))
+	return "dev"
 
 
 ## Mantener presionado el engrane: el nativo abre la pantalla de tutores.
@@ -202,7 +213,8 @@ func _on_scene_changed() -> void:
 		# Solo una vez por sesión: Godot no se destruye entre niveles (H1).
 		if not _engine_ready_sent:
 			_engine_ready_sent = true
-			_send(&"engine_ready", {})
+			# "build" permite saber en el nativo qué main.pck está corriendo.
+			_send(&"engine_ready", {"build": build_stamp()})
 	elif state == State.PLAYING:
 		_connect_level()
 		_send(&"level_started", {"level_id": level_id})

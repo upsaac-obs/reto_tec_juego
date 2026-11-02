@@ -18,16 +18,27 @@ func run() -> void:
 	await wait(2.5)
 	var target := car.max_speed * car.auto_drive_factor
 	check(absf(car.speed - target) < 1.0, "acelera solo hasta el 70 %% del límite (%.0f px/s)" % car.speed)
-	check(not car.is_accelerating, "acelerar solo no cuenta como pisar el pedal")
+	check(not car.is_accelerating, "acelerar solo no cuenta como pisar el pedal (física)")
+	check(car.is_pushing_forward, "pero sin frenar el niño deja avanzar el auto")
 
+	# Mismas reglas que en grande: con amarillo hay que frenar (decisión del cierre).
 	var light := level.get_node("Rules/TrafficLight") as TrafficLight
 	light.check_yellow = true
 	light.yellow_time = 100.0
 	light.set_light(TrafficLight.Light.YELLOW)
 	car.restart_at(1750.0)
 	await wait(2.5)
-	check(not rm.infractions.has(&"yellow"), "en amarillo no hay falta por la aceleración automática")
+	await wait_unpaused()
+	check(rm.infractions.get(&"yellow", 0) == 1, "en amarillo, dejar que el auto avance solo es falta yellow")
+	light.set_light(TrafficLight.Light.YELLOW)
+	light._reset_pass()
+	car.restart_at(1750.0)
+	Input.action_press(&"car_brake")
+	await wait(2.5)
+	check(not car.is_pushing_forward and rm.infractions.get(&"yellow", 0) == 1, "en amarillo, frenando no hay falta")
+	Input.action_release(&"car_brake")
 	light.set_light(TrafficLight.Light.GREEN)
+	await wait_unpaused()
 
 	var zone := level.get_node("Rules/SchoolZone") as SpeedZone
 	var max_in_zone := 0.0
