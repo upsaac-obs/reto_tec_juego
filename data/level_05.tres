@@ -7,7 +7,7 @@
 script = ExtResource("1_data")
 id = 5
 name_key = "NIVEL_05_NOMBRE"
-decalogo_key = "DECALOGO_05"
+decalogo_key = "DECALOGO_02"
 phrase_key = "FRASE_05"
 destination_key = "DESTINO_TERMINAL"
 illustration = ExtResource("2_card")

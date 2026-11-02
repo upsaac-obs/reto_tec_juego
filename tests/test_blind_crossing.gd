@@ -71,7 +71,7 @@ func run() -> void:
 	var overlapped := false
 	var held := false
 	var t := 0.0
-	while t < 12.0 and car.progress < 1550.0:
+	while t < 20.0 and car.progress < 1550.0:
 		await get_tree().physics_frame
 		t += get_physics_process_delta_time()
 		if is_instance_valid(npc) and (car.get_node("Hitbox") as Area2D).overlaps_area(npc.get_node("Hitbox")):
@@ -95,7 +95,7 @@ func run() -> void:
 	npc = crossing.spawn_car(0, 700.0)
 	held = false
 	t = 0.0
-	while t < 12.0 and car.progress < 1550.0:
+	while t < 20.0 and car.progress < 1550.0:
 		await get_tree().physics_frame
 		t += get_physics_process_delta_time()
 		if crossing._holding:

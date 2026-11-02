@@ -51,7 +51,7 @@ Así cada plataforma implementa 5 señales y 1 método, y las dos quedan iguales
 
 | Señal | Cuándo | Datos |
 | --- | --- | --- |
-| `engine_ready` | Godot terminó de arrancar y está esperando en la escena vacía. **Una sola vez por sesión** | — |
+| `engine_ready` | Godot terminó de arrancar y está esperando en la escena vacía. **Una sola vez por sesión** | `{"v":1,"build":"c5f0f9b"}`. `build` es el commit con el que se exportó `main.pck` (lo escribe `tools/export_all.sh`; `"dev"` en el editor). El nativo lo anota en su log para saber qué juego trae |
 | `level_started(json)` | El nivel ya cargó y se ve. También al tocar Repetir en la tarjeta de hábito | `{"v":1,"level_id":3}` |
 | `level_finished(json)` | El niño llegó a la meta. **El nativo guarda el resultado pero NO cierra la vista**: Godot muestra la tarjeta de hábito | `{"v":1,"level_id":3,"stars":2,"points":40,"infractions":{"stop":1},"duration_s":95}` |
 | `level_exited(json)` | El nivel se cerró: Continuar en la tarjeta (`completed: true`), Salir en la pausa, `abort_level` o un `start_level` encima. **Solo aquí el nativo esconde la vista de Godot** | `{"v":1,"level_id":3,"completed":true}`. `completed` dice si antes se mandó `level_finished` |

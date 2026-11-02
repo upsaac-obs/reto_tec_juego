@@ -26,6 +26,9 @@ const Palette := preload("res://autoload/game_state.gd")
 enum Maneuver { NONE, LANE_CHANGE, TURN }
 
 @export var max_speed: float = 240.0
+## Tono del motor: va de engine_pitch_min (parado) a min + range (velocidad máxima).
+@export var engine_pitch_min: float = 0.8
+@export var engine_pitch_range: float = 0.6
 @export var acceleration: float = 120.0
 @export var braking: float = 300.0
 @export var coast_deceleration: float = 60.0
@@ -107,6 +110,7 @@ func _ready() -> void:
 	loop = false
 	rotates = true
 	auto_drive = GameState.mode == GameState.MODE_PEQUE
+	AudioManager.start_loop(&"engine")
 	_turns = _route.get_turn_points()
 	_lane_count = _route.lane_count_at(progress)
 	lane_index = clampi(start_lane, 0, _lane_count - 1)
@@ -127,6 +131,8 @@ func set_headlights(on: bool) -> void:
 	if on == headlights_on:
 		return
 	headlights_on = on
+	if on:
+		AudioManager.play_sfx(&"lights_on")
 	if _headlight_cone != null:
 		_headlight_cone.visible = on
 	queue_redraw()
@@ -182,6 +188,7 @@ func _physics_process(delta: float) -> void:
 		speed = 0.0
 		is_braking = false
 		_set_turn_signal(0)
+		AudioManager.stop_all_loops()
 		route_finished.emit()
 	_blink_time += delta
 	queue_redraw()
@@ -260,6 +267,8 @@ func current_limit() -> float:
 func _update_speed(delta: float) -> void:
 	is_accelerating = Input.is_action_pressed(&"car_accelerate") and seatbelt_on and not auto_drive
 	is_braking = Input.is_action_pressed(&"car_brake")
+	if Input.is_action_just_pressed(&"car_brake"):
+		AudioManager.play_sfx(&"brake")
 	if is_braking:
 		speed -= braking * delta
 	elif auto_drive and seatbelt_on:
@@ -274,6 +283,7 @@ func _update_speed(delta: float) -> void:
 	else:
 		speed -= coast_deceleration * delta
 	speed = clampf(speed, 0.0, max_speed)
+	AudioManager.set_loop_pitch(&"engine", engine_pitch_min + engine_pitch_range * speed / max_speed)
 	if not _stop_requests.is_empty():
 		speed = 0.0
 		is_braking = true
@@ -367,6 +377,10 @@ func _set_turn_signal(direction: int) -> void:
 	if direction == turn_signal:
 		return
 	turn_signal = direction
+	if direction != 0:
+		AudioManager.start_loop(&"turn_signal")
+	else:
+		AudioManager.stop_loop(&"turn_signal")
 	_blink_time = 0.0
 	turn_signal_changed.emit(direction)
 
