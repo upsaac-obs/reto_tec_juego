@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/dark_zone.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+resource_local_to_scene = true
+size = Vector2(1000, 128)
+
+[node name="DarkZone" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Zone" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Zone"]
+position = Vector2(500, 0)
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Riders" type="Node2D" parent="."]
+
+[node name="Shade" type="Node2D" parent="."]
+
+[node name="FadeIn" type="Polygon2D" parent="Shade"]
+
+[node name="Body" type="Polygon2D" parent="Shade"]
+
+[node name="FadeOut" type="Polygon2D" parent="Shade"]
+
+[node name="Rain" type="CPUParticles2D" parent="."]
+visible = false
+emitting = false
+amount = 120
+lifetime = 0.5
+emission_shape = 3
+emission_rect_extents = Vector2(660, 400)
+direction = Vector2(0.25, 1)
+spread = 5.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 600.0
+initial_velocity_max = 700.0
+scale_amount_min = 2.0
+scale_amount_max = 3.0
