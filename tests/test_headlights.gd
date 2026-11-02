@@ -36,5 +36,31 @@ func run() -> void:
 	(lit.get_node("Hud") as Hud).show_lights_button = true
 	get_tree().root.add_child(lit)
 	await frames(1)
+	var lit_hud := lit.get_node("Hud") as Hud
+	var lit_car := (lit.get_node("RuleManager") as RuleManager).car
 	check(lit.get_node("Hud/%Lights").visible, "con show_lights_button el HUD muestra el botón de luces")
+	check(lit_hud.is_lights_pulsing(), "el botón de luces parpadea hasta que las prenden la primera vez")
+	lit_car.set_headlights(true)
+	await frames(2)
+	check(not lit_hud.is_lights_pulsing(), "con las luces prendidas deja de parpadear")
+	lit_car.set_headlights(false)
+	await frames(2)
+	check(not lit_hud.is_lights_pulsing(), "apagadas fuera de una zona oscura ya no parpadea")
+	# Zona que pide luces: cualquier nodo del grupo needs_headlights con is_car_inside().
+	var zone := Node.new()
+	var zone_script := GDScript.new()
+	zone_script.source_code = "extends Node\nvar inside := true\nfunc is_car_inside() -> bool:\n\treturn inside\n"
+	zone_script.reload()
+	zone.set_script(zone_script)
+	zone.add_to_group(&"needs_headlights")
+	lit.add_child(zone)
+	await frames(2)
+	check(lit_hud.is_lights_pulsing(), "dentro de una zona que pide luces, apagadas, parpadea otra vez")
+	lit_car.set_headlights(true)
+	await frames(2)
+	check(not lit_hud.is_lights_pulsing(), "al prenderlas en la zona deja de parpadear")
+	lit_car.set_headlights(false)
+	zone.set(&"inside", false)
+	await frames(2)
+	check(not lit_hud.is_lights_pulsing() and lit.get_node("Hud/%Lights").modulate.a == 1.0, "al salir de la zona deja de parpadear")
 	await close_scene(lit)
