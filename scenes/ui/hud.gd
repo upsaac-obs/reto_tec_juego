@@ -24,6 +24,9 @@ const Palette := preload("res://autoload/game_state.gd")
 @export var seatbelt_done_tint: Color = Color(0.55, 0.55, 0.6, 1.0)
 ## Botón de luces (nivel 7). Un nivel lo muestra poniendo esta propiedad en true
 ## en su nodo Hud (escena heredada). Prende y apaga las luces del auto (car_lights).
+## Parpadea (como el cinturón) hasta que se prenden la primera vez y otra vez
+## mientras las luces están apagadas y alguna pieza del grupo "needs_headlights"
+## dice que el auto está dentro (is_car_inside() -> bool o wants_lights() -> bool).
 @export var show_lights_button: bool = false
 ## Color del botón de luces mientras están encendidas.
 @export var lights_on_tint: Color = Palette.COLOR_GOLD
@@ -42,6 +45,8 @@ const Palette := preload("res://autoload/game_state.gd")
 
 var _pulse: Tween
 var _gear_hold: Tween
+var _lights_pulse: Tween
+var _lights_used: bool = false
 
 
 func _ready() -> void:
@@ -67,7 +72,39 @@ func _ready() -> void:
 	# Modo peque: el auto avanza solo; el niño solo tiene freno y flechas.
 	%Gas.visible = GameState.mode != GameState.MODE_PEQUE
 	_refresh_score()
-	_start_seatbelt_pulse()
+	_pulse = _start_pulse(_seatbelt)
+	set_process(show_lights_button and car != null)
+
+
+func _process(_delta: float) -> void:
+	var wanted := _lights_should_pulse()
+	if wanted == (_lights_pulse != null):
+		return
+	if wanted:
+		_lights_pulse = _start_pulse(_lights)
+	else:
+		_lights_pulse.kill()
+		_lights_pulse = null
+		_lights.modulate.a = 1.0
+
+
+## true si el botón de luces tiene que llamar la atención.
+func _lights_should_pulse() -> bool:
+	if car.headlights_on:
+		return false
+	if not _lights_used:
+		return true
+	for node in get_tree().get_nodes_in_group(&"needs_headlights"):
+		if node.has_method(&"is_car_inside") and node.call(&"is_car_inside"):
+			return true
+		if node.has_method(&"wants_lights") and node.call(&"wants_lights"):
+			return true
+	return false
+
+
+## true mientras el botón de luces parpadea (lo usan las pruebas).
+func is_lights_pulsing() -> bool:
+	return _lights_pulse != null
 
 
 func _refresh_score() -> void:
@@ -79,13 +116,17 @@ func _refresh_score() -> void:
 
 
 func _on_headlights_changed(on: bool) -> void:
+	if on:
+		_lights_used = true
 	_lights.modulate = lights_on_tint if on else Color.WHITE
 
 
-func _start_seatbelt_pulse() -> void:
-	_pulse = create_tween().set_loops()
-	_pulse.tween_property(_seatbelt, ^"modulate:a", 0.45, seatbelt_pulse_time)
-	_pulse.tween_property(_seatbelt, ^"modulate:a", 1.0, seatbelt_pulse_time)
+## Parpadeo para pedir que toquen un botón (cinturón, luces).
+func _start_pulse(node: CanvasItem) -> Tween:
+	var pulse := create_tween().set_loops()
+	pulse.tween_property(node, ^"modulate:a", 0.45, seatbelt_pulse_time)
+	pulse.tween_property(node, ^"modulate:a", 1.0, seatbelt_pulse_time)
+	return pulse
 
 
 func _on_seatbelt_fastened() -> void:
