@@ -59,6 +59,9 @@ func _ready() -> void:
 	for button: TouchScreenButton in [%Seatbelt, %ArrowLeft, %ArrowRight, %Brake, %Gas, %Lights]:
 		button.pressed.connect(func() -> void: button.self_modulate = pressed_tint)
 		button.released.connect(func() -> void: button.self_modulate = Color.WHITE)
+	# Sigue recibiendo toques durante la pausa de una falta: si no, se pierde el
+	# soltar y el engrane abriría Tutores solo.
+	_gear.process_mode = Node.PROCESS_MODE_ALWAYS
 	_gear.button_down.connect(_on_gear_down)
 	_gear.button_up.connect(_cancel_gear_hold)
 	if rule_manager != null:

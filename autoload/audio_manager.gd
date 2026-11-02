@@ -61,8 +61,9 @@ func _ready() -> void:
 	_music = AudioStreamPlayer.new()
 	_music.bus = BUS_MUSIC
 	add_child(_music)
-	# Al cambiar de escena (salir del nivel) no se queda el motor sonando.
-	get_tree().scene_changed.connect(stop_all_loops)
+	# Los bucles y la música del nivel los apaga BridgeClient con
+	# stop_level_audio() ANTES de cambiar de escena. No se usa scene_changed:
+	# llega después del _ready del nivel nuevo y apagaría el motor recién prendido.
 
 
 # --- Efectos cortos -----------------------------------------------------------
@@ -157,6 +158,21 @@ func stop_music() -> void:
 	_music_tween = create_tween()
 	_music_tween.tween_property(_music, "volume_db", -40.0, music_fade)
 	_music_tween.tween_callback(_music.stop)
+
+
+## Al salir de un nivel (o antes de cargar otro): silencio inmediato, sin
+## desvanecer, para que la música del siguiente nivel arranque limpia.
+func stop_level_audio() -> void:
+	stop_all_loops()
+	_kill_music_tween()
+	_music.stop()
+	_music.stream_paused = false
+
+
+## La app pasó a segundo plano o abrió Tutores: la música se detiene donde va
+## (los efectos y bucles ya se pausan con el árbol).
+func set_paused(paused: bool) -> void:
+	_music.stream_paused = paused
 
 
 func is_music_playing() -> bool:
