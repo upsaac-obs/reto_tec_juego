@@ -133,3 +133,14 @@ LLEGADA_A_TIEMPO,"¡Llegamos a tiempo! Y llegamos bien, que es lo más important
 TABLERO_TITULO,Salidas
 TABLERO_AUTOBUS,Nuestro autobús
 TABLERO_A_TIEMPO,A tiempo
+DESTINO_CASA_PRIMOS,"Casa de los primos"
+CELULAR_INTRO,"Si suena el celular, lo dejamos sonar. Manejando, los ojos van en la calle."
+BIEN_CELULAR,"¡Eso es! Dejaste sonar el celular y tus ojos siguieron en la calle."
+CELULAR_TAPA,"¡Uy! Con el celular enfrente ya no vemos la calle."
+FALTA_CELULAR,"Mientras el auto avanza, el celular espera. Lo contestamos estacionados."
+CELULAR_ESPERA_CAJON,"Todavía vamos manejando. Lo contestamos cuando nos estacionemos."
+CELULAR_ESTACIONAR,"¡Otra vez el celular! Adelante hay un cajón: ahí nos estacionamos para contestar."
+CELULAR_CONTESTA,"¡Ya estamos estacionados! Ahora sí puedes contestar el celular."
+BIEN_CONTESTAR,"¡Excelente! Primero te estacionaste y luego contestaste."
+CELULAR_PRIMOS,"Son tus primos: ya nos esperan. ¡Vamos con calma!"
+CELULAR_LUEGO,"Les llamamos al llegar. ¡Seguimos con calma!"
