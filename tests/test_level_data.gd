@@ -20,7 +20,14 @@ func run() -> void:
 	for id in [0, 1, 2]:
 		var data := LevelData.load_by_id(id)
 		check(data.is_built() and not data.destination_key.is_empty(), "nivel %d está construido y tiene destino" % id)
+	# Todo nivel construido (menos el 99, la escena de prueba del puente) hereda
+	# de level.tscn, para que traiga auto, HUD, RuleManager y tarjeta conectados.
+	for id in LevelData.IDS:
+		var data := LevelData.load_by_id(id)
+		if id == 99 or data == null or not data.is_built():
+			continue
 		var packed := load(data.scene_path) as PackedScene
-		check(packed.get_state().get_base_scene_state() != null, "nivel %d hereda de level.tscn" % id)
+		var base := packed.get_state().get_base_scene_state() if packed != null else null
+		check(base != null and base.get_path() == "res://scenes/level/level.tscn", "nivel %d hereda de level.tscn" % id)
 	check(LevelData.load_by_id(50) == null, "el nivel 50 no existe")
 	check(LevelData.find_by_scene("res://levels/level_01.tscn").id == 1, "find_by_scene encuentra el nivel 1")

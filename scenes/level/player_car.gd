@@ -8,6 +8,9 @@ extends PathFollow2D
 ##   calle (o de la SpeedZone en la que esté) y el niño solo usa freno y flechas.
 ## - Las flechas cambian de carril o, cerca de un TurnPoint, giran.
 ##   Siempre pone la direccional signal_time segundos antes de moverse.
+## - Luces (nivel 7): set_headlights() o la acción car_lights (botón del HUD,
+##   tecla L) las prenden y apagan; se dibuja un cono de luz frente al auto.
+##   restart_at() no las apaga.
 ## Las piezas de reglas lo detectan por su Hitbox (grupo "player"); el auto es su owner.
 
 signal seatbelt_fastened
@@ -15,6 +18,8 @@ signal blocked_without_seatbelt
 signal turn_signal_changed(direction: int)
 signal lane_changed(lane_index: int)
 signal route_finished
+## Se prendieron (true) o apagaron (false) las luces. Solo cuando cambian.
+signal headlights_changed(on: bool)
 
 const Palette := preload("res://autoload/game_state.gd")
 
@@ -29,6 +34,8 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 ## Segundos con la direccional encendida antes de cambiar de carril o girar.
 @export var signal_time: float = 1.0
 @export var lane_change_time: float = 0.4
+## Modo peque: velocidad (px/s) a partir de la cual el auto cuenta como avanzando.
+@export var moving_speed: float = 10.0
 ## Carril inicial. El 0 es el de la izquierda.
 @export var start_lane: int = 0
 @export_group("Dibujo")
@@ -43,6 +50,17 @@ enum Maneuver { NONE, LANE_CHANGE, TURN }
 @export var brake_lights: Array[Rect2] = [Rect2(-32.0, -12.0, 3.0, 5.0), Rect2(-32.0, 8.0, 3.0, 5.0)]
 @export var left_signal_lights: Array[Rect2] = [Rect2(22.0, -16.0, 6.0, 3.0), Rect2(-29.0, -16.0, 6.0, 3.0)]
 @export var right_signal_lights: Array[Rect2] = [Rect2(22.0, 14.0, 6.0, 3.0), Rect2(-29.0, 14.0, 6.0, 3.0)]
+@export_subgroup("Luces")
+## Dónde empieza el cono de luz (frente del auto, coordenadas del auto).
+@export var headlight_origin: Vector2 = Vector2(32.0, 0.0)
+## Qué tan lejos llega la luz.
+@export var headlight_length: float = 240.0
+## Ancho del cono al empezar y al final.
+@export var headlight_near_width: float = 36.0
+@export var headlight_far_width: float = 150.0
+@export var headlight_color: Color = Color(Palette.COLOR_WARM_LIGHT, 0.45)
+## Rectángulos de los faros que se encienden con las luces.
+@export var headlight_lamps: Array[Rect2] = [Rect2(28.0, -14.0, 4.0, 6.0), Rect2(28.0, 8.0, 4.0, 6.0)]
 
 var speed: float = 0.0
 var seatbelt_on: bool = false
@@ -50,9 +68,15 @@ var lane_index: int = 0
 ## -1 izquierda, 0 apagada, 1 derecha.
 var turn_signal: int = 0
 var is_braking: bool = false
-## true mientras el niño pisa el pedal verde (lo revisa el semáforo en amarillo).
-## En modo peque siempre es false: acelerar solo no es decisión del niño.
+## Luces encendidas. Cámbialas con set_headlights() para que se emita la señal.
+var headlights_on: bool = false
+## true mientras el niño pisa el pedal verde (física del modo grande).
+## En modo peque siempre es false: el auto acelera solo.
 var is_accelerating: bool = false
+## true si el niño "deja avanzar" el auto: en modo grande, pisa el pedal verde;
+## en modo peque, no frena y el auto se mueve. Es lo que revisan las reglas de
+## decisión (amarillo): las dos edades tienen las mismas reglas.
+var is_pushing_forward: bool = false
 ## Modo peque: el auto avanza solo. Se toma de GameState.mode al empezar.
 var auto_drive: bool = false
 
@@ -71,6 +95,8 @@ var _finished: bool = false
 var _stop_requests: Array[Object] = []
 ## Límites de las SpeedZone en las que está el auto (pieza → px/s).
 var _speed_limits: Dictionary = {}
+## Cono de luz: nodo aparte, abajo del auto y con mezcla aditiva (sin shaders).
+var _headlight_cone: Node2D
 
 
 func _ready() -> void:
@@ -85,6 +111,26 @@ func _ready() -> void:
 	_lane_count = _route.lane_count_at(progress)
 	lane_index = clampi(start_lane, 0, _lane_count - 1)
 	v_offset = _route.lane_offset(lane_index, _lane_count)
+	_headlight_cone = Node2D.new()
+	_headlight_cone.name = "HeadlightCone"
+	_headlight_cone.show_behind_parent = true
+	_headlight_cone.visible = headlights_on
+	var glow := CanvasItemMaterial.new()
+	glow.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_headlight_cone.material = glow
+	_headlight_cone.draw.connect(_draw_headlight_cone)
+	add_child(_headlight_cone)
+
+
+## Prende o apaga las luces. Emite headlights_changed solo si cambian.
+func set_headlights(on: bool) -> void:
+	if on == headlights_on:
+		return
+	headlights_on = on
+	if _headlight_cone != null:
+		_headlight_cone.visible = on
+	queue_redraw()
+	headlights_changed.emit(on)
 
 
 ## Frena en seco. Lo usan las piezas de reglas para no tocar a nadie.
@@ -147,6 +193,8 @@ func _read_input() -> void:
 		seatbelt_fastened.emit()
 	if Input.is_action_just_pressed(&"car_accelerate") and not seatbelt_on:
 		blocked_without_seatbelt.emit()
+	if Input.is_action_just_pressed(&"car_lights"):
+		set_headlights(not headlights_on)
 	if Input.is_action_just_pressed(&"car_left"):
 		_on_arrow(-1)
 	if Input.is_action_just_pressed(&"car_right"):
@@ -229,7 +277,10 @@ func _update_speed(delta: float) -> void:
 	if not _stop_requests.is_empty():
 		speed = 0.0
 		is_braking = true
+		is_pushing_forward = false
 		return
+	is_pushing_forward = is_accelerating if not auto_drive \
+		else seatbelt_on and not is_braking and speed > moving_speed
 
 	# Frena solo antes de un giro que todavía no se ha indicado con la flecha.
 	var stop := _stop_progress()
@@ -324,9 +375,23 @@ func _set_turn_signal(direction: int) -> void:
 func _draw() -> void:
 	if texture != null:
 		draw_texture(texture, texture_offset)
+	if headlights_on:
+		for rect in headlight_lamps:
+			draw_rect(rect, Palette.COLOR_WARM_LIGHT)
 	if is_braking:
 		for rect in brake_lights:
 			draw_rect(rect, Palette.COLOR_SKY_HORIZON)
 	if turn_signal != 0 and fmod(_blink_time, blink_interval * 2.0) < blink_interval:
 		for rect in (right_signal_lights if turn_signal > 0 else left_signal_lights):
 			draw_rect(rect, Palette.COLOR_GOLD)
+
+
+func _draw_headlight_cone() -> void:
+	var near := headlight_near_width / 2.0
+	var far := headlight_far_width / 2.0
+	var tip := headlight_origin + Vector2(headlight_length, 0.0)
+	var points := PackedVector2Array([
+		headlight_origin + Vector2(0.0, -near), tip + Vector2(0.0, -far),
+		tip + Vector2(0.0, far), headlight_origin + Vector2(0.0, near)])
+	var fade := Color(headlight_color, 0.0)
+	_headlight_cone.draw_polygon(points, PackedColorArray([headlight_color, fade, fade, headlight_color]))
