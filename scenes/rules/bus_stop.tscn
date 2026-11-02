@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/rules/bus_stop.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/vehicles/bus.png" id="2_bus"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/bus_stop.png" id="3_shelter"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/bus_stop_sign.png" id="4_sign"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+resource_local_to_scene = true
+size = Vector2(16, 256)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bus"]
+size = Vector2(132, 60)
+
+[node name="BusStop" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Trigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trigger"]
+position = Vector2(-1400, 0)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="Shelter" type="Sprite2D" parent="."]
+position = Vector2(0, 168)
+texture = ExtResource("3_shelter")
+
+[node name="Sign" type="Sprite2D" parent="."]
+position = Vector2(-90, 150)
+texture = ExtResource("4_sign")
+
+[node name="Bus" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(0, 96)
+
+[node name="Sprite" type="Sprite2D" parent="Bus"]
+texture = ExtResource("2_bus")
+
+[node name="Hitbox" type="Area2D" parent="Bus" groups=["traffic"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bus/Hitbox"]
+shape = SubResource("RectangleShape2D_bus")
