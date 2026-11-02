@@ -21,15 +21,15 @@ data class Progress(
     val infractions: Map<Int, Map<String, Int>> = emptyMap(),
 ) {
     fun starsFor(levelId: Int) = stars[levelId] ?: 0
-    val totalStars get() = stars.values.sum()
+    val totalStars get() = Levels.menu.sumOf { starsFor(it.id) }
 
-    /** El 0 siempre está abierto; cada nivel se abre con 1 estrella en el anterior. */
-    fun isUnlocked(levelId: Int) = levelId == 0 || starsFor(levelId - 1) >= 1
+    /** El tutorial y el primer nivel de la lista siempre están abiertos; los demás con 1 estrella en el anterior. */
+    fun isUnlocked(levelId: Int) = levelId <= Levels.menu.first().id || starsFor(levelId - 1) >= 1
 }
 
 /**
  * Todo lo que guarda la app (plan del sprint, sección 5.2). Nada personal.
- * Claves: mode, muted, kiosk, level_<id>_stars, level_<id>_points, level_<id>_infractions.
+ * Claves: mode, muted, kiosk, tutorial_done, level_<id>_stars, level_<id>_points, level_<id>_infractions.
  */
 class SettingsStore(private val context: Context) {
 
@@ -37,6 +37,8 @@ class SettingsStore(private val context: Context) {
     val mode: Flow<String?> = context.dataStore.data.map { it[MODE] }
     val muted: Flow<Boolean> = context.dataStore.data.map { it[MUTED] ?: false }
     val kiosk: Flow<Boolean> = context.dataStore.data.map { it[KIOSK] ?: false }
+    /** Se terminó el tutorial (nivel 0). Hasta entonces Jugar abre el tutorial. */
+    val tutorialDone: Flow<Boolean> = context.dataStore.data.map { it[TUTORIAL_DONE] ?: false }
 
     val progress: Flow<Progress> = context.dataStore.data.map { prefs ->
         val ids = Levels.all.map { it.id }
@@ -66,10 +68,11 @@ class SettingsStore(private val context: Context) {
             prefs[starsKey(levelId)] = maxOf(stars, prefs[starsKey(levelId)] ?: 0)
             prefs[pointsKey(levelId)] = maxOf(points, prefs[pointsKey(levelId)] ?: 0)
             prefs[infractionsKey(levelId)] = JSONObject(infractions).toString()
+            if (levelId == Levels.TUTORIAL_ID) prefs[TUTORIAL_DONE] = true
         }
     }
 
-    /** Borra estrellas, puntos y faltas. El modo, el sonido y el kiosco se quedan. */
+    /** Borra estrellas, puntos, faltas y el tutorial terminado. El modo, el sonido y el kiosco se quedan. */
     suspend fun resetProgress() {
         context.dataStore.edit { prefs ->
             for (level in Levels.all) {
@@ -77,6 +80,7 @@ class SettingsStore(private val context: Context) {
                 prefs.remove(pointsKey(level.id))
                 prefs.remove(infractionsKey(level.id))
             }
+            prefs.remove(TUTORIAL_DONE)
         }
     }
 
@@ -94,6 +98,7 @@ class SettingsStore(private val context: Context) {
         private val MODE = stringPreferencesKey("mode")
         private val MUTED = booleanPreferencesKey("muted")
         private val KIOSK = booleanPreferencesKey("kiosk")
+        private val TUTORIAL_DONE = booleanPreferencesKey("tutorial_done")
         private fun starsKey(id: Int): Preferences.Key<Int> = intPreferencesKey("level_${id}_stars")
         private fun pointsKey(id: Int): Preferences.Key<Int> = intPreferencesKey("level_${id}_points")
         private fun infractionsKey(id: Int): Preferences.Key<String> = stringPreferencesKey("level_${id}_infractions")

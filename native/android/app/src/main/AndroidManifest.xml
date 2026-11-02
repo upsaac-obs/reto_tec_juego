@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Sin INTERNET ni ningún otro permiso (REQ-5). Revisa el manifest final con README.md. -->
+
     <!-- Godot usa el renderer Compatibility (OpenGL ES 3). -->
     <uses-feature android:glEsVersion="0x00030000" android:required="true" />
 
     <application
-        android:label="RutaKids spike"
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:label="@string/TITULO_JUEGO"
+        android:icon="@mipmap/ic_launcher"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <!-- configChanges: Godot no debe recrearse al rotar o cambiar el teclado. -->
         <activity

@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -12,10 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.fundacionado.rutakids.bridge.BridgeViewModel
+import org.fundacionado.rutakids.bridge.MenuCommand
 import org.fundacionado.rutakids.data.Levels
 import org.fundacionado.rutakids.data.Progress
 
@@ -39,7 +43,7 @@ fun RutaKidsApp(vm: BridgeViewModel) {
     val activity = LocalContext.current as? Activity
     val godot by vm.state.collectAsState()
     val muted by vm.settings.muted.collectAsState(initial = false)
-    val kiosk by vm.settings.kiosk.collectAsState(initial = false)
+    val kiosk by vm.kiosk.collectAsState()
     val mode by vm.settings.mode.collectAsState(initial = null)
     val progress by vm.settings.progress.collectAsState(initial = Progress())
 
@@ -49,10 +53,47 @@ fun RutaKidsApp(vm: BridgeViewModel) {
             mode = mode,
             kiosk = kiosk,
             onModeChange = vm::setMode,
-            onKioskChange = vm::setKiosk,
+            onKioskChange = { on ->
+                vm.setKiosk(on)
+                activity?.setScreenPinned(on)
+            },
             onResetProgress = vm::resetProgress,
             onBack = onBack,
         )
+    }
+
+    val route = nav.currentBackStackEntryAsState().value?.destination?.route
+    val inLevel = godot.requestedLevel != null
+
+    // Primera vez sin modo guardado: Selección de edad. Después: el tutorial (si toca) o la lista.
+    val openLevelsOrTutorial: suspend () -> Unit = {
+        if (vm.playTutorialIfNeeded()) nav.popBackStack(Routes.HOME, inclusive = false)
+        else nav.navigate(Routes.LEVEL_SELECT) { popUpTo(Routes.HOME) }
+    }
+
+    LaunchedEffect(nav) {
+        vm.commands.collect { command ->
+            when (command) {
+                MenuCommand.GoHome -> nav.popBackStack(Routes.HOME, inclusive = false)
+                MenuCommand.OpenLevels -> if (nav.currentDestination?.route != Routes.LEVEL_SELECT) {
+                    nav.navigate(Routes.LEVEL_SELECT) { popUpTo(Routes.HOME); launchSingleTop = true }
+                }
+            }
+        }
+    }
+
+    // Kiosco: 60 s sin tocar en los menús → Inicio. Se pausa con un nivel abierto (ahí cuenta Godot)
+    // y en Tutores (igual que iOS); al volver a contar se empieza de cero.
+    LaunchedEffect(kiosk, inLevel, route) {
+        if (!kiosk || inLevel || route == Routes.TUTORS || route == Routes.HOME) return@LaunchedEffect
+        vm.onUserTouch()
+        while (true) {
+            delay(KIOSK_IDLE_CHECK_MS)
+            if (vm.idleMs() >= KIOSK_IDLE_TIMEOUT_MS) {
+                vm.goHome()
+                break
+            }
+        }
     }
 
     RutaKidsTheme {
@@ -66,9 +107,8 @@ fun RutaKidsApp(vm: BridgeViewModel) {
                         kiosk = kiosk,
                         onPlay = {
                             scope.launch {
-                                // Primera vez (sin modo guardado): Selección de edad. Después: directo a los niveles.
-                                val saved = vm.settings.mode.first()
-                                nav.navigate(if (saved == null) Routes.AGE_SELECT else Routes.LEVEL_SELECT)
+                                if (vm.settings.mode.first() == null) nav.navigate(Routes.AGE_SELECT)
+                                else openLevelsOrTutorial()
                             }
                         },
                         onExit = { activity?.finish() },
@@ -80,8 +120,8 @@ fun RutaKidsApp(vm: BridgeViewModel) {
                     AgeSelectScreen(onModeSelected = { selected ->
                         scope.launch {
                             vm.settings.saveMode(selected)
-                            // Quita Edad de la pila: al regresar desde Niveles se vuelve a Inicio.
-                            nav.navigate(Routes.LEVEL_SELECT) { popUpTo(Routes.AGE_SELECT) { inclusive = true } }
+                            // Edad sale de la pila: al regresar desde Niveles (o del tutorial) se vuelve a Inicio.
+                            openLevelsOrTutorial()
                         }
                     })
                 }
@@ -107,7 +147,9 @@ fun RutaKidsApp(vm: BridgeViewModel) {
 
         // Van después del NavHost para que ganen sobre su "atrás".
         // Con un nivel abierto, "atrás" cierra el nivel; con Tutores encima, cierra Tutores.
-        BackHandler(enabled = godot.requestedLevel != null && !godot.tutorsOverLevel) { vm.abortLevel() }
+        // En kiosco no hay Salir: "atrás" no cierra el nivel ni la app desde Inicio.
+        BackHandler(enabled = inLevel && !godot.tutorsOverLevel && !kiosk) { vm.abortLevel() }
+        BackHandler(enabled = kiosk && !godot.tutorsOverLevel && (inLevel || route == Routes.HOME)) { }
         BackHandler(enabled = godot.tutorsOverLevel) { vm.closeTutorsOverLevel() }
     }
 }

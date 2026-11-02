@@ -1,6 +1,8 @@
 package org.fundacionado.rutakids
 
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.viewModels
@@ -53,6 +55,23 @@ class MainActivity : FragmentActivity(), GodotHost {
                 }
             }
         }
+    }
+
+    // Cuenta cada toque real en toda la app (menús y nivel) para el kiosco de 60 s.
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) vm.onUserTouch()
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // Con el nivel abierto la vista de Godot tiene el foco y se come la tecla Atrás
+    // (Android 13–15 y anteriores). Se manda siempre al OnBackPressedDispatcher para que
+    // decidan los BackHandler de RutaKidsApp (cerrar el nivel, o nada en kiosco).
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_BACK) {
+            if (event.action == KeyEvent.ACTION_UP && !event.isCanceled) onBackPressedDispatcher.onBackPressed()
+            return true
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     // --- GodotHost ---
