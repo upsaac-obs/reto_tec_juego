@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LevelTheme" format=3]
+
+[ext_resource type="Script" path="res://resources/level_theme.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+seed_value = 108
+lot_weights = Array[float]([0.4, 0.4, 0.4, 0.4, 1.0, 1.0, 1.0])
+tree_kinds = Array[int]([1, 0])
+destination_nodes = PackedStringArray("Library")
+destination_icon = 2

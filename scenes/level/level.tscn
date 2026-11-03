@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="6_card"]
 [ext_resource type="TileSet" path="res://assets/tiles/street_tiles.tres" id="7_tiles"]
+[ext_resource type="Script" path="res://scenes/level/city_dresser.gd" id="8_dresser"]
+[ext_resource type="Script" path="res://scenes/debug/perf_overlay.gd" id="9_perf"]
 
 [sub_resource type="Curve2D" id="Curve2D_base"]
 resource_local_to_scene = true
@@ -44,3 +46,9 @@ rule_manager = NodePath("../RuleManager")
 
 [node name="HabitCard" parent="." node_paths=PackedStringArray("rule_manager") instance=ExtResource("6_card")]
 rule_manager = NodePath("../RuleManager")
+
+[node name="CityDresser" type="Node" parent="."]
+script = ExtResource("8_dresser")
+
+[node name="PerfOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("9_perf")

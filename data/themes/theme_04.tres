@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="LevelTheme" format=3]
+
+[ext_resource type="Script" path="res://resources/level_theme.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+seed_value = 104
+lot_weights = Array[float]([1.0, 1.0, 0.5, 1.0, 0.6, 0.6, 0.6])
+destination_nodes = PackedStringArray("Hospital")
+destination_icon = 6
