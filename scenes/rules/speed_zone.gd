@@ -62,6 +62,8 @@ func _ready() -> void:
 	_refresh()
 	if Engine.is_editor_hint():
 		return
+	# El velocímetro se muestra solo si el nivel tiene alguna zona de velocidad.
+	add_to_group(&"speed_zone")
 	_zone.area_entered.connect(_on_zone_entered)
 	_zone.area_exited.connect(_on_zone_exited)
 
