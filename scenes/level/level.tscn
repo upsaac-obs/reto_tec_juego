@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/level/rule_manager.gd" id="4_rules"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/habit_card.tscn" id="6_card"]
+[ext_resource type="PackedScene" path="res://scenes/ui/speedometer.tscn" id="8_speedo"]
 [ext_resource type="TileSet" path="res://assets/tiles/street_tiles.tres" id="7_tiles"]
 [ext_resource type="Script" path="res://scenes/level/city_dresser.gd" id="8_dresser"]
 [ext_resource type="Script" path="res://scenes/debug/perf_overlay.gd" id="9_perf"]
@@ -23,6 +24,22 @@ point_count = 2
 tile_set = ExtResource("7_tiles")
 
 [node name="Rules" type="Node2D" parent="."]
+
+[node name="SpeedometerLayer" type="CanvasLayer" parent="."]
+
+[node name="Speedometer" parent="SpeedometerLayer" node_paths=PackedStringArray("car") instance=ExtResource("8_speedo")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -170.0
+offset_right = 80.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+car = NodePath("../../Route/PlayerCar")
 
 [node name="Route" type="Path2D" parent="."]
 curve = SubResource("Curve2D_base")
