@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LevelTheme" format=3]
+
+[ext_resource type="Script" path="res://resources/level_theme.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+seed_value = 105
+lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.8, 0.8, 0.8])
+destination_nodes = PackedStringArray("Terminal")
+destination_icon = 7
+tint = Color(1.0, 0.93, 0.82, 1)

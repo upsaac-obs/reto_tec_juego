@@ -70,6 +70,7 @@ res://
    - **Cajón reutilizable (nivel 6):** `ParkingSpot.release()` suelta al auto estacionado (emite `released`, no lo vuelve a atrapar en esa pasada); `release_after_park = true` lo hace solo tras `release_delay`. `parked_message_key` cambia o quita (vacía) el mensaje al estacionarse; `show_finish_line = false` quita los cuadros de meta. `DoorExit.spot` es su cajón; con `finish_level_on_open = false` abrir bien suelta el auto en vez de terminar el nivel (emite `door_opened`).
    - **Engrane:** mantenerlo `tutor_hold_time` (3 s) llama `BridgeClient.request_tutor()`; el HUD emite `tutor_requested`.
    - **Avenida (nivel 8):** `LevelBuilder.new(nombre, tiles, carril, semilla, casas_hasta, 4, ciclovía)` pinta 4 carriles (ver el inicio de `tools/level_builder.gd`).
+   - **Decorado de la ciudad:** `CityDresser` (en `level.tscn`) viste el nivel al cargarlo con `data/themes/theme_XX.tres` (`LevelTheme`, mismo número que el nivel): cambia las casas provisionales del tilemap por manzanas de `casas.png` y `edificios.png`, pone azoteas o pasto detrás, árboles en la banqueta, el ícono del destino sobre el sprite de `Decor` que diga el tema y el tinte de la hora del día. Lo que pongas en `Decor` (destinos, túnel) queda reservado y no se tapa. Nada del decorado tiene colisiones ni grupos, no pisa los carriles y deja libres `calm_radius` px alrededor de cada pieza de `Rules` (`tests/test_decor.gd`). Para apagarlo en un nivel: `enabled = false` en su tema. Capturas para revisar el arte: `godot --path . res://tools/capturas.tscn -- --out=<carpeta>` (con ventana). Plan completo: `docs/plan_visual.md`.
    - **Prueba del conductor cuidadoso:** `tests/test_levels.gd` recorre solo los niveles con `scene_path`. Una pieza nueva que obligue a esperar expone `careful_stop_x() -> float` y `must_wait() -> bool`; una que pida carril, `careful_lane() -> int` y `careful_range() -> Vector2` (x inicial y final).
 
 API del RuleManager:
@@ -97,7 +98,7 @@ Estrellas: 0 faltas = 3, 1 o 2 faltas = 2, 3 o más = 1. La falta grave cuenta c
 
 Oficiales: rojo ADO `#DD2835` (bordes y barra), morado oscuro `#3F1B4E` (fondo de botones), amarillo dorado `#FFC700` (detalles y Jugar), blanco `#FFFFFF` (texto), cielo `#4A235A` → `#9C4B79` → `#E86F56` (gradiente de arriba a abajo), asfalto `#534A5E`.
 
-Extra (propuesta): contorno `#1E0F26`, llantas y sombras `#2A2230`, banqueta `#B8A6CC`, nubes y luces `#F8C99B`, verde `#3FA34D`, verde oscuro `#2B6B3F`, vidrios `#7FC8E8`, piel `#F2C29B` `#C68B59` `#8A5A3B`.
+Extra (propuesta): contorno `#1E0F26`, llantas y sombras `#2A2230`, banqueta de cantera `#C9BDB4` con juntas `#968A85` (el lila `#B8A6CC` queda como acento), nubes y luces `#F8C99B`, verde `#3FA34D`, verde oscuro `#2B6B3F`, vidrios `#7FC8E8`, piel `#F2C29B` `#C68B59` `#8A5A3B`. Ciudad (plan visual): pasto suave `#5E9A5A`, ladrillo `#B5523B`, talavera `#2E4DA0`, ocre `#E3A548`, rosa mexicano `#E0457B`, verde hoja `#7CC56B`. Nada decorativo más saturado que un peatón.
 
 Define estos colores una sola vez en un tema de Godot (`assets/ui/theme.tres`) y en constantes de `game_state.gd`. No escribas colores sueltos en las escenas.
 

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LevelTheme" format=3]
+
+[ext_resource type="Script" path="res://resources/level_theme.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+seed_value = 107
+no_lots = true
+backfill = 2
+sidewalk_tree_every = 0
+tree_kinds = Array[int]([0, 2, 2])
+destination_nodes = PackedStringArray("Casa")
+destination_icon = 4

@@ -2,9 +2,14 @@
 
 [ext_resource type="Script" path="res://scenes/actors/cyclist.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/vehicles/cyclist_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://scenes/fx/drop_shadow.gd" id="3_shadow"]
 
 [node name="Cyclist" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="Shadow" type="Node2D" parent="."]
+script = ExtResource("3_shadow")
+size = Vector2(40, 18)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_frames")
