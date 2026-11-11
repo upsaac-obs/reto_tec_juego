@@ -113,15 +113,19 @@ def anim_frames(sheets: list, frame: tuple, scale_extra: float = 1.0, anchor: st
     all_cells = []
     for im, cols, rows, count in sheets:
         all_cells.append(cells(im, cols, rows)[:count])
+    # Caja horizontal por hoja (cada hoja tiene su propio tamaño de celda).
+    spans = []
+    for group in all_cells:
+        bs = [bbox(c) for c in group if bbox(c)]
+        spans.append((min(b[0] for b in bs), max(b[2] for b in bs)))
     boxes = [bbox(c) for group in all_cells for c in group if bbox(c)]
-    left = min(b[0] for b in boxes)
-    right = max(b[2] for b in boxes)
     top = min(b[1] for b in boxes)
     bottom = max(b[3] for b in boxes)
     tallest = max(b[3] - b[1] for b in boxes) if anchor == "bottom" else bottom - top
-    scale = min(frame[1] / tallest, frame[0] / (right - left)) * scale_extra
+    widest = max(r - l for l, r in spans)
+    scale = min(frame[1] / tallest, frame[0] / widest) * scale_extra
     result = []
-    for group in all_cells:
+    for group, (left, right) in zip(all_cells, spans):
         frames = []
         for c in group:
             box = bbox(c)
@@ -230,8 +234,79 @@ def copilot() -> None:
     out.save(SPRITES / "copilot/copilot.png")
 
 
+# ------------------------------------------------------------------ lote 03: peatones
+
+def write_sprite_frames(tres: Path, png_res: str, frame: tuple, anims: list) -> None:
+    """Reescribe un SpriteFrames: anims = [(nombre, [índices en la tira], loop, fps)]."""
+    used = sorted({i for _, idx, _, _ in anims for i in idx})
+    lines = ['[gd_resource type="SpriteFrames" format=3]', "",
+             f'[ext_resource type="Texture2D" path="{png_res}" id="1_sheet"]', ""]
+    for i in used:
+        lines += [f'[sub_resource type="AtlasTexture" id="AtlasTexture_{i}"]', 'atlas = ExtResource("1_sheet")',
+                  f"region = Rect2({i * frame[0]}, 0, {frame[0]}, {frame[1]})", ""]
+    blocks = []
+    for name, idx, loop, fps in anims:
+        frames = ", ".join('{\n"duration": 1.0,\n"texture": SubResource("AtlasTexture_%d")\n}' % i for i in idx)
+        blocks.append('{\n"frames": [%s],\n"loop": %s,\n"name": &"%s",\n"speed": %s\n}'
+                      % (frames, "true" if loop else "false", name, float(fps)))
+    lines += ["[resource]", "animations = [" + ", ".join(blocks) + "]", ""]
+    tres.write_text("\n".join(lines))
+
+
+# Por personaje: hojas de Codex (archivo, columnas, filas, cuadros) y animaciones
+# sobre la tira resultante (walk, después reacciones; la última celda de reacciones
+# es idle salvo en la silla). Velocidades y loops como en los .tres de antes.
+PEDESTRIANS = {
+    "girl": {
+        "frame": (64, 80),
+        "sheets": [("nina_camina", 4, 2, 8), ("nina_reacciones", 3, 2, 5)],
+        "anims": [("walk", list(range(0, 8)), True, 8), ("scared", [8, 9, 10, 11], False, 8), ("idle", [12], True, 1)],
+    },
+    "adult": {
+        "frame": (64, 88),
+        "sheets": [("adulto_camina", 4, 2, 8), ("adulto_reacciones", 3, 2, 6)],
+        "anims": [("walk", list(range(0, 8)), True, 8), ("scared", [8, 9, 10, 11, 12], False, 8), ("idle", [13], True, 1)],
+    },
+    "elder": {
+        "frame": (64, 78),
+        "sheets": [("abuelita_camina", 3, 2, 6), ("abuelita_reacciones", 3, 2, 6)],
+        # La reacción de 10 cuadros se arma de ida y vuelta con los 5 de Codex.
+        "anims": [("idle", [11], True, 1), ("scared", [6, 7, 8, 9, 8, 9, 8, 9, 10, 10], False, 10),
+                  ("walk", list(range(0, 6)), True, 6)],
+    },
+    "wheelchair": {
+        "frame": (72, 78),
+        "sheets": [("silla_ruedas", 4, 4, 13)],
+        "anims": [("walk", [0, 1, 2, 3], True, 4), ("scared", [4, 5, 6, 7], False, 6), ("idle", [12], True, 1),
+                  ("happy", [8, 9, 10, 11], True, 4)],
+    },
+}
+
+
+def find(stem: str):
+    for name in (f"{stem}.png", f"{stem}_REVISAR.png"):
+        if (SRC / name).exists():
+            return SRC / name
+    return None
+
+
+def pedestrians() -> None:
+    folder = SPRITES / "pedestrians"
+    for key, spec in PEDESTRIANS.items():
+        paths = [find(stem) for stem, *_ in spec["sheets"]]
+        if None in paths:
+            print(f"  (faltan hojas de {key}: se deja como está)")
+            continue
+        sheets = [(load_rgba(p), cols, rows, count) for p, (_, cols, rows, count) in zip(paths, spec["sheets"])]
+        groups = anim_frames(sheets, spec["frame"], PEDESTRIAN_SCALE)
+        frames = [f for group in groups for f in group]
+        strip(frames, spec["frame"]).save(folder / f"{key}.png")
+        write_sprite_frames(folder / f"{key}_frames.tres", f"res://assets/sprites/pedestrians/{key}.png",
+                            spec["frame"], spec["anims"])
+
+
 if __name__ == "__main__":
-    for step in (player_car, houses, child, hud, phone, copilot):
+    for step in (player_car, houses, child, hud, phone, copilot, pedestrians):
         print(step.__name__)
         step()
     print("arte v2 integrado")
