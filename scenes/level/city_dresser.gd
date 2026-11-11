@@ -53,7 +53,7 @@ const ROOF_BLOCK := Vector2i(3, 2)
 ## Probabilidad de que una losa lisa de la banqueta sea una variante (registro, grieta).
 @export_range(0.0, 1.0) var sidewalk_variant_chance: float = 0.08
 ## Probabilidad de que un tile de azotea tenga algo encima.
-@export_range(0.0, 1.0) var roof_item_chance: float = 0.15
+@export_range(0.0, 1.0) var roof_item_chance: float = 0.25
 ## Probabilidad de un árbol suelto en el pasto o el cerro del fondo.
 @export_range(0.0, 1.0) var backfill_tree_chance: float = 0.06
 
@@ -224,10 +224,13 @@ func _paint_ground() -> void:
 
 
 func _roof_tile(x: int, depth: int) -> Vector2i:
-	if _rng.randf() < roof_item_chance:
-		return ROOF_ITEMS[_rng.randi() % ROOF_ITEMS.size()]
 	var block := Vector2i(floori(x / float(ROOF_BLOCK.x)), floori(depth / float(ROOF_BLOCK.y)))
-	return ROOF_PLAIN[absi(hash([theme.seed_value, block])) % ROOF_PLAIN.size()]
+	var plain := ROOF_PLAIN[absi(hash([theme.seed_value, block])) % ROOF_PLAIN.size()]
+	# Los objetos (tinaco, tendedero…) están dibujados sobre el tono de ROOF_PLAIN[0]:
+	# solo van en manzanas de ese tono para que no se vea el cuadro del tile.
+	if plain == ROOF_PLAIN[0] and _rng.randf() < roof_item_chance:
+		return ROOF_ITEMS[_rng.randi() % ROOF_ITEMS.size()]
+	return plain
 
 
 ## Manzana continua a un lado de la calle (side -1 arriba, 1 abajo): lotes pegados a
