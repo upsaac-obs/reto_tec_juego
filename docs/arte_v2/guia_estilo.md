@@ -1,5 +1,8 @@
 # Guía de estilo: arte v2 de los niveles
 
+> **Reemplazada** por `docs/arte_v2/codex/estilo.md` (biblia v2, con la revisión de
+> dirección de arte del 11-11). Este archivo queda como registro del piloto.
+
 Reemplaza el pixel art **solo dentro de los niveles** de Godot. Los menús nativos
 (iOS y Android) no cambian.
 
