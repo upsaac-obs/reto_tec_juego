@@ -305,8 +305,86 @@ def pedestrians() -> None:
                             spec["frame"], spec["anims"])
 
 
+# ------------------------------------------------------------------ lote 04: vehículos
+
+def same_box(cs: list, size: tuple, fill: float = 0.98, anchor: str = "center") -> list:
+    """Varias celdas con la misma caja y la misma escala (sin saltos entre cuadros)."""
+    boxes = [bbox(c) for c in cs if bbox(c)]
+    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+    w, h = box[2] - box[0], box[3] - box[1]
+    scale = min(size[0] * fill / w, size[1] * fill / h)
+    out = []
+    for c in cs:
+        small = shrink(c.crop(box), (max(1, round(w * scale)), max(1, round(h * scale))))
+        frame = Image.new("RGBA", size, (0, 0, 0, 0))
+        y = (size[1] - small.height) // 2 if anchor == "center" else size[1] - small.height
+        frame.alpha_composite(small, ((size[0] - small.width) // 2, y))
+        out.append(frame)
+    return out
+
+
+def vehicles() -> None:
+    folder = SPRITES / "vehicles"
+    path = find("autos_trafico")
+    if path:
+        # npc_car.gd: tira de 8 autos de 70 × 38 en el orden de CAR_COLORS.
+        cars = [fit(c, (70, 38), fill=0.98) for c in cells(load_rgba(path), 4, 2)]
+        strip(cars, (70, 38)).save(folder / "npc_cars.png")
+    path = find("vehiculos_grandes")
+    if path:
+        bus, ambulance = cells(load_rgba(path), 1, 2)
+        fit(bus, (139, 80)).save(folder / "bus.png")
+        fit(ambulance, (94, 50)).save(folder / "ambulance.png")
+    path = find("moto")
+    if path:
+        fit(load_rgba(path), (60, 27)).save(folder / "motorcycle.png")
+    path = find("ciclista")
+    if path:
+        frames = same_box(cells(load_rgba(path), 3, 2), (60, 29))
+        strip(frames, (60, 29)).save(folder / "cyclist.png")
+        write_sprite_frames(folder / "cyclist_frames.tres", "res://assets/sprites/vehicles/cyclist.png", (60, 29),
+                            [("ride", list(range(6)), True, 8), ("idle", [0], True, 1)])
+
+
+# ------------------------------------------------------------------ lote 05: señales
+
+# speed_zone.gd escribe el número del límite en LIMIT_CENTER (35.5, 52) del cuadro 1.
+LIMIT_CENTER = (35.5, 52.0)
+
+
+def white_center(im: Image.Image) -> tuple:
+    a = np.asarray(im).astype(np.int32)
+    mask = (a[..., 0] > 235) & (a[..., 1] > 235) & (a[..., 2] > 235) & (a[..., 3] > 200)
+    ys, xs = np.nonzero(mask)
+    return float(xs.mean()), float(ys.mean())
+
+
+def signals() -> None:
+    path = find("senales")
+    if not path:
+        print("  (falta senales.png: se deja como está)")
+        return
+    cs = cells(load_rgba(path), 4, 2)
+    signs = same_box(cs[0:4], (72, 112), fill=0.92, anchor="bottom")
+    # Mueve los 4 letreros igual para que el círculo vacío caiga donde el juego escribe.
+    cx, cy = white_center(signs[1])
+    dx, dy = round(LIMIT_CENTER[0] - cx), round(LIMIT_CENTER[1] - cy)
+    print(f"  letreros movidos ({dx}, {dy}) para el número del límite")
+    signs = [_shift(s, dx, dy) for s in signs]
+    strip(signs, (72, 112)).save(SPRITES / "signals/signs.png")
+    lights = same_box(cs[4:7], (43, 104), anchor="bottom")
+    strip(lights, (43, 104)).save(SPRITES / "signals/pedestrian_light.png")
+    fit(cs[7], (28, 52), anchor="bottom").save(SPRITES / "city/bus_stop_sign.png")
+
+
+def _shift(im: Image.Image, dx: int, dy: int) -> Image.Image:
+    out = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    out.paste(im, (dx, dy), im)
+    return out
+
+
 if __name__ == "__main__":
-    for step in (player_car, houses, child, hud, phone, copilot, pedestrians):
+    for step in (player_car, houses, child, hud, phone, copilot, pedestrians, vehicles, signals):
         print(step.__name__)
         step()
     print("arte v2 integrado")
