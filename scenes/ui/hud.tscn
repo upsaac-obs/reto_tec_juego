@@ -141,14 +141,14 @@ action = "car_seatbelt"
 [node name="ArrowLeft" type="TouchScreenButton" parent="Root/LeftControls"]
 unique_name_in_owner = true
 position = Vector2(40, -168)
-scale = Vector2(3, 3)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("7_left")
 action = "car_left"
 
 [node name="ArrowRight" type="TouchScreenButton" parent="Root/LeftControls"]
 unique_name_in_owner = true
 position = Vector2(212, -168)
-scale = Vector2(3, 3)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("8_right")
 action = "car_right"
 
@@ -166,14 +166,14 @@ mouse_filter = 2
 [node name="Brake" type="TouchScreenButton" parent="Root/RightControls"]
 unique_name_in_owner = true
 position = Vector2(-372, -148)
-scale = Vector2(4, 4)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("9_brake")
 action = "car_brake"
 
 [node name="Gas" type="TouchScreenButton" parent="Root/RightControls"]
 unique_name_in_owner = true
 position = Vector2(-148, -228)
-scale = Vector2(4, 4)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("10_gas")
 action = "car_accelerate"
 
@@ -181,6 +181,6 @@ action = "car_accelerate"
 unique_name_in_owner = true
 visible = false
 position = Vector2(-160, -392)
-scale = Vector2(3, 3)
+scale = Vector2(1, 1)
 texture_normal = ExtResource("11_lights")
 action = "car_lights"
