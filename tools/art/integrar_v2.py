@@ -1,74 +1,86 @@
 #!/usr/bin/env python3
-"""Integra el arte v2 (docs/arte_v2) desde arte_v2/entrada/ a assets/.
+"""Integra el arte v2 (docs/arte_v2/codex) desde arte_v2/entrada/ a assets/.
 
-Cada imagen generada (fondo transparente o magenta #FF00FF) se recorta a su
-contenido y se reduce al tamaño exacto que usa el juego, con el mismo nombre de
-archivo que el asset actual. Así el código y las pruebas no cambian.
+Cada entrega de Codex (fondo transparente o magenta #FF00FF) se parte en su
+cuadrícula, cada celda se recorta a su contenido y se reduce al tamaño exacto que
+usa el juego, con el mismo nombre de archivo que el asset actual. Solo procesa
+las entregas que existan; lo que falta se queda como está.
+
+Decisiones del 11-11 (LEEME_CODEX.md §7): HUD al tamaño en que se ve (hud.tscn a
+escala 1), peatones al 80 % dentro de su cuadro y decorado desaturado.
 
 Uso: python3 tools/art/integrar_v2.py   (luego godot --headless --import)
 """
 from pathlib import Path
 
-from PIL import Image
+import numpy as np
+from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "arte_v2/entrada"
 SPRITES = ROOT / "assets/sprites"
+ICONS = ROOT / "assets/ui/icons"
 
-# Magenta de fondo: cuánto "magenta" (min(R, B) - G) tiene un pixel.
-# >= KEY_HI es fondo puro y <= KEY_LO es dibujo. Entre los dos es una orilla
-# mezclada: se le baja el alfa y se le quita el magenta (despill).
-KEY_HI = 225
-KEY_LO = 110
+# Magenta de fondo: "magenta" de un pixel = min(R, B) - G. >= KEY_HI es fondo puro,
+# <= KEY_LO es dibujo; en medio es orilla mezclada: se baja el alfa y se quita el
+# magenta (despill), suponiendo C = a*F + (1-a)*M con M = (255, 0, 255).
+KEY_HI = 225.0
+KEY_LO = 110.0
+# Peatones al 80 % de su cuadro (para que quepan en un carril).
+PEDESTRIAN_SCALE = 0.8
+# Decorado: saturación y valor (para no competir con el auto ni los peatones).
+DECOR_SAT = 0.85
+DECOR_VAL = 0.95
 
+
+# ------------------------------------------------------------------ utilidades
 
 def load_rgba(path: Path) -> Image.Image:
     im = Image.open(path).convert("RGBA")
-    px = im.load()
-    has_alpha = im.getextrema()[3][0] < 250
-    if has_alpha:
+    a = np.asarray(im).astype(np.float32)
+    if a[..., 3].min() < 250:  # ya trae alfa
         return im
-    for y in range(im.height):
-        for x in range(im.width):
-            r, g, b, _ = px[x, y]
-            m = min(r, b) - g
-            if m >= KEY_HI:
-                px[x, y] = (0, 0, 0, 0)
-            elif m > KEY_LO:
-                a = (KEY_HI - m) / (KEY_HI - KEY_LO)
-                # C = a*F + (1-a)*M  ->  F = (C - (1-a)*M) / a, con M = (255, 0, 255)
-                fr = (r - (1 - a) * 255) / a
-                fb = (b - (1 - a) * 255) / a
-                fg = g / a
-                px[x, y] = (
-                    max(0, min(255, round(fr))),
-                    max(0, min(255, round(fg))),
-                    max(0, min(255, round(fb))),
-                    round(a * 255),
-                )
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    m = np.minimum(r, b) - g
+    alpha = np.clip((KEY_HI - m) / (KEY_HI - KEY_LO), 0.0, 1.0)
+    safe = np.maximum(alpha, 1e-3)
+    out = np.empty_like(a)
+    out[..., 0] = (r - (1 - alpha) * 255) / safe
+    out[..., 1] = g / safe
+    out[..., 2] = (b - (1 - alpha) * 255) / safe
+    out[..., 3] = alpha * 255
+    out = np.clip(out, 0, 255).astype(np.uint8)
+    im = Image.fromarray(out, "RGBA")
+    # Erosiona 1 px el alfa: quita el último halo rosa de la orilla.
+    a_ch = im.getchannel("A").filter(ImageFilter.MinFilter(3))
+    im.putalpha(a_ch)
     return im
 
 
-def bbox(im: Image.Image, threshold: int = 128) -> tuple:
-    return im.getchannel("A").point(lambda a: 255 if a > threshold else 0).getbbox()
+def bbox(im: Image.Image, threshold: int = 128):
+    return im.getchannel("A").point(lambda v: 255 if v > threshold else 0).getbbox()
 
 
 def cells(im: Image.Image, cols: int, rows: int) -> list:
-    w, h = im.width // cols, im.height // rows
-    return [im.crop((c * w, r * h, (c + 1) * w, (r + 1) * h)) for r in range(rows) for c in range(cols)]
+    """Celdas proporcionales (1024 / 3 no es entero)."""
+    xs = [round(i * im.width / cols) for i in range(cols + 1)]
+    ys = [round(j * im.height / rows) for j in range(rows + 1)]
+    return [im.crop((xs[c], ys[r], xs[c + 1], ys[r + 1])) for r in range(rows) for c in range(cols)]
 
 
 def shrink(im: Image.Image, size: tuple) -> Image.Image:
-    # Reducir en pasos de la mitad conserva mejor los contornos que un solo salto.
     while im.width >= size[0] * 2 and im.height >= size[1] * 2:
         im = im.resize((im.width // 2, im.height // 2), Image.LANCZOS)
     return im.resize(size, Image.LANCZOS)
 
 
-def fit(im: Image.Image, size: tuple, anchor: str = "center") -> Image.Image:
-    """Recorta al contenido, escala para caber en size sin deformar y lo coloca."""
-    im = im.crop(bbox(im))
-    scale = min(size[0] / im.width, size[1] / im.height)
+def fit(im: Image.Image, size: tuple, anchor: str = "center", fill: float = 1.0) -> Image.Image:
+    """Recorta al contenido, escala para caber en size*fill sin deformar y coloca."""
+    box = bbox(im)
+    if box is None:
+        return Image.new("RGBA", size, (0, 0, 0, 0))
+    im = im.crop(box)
+    scale = min(size[0] * fill / im.width, size[1] * fill / im.height)
     small = shrink(im, (max(1, round(im.width * scale)), max(1, round(im.height * scale))))
     out = Image.new("RGBA", size, (0, 0, 0, 0))
     x = (size[0] - small.width) // 2
@@ -77,47 +89,149 @@ def fit(im: Image.Image, size: tuple, anchor: str = "center") -> Image.Image:
     return out
 
 
-def player_car() -> None:
-    out = fit(load_rgba(SRC / "auto_jugador.png"), (69, 41))
-    out.save(SPRITES / "player_car.png")
-
-
-def houses() -> None:
-    sheet = load_rgba(SRC / "casas_a.png")
-    tiles = [fit(c, (128, 128), anchor="bottom") for c in cells(sheet, 3, 2)]
-    out = Image.new("RGBA", (128 * len(tiles), 128), (0, 0, 0, 0))
-    for i, t in enumerate(tiles):
-        out.alpha_composite(t, (i * 128, 0))
-    out.save(SPRITES / "city/casas.png")
-
-
-def walk_sheet(name: str, frame: tuple, scale: float, union: tuple) -> Image.Image:
-    """Tira de 8 cuadros: misma caja horizontal para todos (sin temblor) y pies abajo."""
-    frames = cells(load_rgba(SRC / name), 4, 2)
-    out = Image.new("RGBA", (frame[0] * len(frames), frame[1]), (0, 0, 0, 0))
-    for i, f in enumerate(frames):
-        box = bbox(f)
-        crop = f.crop((union[0], box[1], union[2], box[3]))
-        small = shrink(crop, (max(1, round(crop.width * scale)), max(1, round(crop.height * scale))))
-        x = i * frame[0] + (frame[0] - small.width) // 2
-        out.alpha_composite(small, (x, frame[1] - small.height))
+def desaturate(im: Image.Image, sat: float = DECOR_SAT, val: float = DECOR_VAL) -> Image.Image:
+    alpha = im.getchannel("A")
+    h, s, v = im.convert("RGB").convert("HSV").split()
+    s = s.point(lambda p: round(p * sat))
+    v = v.point(lambda p: round(p * val))
+    out = Image.merge("HSV", (h, s, v)).convert("RGB").convert("RGBA")
+    out.putalpha(alpha)
     return out
 
 
+def strip(frames: list, size: tuple) -> Image.Image:
+    out = Image.new("RGBA", (size[0] * len(frames), size[1]), (0, 0, 0, 0))
+    for i, f in enumerate(frames):
+        out.alpha_composite(f, (i * size[0], 0))
+    return out
+
+
+def anim_frames(sheets: list, frame: tuple, scale_extra: float = 1.0, anchor: str = "bottom") -> list:
+    """Cuadros de animación con la MISMA escala y la misma caja horizontal para todos
+    (sin temblor). sheets = [(imagen, columnas, filas, cuántos cuadros)]. Devuelve
+    una lista por hoja. Con anchor 'bottom' cada cuadro se apoya en su línea base."""
+    all_cells = []
+    for im, cols, rows, count in sheets:
+        all_cells.append(cells(im, cols, rows)[:count])
+    boxes = [bbox(c) for group in all_cells for c in group if bbox(c)]
+    left = min(b[0] for b in boxes)
+    right = max(b[2] for b in boxes)
+    top = min(b[1] for b in boxes)
+    bottom = max(b[3] for b in boxes)
+    tallest = max(b[3] - b[1] for b in boxes) if anchor == "bottom" else bottom - top
+    scale = min(frame[1] / tallest, frame[0] / (right - left)) * scale_extra
+    result = []
+    for group in all_cells:
+        frames = []
+        for c in group:
+            box = bbox(c)
+            out = Image.new("RGBA", frame, (0, 0, 0, 0))
+            if box is None:
+                frames.append(out)
+                continue
+            y0, y1 = (box[1], box[3]) if anchor == "bottom" else (top, bottom)
+            crop = c.crop((left, y0, right, y1))
+            small = shrink(crop, (max(1, round(crop.width * scale)), max(1, round(crop.height * scale))))
+            x = (frame[0] - small.width) // 2
+            y = frame[1] - small.height if anchor == "bottom" else (frame[1] - small.height) // 2
+            out.alpha_composite(small, (x, y))
+            frames.append(out)
+        result.append(frames)
+    return result
+
+
+def have(*names: str) -> bool:
+    missing = [n for n in names if not (SRC / n).exists()]
+    if missing:
+        print(f"  (falta {', '.join(missing)}: se deja como está)")
+    return not missing
+
+
+# ------------------------------------------------------------------ piloto
+
+def player_car() -> None:
+    if have("auto_jugador.png"):
+        fit(load_rgba(SRC / "auto_jugador.png"), (69, 41)).save(SPRITES / "player_car.png")
+
+
+def houses() -> None:
+    if not have("casas_a.png"):
+        return
+    tiles = [desaturate(fit(c, (128, 128), anchor="bottom")) for c in cells(load_rgba(SRC / "casas_a.png"), 3, 2)]
+    strip(tiles, (128, 128)).save(SPRITES / "city/casas.png")
+
+
 def child() -> None:
-    frame = (46, 85)
-    boxes = []
-    for name in ("nino_camina.png", "nino_sorprendido.png"):
-        boxes += [bbox(c) for c in cells(load_rgba(SRC / name), 4, 2)]
-    union = (min(b[0] for b in boxes), 0, max(b[2] for b in boxes), 0)
-    tallest = max(b[3] - b[1] for b in boxes)
-    scale = min(frame[1] / tallest, frame[0] / (union[2] - union[0]))
-    walk_sheet("nino_camina.png", frame, scale, union).save(SPRITES / "pedestrians/child_walk.png")
-    walk_sheet("nino_sorprendido.png", frame, scale, union).save(SPRITES / "pedestrians/child_scared.png")
+    if not have("nino_camina.png", "nino_sorprendido.png"):
+        return
+    walk, scared = anim_frames(
+        [(load_rgba(SRC / "nino_camina.png"), 4, 2, 8), (load_rgba(SRC / "nino_sorprendido.png"), 4, 2, 8)],
+        (46, 85), PEDESTRIAN_SCALE)
+    strip(walk, (46, 85)).save(SPRITES / "pedestrians/child_walk.png")
+    strip(scared, (46, 85)).save(SPRITES / "pedestrians/child_scared.png")
+
+
+# ------------------------------------------------------------------ lote 01: HUD
+
+# Celda de hud_iconos.png -> (archivo, tamaño en pantalla). hud.tscn los usa a escala 1.
+HUD_ICONS = {
+    0: ("arrow_right.png", (138, 120)),
+    1: ("brake_pedal.png", (180, 100)),
+    2: ("gas_pedal.png", (100, 180)),
+    3: ("lights.png", (120, 120)),
+    4: ("seatbelt.png", (160, 160)),
+    5: ("coin.png", (44, 45)),
+    6: ("star.png", (49, 47)),
+    7: ("star_empty.png", (49, 47)),
+    8: ("gear.png", (92, 100)),
+}
+
+
+def hud() -> None:
+    name = next((n for n in ("hud_iconos.png", "hud_iconos_REVISAR.png") if (SRC / n).exists()), None)
+    if name is None:
+        print("  (falta hud_iconos.png: se deja como está)")
+        return
+    cs = cells(load_rgba(SRC / name), 4, 3)
+    for index, (file, size) in HUD_ICONS.items():
+        icon = fit(cs[index], size, fill=0.96)
+        icon.save(ICONS / file)
+        if file == "arrow_right.png":
+            icon.transpose(Image.FLIP_LEFT_RIGHT).save(ICONS / "arrow_left.png")
+
+
+def phone() -> None:
+    if have("celular.png"):
+        fit(load_rgba(SRC / "celular.png"), (168, 320)).save(ROOT / "assets/ui/phone.png")
+
+
+# ------------------------------------------------------------------ lote 02: copiloto
+
+# copilot.png conserva su acomodo (copilot_frames.tres no cambia): 4 filas de 6
+# cuadros de 105 × 106 -> talk, happy, surprised, thinking. Cada cuadro es una de
+# las 8 poses (1 habla cerrada, 2 habla abierta, 3 feliz, 4 pulgar, 5 sorprendido,
+# 6 pensando, 7 parpadeo, 8 saluda).
+COPILOT_ROWS = [
+    [1, 2, 1, 2, 2, 1],  # talk (8 fps, en ciclo)
+    [3, 3, 4, 4, 4, 3],  # happy
+    [5, 5, 5, 5, 5, 5],  # surprised (una vez)
+    [6, 6, 6, 6, 7, 6],  # thinking (5 fps): parpadea una vez
+]
+
+
+def copilot() -> None:
+    if not have("copiloto_poses.png"):
+        return
+    (poses,) = anim_frames([(load_rgba(SRC / "copiloto_poses.png"), 4, 2, 8)], (105, 106), 0.96, anchor="fixed")
+    out = Image.new("RGBA", (105 * 6, 106 * 4), (0, 0, 0, 0))
+    for row, seq in enumerate(COPILOT_ROWS):
+        for col, pose in enumerate(seq):
+            out.alpha_composite(poses[pose - 1], (col * 105, row * 106))
+    out.save(SPRITES / "copilot/copilot.png")
 
 
 if __name__ == "__main__":
-    player_car()
-    houses()
-    child()
-    print("arte v2 integrado: player_car, casas, child_walk, child_scared")
+    for step in (player_car, houses, child, hud, phone, copilot):
+        print(step.__name__)
+        step()
+    print("arte v2 integrado")
