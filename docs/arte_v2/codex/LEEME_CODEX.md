@@ -123,3 +123,12 @@ Dudas para Claude: …
 ```
 
 Estados: `OK` cumple todo; `REVISAR` tiene un problema conocido; `FALTA` no se pudo generar.
+
+---
+
+## 7. Decisiones del 11-11 (para Claude al integrar; Codex no necesita hacer nada)
+
+1. **HUD en alta resolución:** se guardan los íconos al tamaño en que se ven y se ajusta la escala en `hud.tscn` (Dylan dio permiso para tocar ese archivo protegido).
+2. **Peatones al 80 %**, dentro del mismo cuadro y con los pies abajo al centro, para que quepan en un carril.
+3. **Decorado desaturado** desde el script de integración: saturación ×0.85 y valor ×0.95 en casas, edificios, árboles, mobiliario y destinos.
+4. **Fuente redondeada** (Fredoka o Baloo 2, licencia OFL, empaquetada). Es P1 y hay que revisar los cortes de línea.
