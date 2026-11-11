@@ -12,9 +12,9 @@ enum Icon { NONE, TREE, BOOK, FRUIT, HOUSE, BELL, CROSS, BUS }
 ## Semilla propia del decorado: no mueve el aleatorio de las piezas.
 @export var seed_value: int = 1
 @export_group("Manzanas")
-## Peso de cada lote: 4 casas de casas.png y luego 3 edificios de edificios.png.
+## Peso de cada lote: casas 1-4 de casas.png, 3 edificios de edificios.png y casas 5-6.
 ## 0 = ese lote no sale en este nivel.
-@export var lot_weights: Array[float] = [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+@export var lot_weights: Array[float] = [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0]
 ## Probabilidad de dejar un hueco de un tile con árbol entre dos lotes.
 @export_range(0.0, 1.0) var gap_chance: float = 0.15
 ## Sin lotes (por ejemplo, el cerro del nivel 7): solo árboles sueltos.
