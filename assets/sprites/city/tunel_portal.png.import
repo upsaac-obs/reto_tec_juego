@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dnr6o2rkbpms7"
-path="res://.godot/imported/tunel_entrada.png-10c2794a7f25a7b557e3b1588606686c.ctex"
+uid="uid://bhoabyungtnav"
+path="res://.godot/imported/tunel_portal.png-94f742155fc9fbeed2550cf20751d328.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/city/tunel_entrada.png"
-dest_files=["res://.godot/imported/tunel_entrada.png-10c2794a7f25a7b557e3b1588606686c.ctex"]
+source_file="res://assets/sprites/city/tunel_portal.png"
+dest_files=["res://.godot/imported/tunel_portal.png-94f742155fc9fbeed2550cf20751d328.ctex"]
 
 [params]
 

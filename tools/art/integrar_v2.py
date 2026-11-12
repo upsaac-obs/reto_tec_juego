@@ -480,14 +480,7 @@ def destinations() -> None:
         path = find(stem)
         if path:
             desaturate(fit(load_rgba(path), size, anchor="bottom"), 0.92, 0.98).save(folder / file)
-    path = find("tunel")
-    if path:
-        # Codex dibujó el portal a la derecha: es la salida; la entrada (el auto llega
-        # por la izquierda) es su espejo. Abajo al centro para que el camino toque la calle.
-        exit_ = desaturate(fit(load_rgba(path), (256, 251), anchor="bottom"))
-        exit_.save(folder / "tunel_salida.png")
-        entrance = desaturate(fit(load_rgba(path), (253, 256), anchor="bottom"))
-        entrance.transpose(Image.FLIP_LEFT_RIGHT).save(folder / "tunel_entrada.png")
+    # El túnel del nivel 7 ya no usa el arte de Codex: tools/art/tunel_v3.py lo dibuja desde arriba.
     for stem, (file, size) in DESTINATIONS_TIGHT.items():
         path = find(stem)
         if path:

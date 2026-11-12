@@ -64,6 +64,11 @@ const ROOF_BLOCK := Vector2i(3, 2)
 @export_range(0.0, 1.0) var sidewalk_variant_chance: float = 0.08
 ## Probabilidad de que un tile de azotea tenga algo encima.
 @export_range(0.0, 1.0) var roof_item_chance: float = 0.25
+## Gente de la banqueta: distancia de los pies a las fachadas y a la guarnición, y alto
+## de una persona (en la banqueta de abajo la cabeza no debe tapar la calle).
+@export var walker_facade_gap: float = 44.0
+@export var walker_curb_gap: float = 28.0
+@export var walker_height: float = 72.0
 ## Probabilidad de un árbol suelto en el pasto o el cerro del fondo.
 @export_range(0.0, 1.0) var backfill_tree_chance: float = 0.06
 
@@ -111,6 +116,7 @@ func _dress() -> void:
 	_place_backfill_trees(trees)
 	_place_sidewalk_trees(_add_layer("Sidewalk"))
 	_place_destination(level)
+	_place_walkers(level)
 	_apply_tint(level)
 
 
@@ -342,6 +348,49 @@ func _make_sprite(texture: Texture2D, region: Rect2, pos: Vector2) -> Sprite2D:
 	sprite.region_rect = region
 	sprite.position = pos
 	return sprite
+
+
+## Piezas de Rules con peatones o calles que cruzan: la gente de la banqueta da la vuelta antes.
+const WALKER_AVOID_SCENES: PackedStringArray = [
+	"crosswalk", "patience_zone", "ball_event", "bus_stop", "blind_crossing", "yellow_crossing",
+	"stop_zone", "traffic_light"]
+
+
+func _place_walkers(level: Node) -> void:
+	if theme.sidewalk_walkers <= 0:
+		return
+	var route := level.get_node_or_null(^"Route") as DrivingRoute
+	var half_road := route.default_lane_count * 32.0 if route != null else 64.0
+	var walkers := SidewalkWalkers.new()
+	walkers.name = "Walkers"
+	# Pies sobre la losa: ni en la guarnición (cabeza sobre la calle) ni pegados a las fachadas.
+	var north := Vector2(street_top * TILE + walker_facade_gap, -half_road - walker_curb_gap)
+	var south := Vector2(half_road + walker_height, (street_bottom + 1) * TILE - walker_facade_gap / 4.0)
+	# Banqueta angosta (avenida de 4 carriles): arriba, por el centro de la losa; abajo,
+	# nadie, porque la cabeza taparía la calle.
+	if north.y <= north.x:
+		var middle := (street_top * TILE - half_road) / 2.0
+		north = Vector2(middle - 4.0, middle + 4.0)
+	for lane in [north, south]:
+		if lane.y > lane.x:
+			walkers.lanes.append(lane)
+	var used := _ground.get_used_rect()
+	walkers.min_x = used.position.x * TILE + TILE
+	walkers.max_x = used.end.x * TILE - TILE
+	var rules := level.get_node_or_null(^"Rules")
+	if rules != null:
+		for piece in rules.get_children():
+			if not piece is Node2D or piece.scene_file_path.get_file().get_basename() not in WALKER_AVOID_SCENES:
+				continue
+			var radius := theme.calm_radius
+			for prop: StringName in [&"cross_width", &"crosswalk_width", &"crossing_width"]:
+				if prop in piece:
+					radius += float(piece.get(prop)) / 2.0
+			walkers.avoid.append(Vector2((piece as Node2D).global_position.x, radius))
+			if piece.has_method(&"careful_stop_x"):
+				walkers.avoid.append(Vector2(piece.call(&"careful_stop_x"), theme.calm_radius))
+	city.add_child(walkers)
+	walkers.setup(theme.sidewalk_walkers, theme.seed_value)
 
 
 ## Ícono del destino flotando sobre su edificio, para que se vea sin leer el HUD.
