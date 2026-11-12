@@ -8,6 +8,6 @@ seed_value = 107
 no_lots = true
 backfill = 2
 sidewalk_tree_every = 0
-tree_kinds = Array[int]([0, 2, 2])
+tree_kinds = Array[int]([0, 2, 2, 4, 5])
 destination_nodes = PackedStringArray("Casa")
 destination_icon = 4
