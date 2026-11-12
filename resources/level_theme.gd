@@ -30,6 +30,9 @@ enum Icon { NONE, TREE, BOOK, FRUIT, HOUSE, BELL, CROSS, BUS }
 @export var tree_kinds: Array[int] = [0, 1, 3, 4, 6, 7, 8]
 ## Distancia libre de decoración alrededor de cada pieza de Rules (x).
 @export var calm_radius: float = 192.0
+## Personas que caminan por las banquetas sin interactuar con el auto (0 = nadie).
+## Dan la vuelta antes de los cruces y de las piezas con peatones.
+@export var sidewalk_walkers: int = 6
 @export_group("Destino")
 ## Nodos de Decor que forman el destino ("*" = todos). Vacío = el de más a la derecha.
 @export var destination_nodes: PackedStringArray = []

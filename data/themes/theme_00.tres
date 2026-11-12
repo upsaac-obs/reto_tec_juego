@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_theme")
+sidewalk_walkers = 3
 seed_value = 100
 lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 gap_chance = 0.3

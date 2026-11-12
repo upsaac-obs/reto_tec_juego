@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_theme")
+sidewalk_walkers = 0
 seed_value = 107
 no_lots = true
 backfill = 2
