@@ -14,7 +14,7 @@ Hoy faltan los niveles **5, 6, 7 y 8**, el audio y el cierre de Android.
 | --- | --- |
 | Nivel 5, reloj | **Tablero de salidas de la terminal que siempre va "A tiempo".** Sin cuenta regresiva que empuje a correr. Al llegar, el copiloto dice "¡Llegamos a tiempo!" |
 | Modo Peque | **Mismas reglas que Grande.** El niño frena y toca los botones (celular, luces); si no lo hace, es falta. En Peque, "acelerar" significa dejar que el auto avance solo sin frenar |
-| Voces | **Todas las claves de `textos.csv`.** Hoy se usa una voz provisional (espeak-ng) y queda el script listo para cambiarla por la voz final |
+| Voces | **Todas las claves de `textos.csv`.** Desde el 12 de noviembre es la voz neuronal **Piper `es_MX-claude-high`** (Apache-2.0), generada sin internet con `tools/gen_voces.py`; la provisional espeak-ng queda como `--engine espeak` |
 | Libertad de diseño | **Dentro del diseño.** Cada nivel tiene su regla principal del documento de diseño, un momento clímax y repaso de reglas anteriores. No se inventan reglas nuevas |
 | Camión (nivel 8) | Solo es falta pasar junto al camión mientras está detenido en su parada |
 | Salir del nivel | Mantener el engrane 3 s abre Tutores (que tiene Salir) |
