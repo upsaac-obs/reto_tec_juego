@@ -498,8 +498,8 @@ def destinations() -> None:
 
 # Recorte 5:3 de 1536 × 1024 (922 de alto): por defecto se quita todo lo de arriba
 # para no cortar al copiloto de la esquina inferior; la 00 y la 06 bajan menos para
-# no cortar el pelo del niño ni el espejo.
-CARD_TOP = {0: 20, 6: 90}
+# no cortar el pelo del niño ni el espejo; la 09 y la 10 ya traen al copiloto más arriba.
+CARD_TOP = {0: 20, 6: 90, 9: 60, 10: 60}
 
 
 def cards() -> None:
