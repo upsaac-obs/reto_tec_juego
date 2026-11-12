@@ -162,6 +162,10 @@ def houses() -> None:
     if not have("casas_a.png"):
         return
     tiles = [desaturate(fit(c, (128, 128), anchor="bottom")) for c in cells(load_rgba(SRC / "casas_a.png"), 3, 2)]
+    # Lote 09: segunda hoja, casas 7-12 (LOTS 12-17 del CityDresser).
+    path = find("casas_b")
+    if path:
+        tiles += [desaturate(fit(c, (128, 128), anchor="bottom")) for c in cells(load_rgba(path), 3, 2)]
     strip(tiles, (128, 128)).save(SPRITES / "city/casas.png")
 
 
@@ -273,6 +277,23 @@ PEDESTRIANS = {
         # La reacción de 10 cuadros se arma de ida y vuelta con los 5 de Codex.
         "anims": [("idle", [11], True, 1), ("scared", [6, 7, 8, 9, 8, 9, 8, 9, 10, 10], False, 10),
                   ("walk", list(range(0, 6)), True, 6)],
+    },
+    # Lote 09: solo caminata. Quietos usan el cuadro 0; "scared" es una pausa corta
+    # en el mismo cuadro (Pedestrian solo espera a que termine para seguir).
+    "dad_stroller": {
+        "frame": (88, 88),
+        "sheets": [("papa_carriola_camina", 4, 2, 8)],
+        "anims": [("walk", list(range(0, 8)), True, 8), ("scared", [0, 0, 0, 0], False, 8), ("idle", [0], True, 1)],
+    },
+    "teen": {
+        "frame": (64, 88),
+        "sheets": [("joven_camina", 4, 2, 8)],
+        "anims": [("walk", list(range(0, 8)), True, 8), ("scared", [0, 0, 0, 0], False, 8), ("idle", [0], True, 1)],
+    },
+    "shopper": {
+        "frame": (64, 86),
+        "sheets": [("senora_mandado_camina", 4, 2, 8)],
+        "anims": [("walk", list(range(0, 8)), True, 8), ("scared", [0, 0, 0, 0], False, 8), ("idle", [0], True, 1)],
     },
     "wheelchair": {
         "frame": (72, 78),
@@ -408,6 +429,44 @@ def city() -> None:
 
 # ------------------------------------------------------------------ lote 07: destinos
 
+def fit_tight(im: Image.Image, max_size: tuple) -> Image.Image:
+    """Como fit, pero el PNG mide justo lo que el dibujo (sin relleno transparente),
+    para que el rect del Sprite2D sea el del edificio."""
+    im = im.crop(bbox(im))
+    scale = min(max_size[0] / im.width, max_size[1] / im.height)
+    return shrink(im, (max(1, round(im.width * scale)), max(1, round(im.height * scale))))
+
+
+def fill_holes(im: Image.Image) -> Image.Image:
+    """Rellena huecos transparentes encerrados (p. ej. recortes del papel picado del
+    mercado que Codex dejó en magenta) con el color medio de su orilla."""
+    a = np.array(im.getchannel("A")) > 128
+    outside = Image.fromarray(np.where(a, 0, 255).astype(np.uint8))
+    from PIL import ImageDraw
+    padded = Image.new("L", (outside.width + 2, outside.height + 2), 255)
+    padded.paste(outside, (1, 1))
+    ImageDraw.floodfill(padded, (0, 0), 128)
+    holes = np.array(padded)[1:-1, 1:-1] == 255
+    if not holes.any():
+        return im
+    rgba = np.array(im).astype(np.float32)
+    ring = np.array(Image.fromarray(holes.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(5))) > 0
+    ring &= a
+    color = np.median(rgba[ring][:, :3], axis=0)
+    rgba[holes, :3] = color
+    rgba[holes, 3] = 255
+    return Image.fromarray(rgba.astype(np.uint8), "RGBA")
+
+
+# Lote 09: destinos sin relleno, tamaño máximo (el PNG queda al tamaño del dibujo).
+DESTINATIONS_TIGHT = {
+    "destino_biblioteca": ("biblioteca.png", (300, 210)),
+    "destino_mercado": ("mercado.png", (290, 190)),
+    "destino_parque": ("parque.png", (300, 230)),
+    "destino_abuela": ("casa_abuela.png", (190, 140)),
+    "destino_primos": ("casa_primos.png", (200, 140)),
+}
+
 DESTINATIONS = {
     "destino_escuela": ("escuela.png", (320, 224)),
     "destino_hospital": ("hospital.png", (300, 217)),
@@ -429,10 +488,42 @@ def destinations() -> None:
         exit_.save(folder / "tunel_salida.png")
         entrance = desaturate(fit(load_rgba(path), (253, 256), anchor="bottom"))
         entrance.transpose(Image.FLIP_LEFT_RIGHT).save(folder / "tunel_entrada.png")
+    for stem, (file, size) in DESTINATIONS_TIGHT.items():
+        path = find(stem)
+        if path:
+            im = desaturate(fit_tight(fill_holes(load_rgba(path)), size), 0.92, 0.98)
+            im.save(folder / file)
+            print(f"  {file}: {im.size}")
+    path = find("papel_picado")
+    if path:
+        # 3 tiras de 256 × 48 en fila (region por tira); los recortes quedan transparentes.
+        flags = [fit(c, (256, 48), fill=0.98) for c in cells(load_rgba(path), 1, 3)]
+        strip(flags, (256, 48)).save(folder / "papel_picado.png")
+
+
+# ------------------------------------------------------------------ lote 08: tarjetas
+
+# Recorte 5:3 de 1536 × 1024 (922 de alto): por defecto se quita todo lo de arriba
+# para no cortar al copiloto de la esquina inferior; la 00 y la 06 bajan menos para
+# no cortar el pelo del niño ni el espejo.
+CARD_TOP = {0: 20, 6: 90}
+
+
+def cards() -> None:
+    folder = ROOT / "assets/ui/habit_cards"
+    for i in range(11):
+        path = find(f"tarjeta_{i:02d}")
+        if path is None:
+            continue
+        im = Image.open(path).convert("RGB")
+        h = round(im.width * 3 / 5)
+        top = CARD_TOP.get(i, im.height - h)
+        im.crop((0, top, im.width, top + h)).resize((720, 432), Image.LANCZOS).convert("RGBA").save(
+            folder / f"card_{i:02d}.png")
 
 
 if __name__ == "__main__":
-    for step in (player_car, houses, child, hud, phone, copilot, pedestrians, vehicles, signals, city, destinations):
+    for step in (player_car, houses, child, hud, phone, copilot, pedestrians, vehicles, signals, city, destinations, cards):
         print(step.__name__)
         step()
     print("arte v2 integrado")
