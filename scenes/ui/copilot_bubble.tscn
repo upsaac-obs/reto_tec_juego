@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/ui/copilot_bubble.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/copilot/copilot_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://scenes/ui/bubble_tail.gd" id="3_tail"]
 
 [node name="CopilotBubble" type="CanvasLayer"]
 layer = 10
@@ -22,22 +23,34 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -440.0
-offset_top = 96.0
-offset_right = 440.0
-offset_bottom = 202.0
+offset_left = -450.0
+offset_top = 90.0
+offset_right = 450.0
+offset_bottom = 208.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 30
 
 [node name="CopilotSlot" type="Control" parent="Root/Box"]
-custom_minimum_size = Vector2(105, 106)
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
+
+[node name="Medallion" type="Panel" parent="Root/Box/CopilotSlot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"MedallionGood"
 
 [node name="Copilot" type="AnimatedSprite2D" parent="Root/Box/CopilotSlot"]
 unique_name_in_owner = true
-position = Vector2(52, 53)
+position = Vector2(59, 58)
 sprite_frames = ExtResource("2_frames")
 animation = &"talk"
 
@@ -55,6 +68,13 @@ theme_type_variation = &"MessageLabel"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="Tail" type="Control" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("3_tail")
 
 [node name="PointsPopup" type="Label" parent="Root"]
 unique_name_in_owner = true
