@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_theme")
 seed_value = 101
-lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.3, 0.0, 0.0])
+lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.3, 0.0, 0.0, 1.0, 1.0, 0.3, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 destination_nodes = PackedStringArray("Sprite2D")
 hide_decor = PackedStringArray("Sprite2D2", "Sprite2D3", "Sprite2D4", "Sprite2D5")
 destination_icon = 5

@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/actors/npc_car.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/sprites/vehicles/npc_car.png" id="2_texture"]
+[ext_resource type="Texture2D" path="res://assets/sprites/vehicles/npc_cars.png" id="2_texture"]
 [ext_resource type="Script" path="res://scenes/fx/drop_shadow.gd" id="3_shadow"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]

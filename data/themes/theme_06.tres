@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_theme")
 seed_value = 106
-lot_weights = Array[float]([0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0])
+lot_weights = Array[float]([0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
 destination_nodes = PackedStringArray("PrimosHouse")
 destination_icon = 4
 tint = Color(1.0, 0.95, 0.86, 1)

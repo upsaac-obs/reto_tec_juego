@@ -1,0 +1,2422 @@
+{
+ "version": 1,
+ "carpeta_entrada": "arte_v2/entrada",
+ "nota": "Codex: usa 'entrega', 'lienzo', 'cuadricula' (columnas, filas) y 'referencias'. Lo demas (destino, tamano_final, cuadro) lo usa Claude al integrar.",
+ "entregas": [
+  {
+   "lote": "01_hud",
+   "ficha": "01-A",
+   "prioridad": "P0",
+   "entrega": "hud_iconos.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    3
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "flecha derecha",
+     "destino": "assets/ui/icons/arrow_right.png",
+     "tamano_final": [
+      138,
+      120
+     ],
+     "tambien": [
+      {
+       "destino": "assets/ui/icons/arrow_left.png",
+       "espejo_h": true
+      }
+     ],
+     "nota_tamano": "hoy 46x40 escalado x3 en hud.tscn"
+    },
+    {
+     "n": 2,
+     "que": "pedal de freno",
+     "destino": "assets/ui/icons/brake_pedal.png",
+     "tamano_final": [
+      180,
+      100
+     ],
+     "nota_tamano": "hoy 45x25 x4"
+    },
+    {
+     "n": 3,
+     "que": "pedal de gas",
+     "destino": "assets/ui/icons/gas_pedal.png",
+     "tamano_final": [
+      100,
+      180
+     ],
+     "nota_tamano": "hoy 25x45 x4"
+    },
+    {
+     "n": 4,
+     "que": "boton de luces",
+     "destino": "assets/ui/icons/lights.png",
+     "tamano_final": [
+      120,
+      120
+     ],
+     "nota_tamano": "hoy 40x40 x3"
+    },
+    {
+     "n": 5,
+     "que": "boton de cinturon",
+     "destino": "assets/ui/icons/seatbelt.png",
+     "tamano_final": [
+      160,
+      160
+     ]
+    },
+    {
+     "n": 6,
+     "que": "moneda",
+     "destino": "assets/ui/icons/coin.png",
+     "tamano_final": [
+      44,
+      45
+     ]
+    },
+    {
+     "n": 7,
+     "que": "estrella llena",
+     "destino": "assets/ui/icons/star.png",
+     "tamano_final": [
+      49,
+      47
+     ]
+    },
+    {
+     "n": 8,
+     "que": "estrella vacia",
+     "destino": "assets/ui/icons/star_empty.png",
+     "tamano_final": [
+      49,
+      47
+     ]
+    },
+    {
+     "n": 9,
+     "que": "engrane",
+     "destino": "assets/ui/icons/gear.png",
+     "tamano_final": [
+      92,
+      100
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "01_hud",
+   "ficha": "01-B",
+   "prioridad": "P0",
+   "entrega": "celular.png",
+   "lienzo": [
+    1024,
+    1536
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "hud_iconos.png",
+    "auto_jugador.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "celular",
+     "destino": "assets/ui/phone.png",
+     "tamano_final": [
+      168,
+      320
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "02_copiloto",
+   "ficha": "02-A",
+   "prioridad": "P0",
+   "entrega": "copiloto_maestra.png",
+   "lienzo": [
+    1024,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "nino_camina.png",
+    "auto_jugador.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "ficha maestra",
+     "uso": "solo referencia"
+    }
+   ]
+  },
+  {
+   "lote": "02_copiloto",
+   "ficha": "02-B",
+   "prioridad": "P0",
+   "entrega": "copiloto_poses.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "copiloto_maestra.png",
+    "nino_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "habla cerrada",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 2,
+     "que": "habla abierta",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 3,
+     "que": "feliz",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 4,
+     "que": "feliz pulgar",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 5,
+     "que": "sorprendido",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 6,
+     "que": "pensando",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 7,
+     "que": "parpadeo",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    },
+    {
+     "n": 8,
+     "que": "saluda",
+     "destino": "assets/sprites/copilot/copilot.png",
+     "tamano_final": [
+      105,
+      106
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-A",
+   "prioridad": "P0",
+   "entrega": "nina_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 7,
+     "que": "walk 7",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 8,
+     "que": "walk 8",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-B",
+   "prioridad": "P0",
+   "entrega": "nina_reacciones.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png",
+    "nina_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "scared 1",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 2,
+     "que": "scared 2",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 3,
+     "que": "scared 3",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 4,
+     "que": "scared 4",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 5,
+     "que": "idle",
+     "destino": "assets/sprites/pedestrians/girl.png",
+     "tamano_final": [
+      43,
+      80
+     ],
+     "animacion": "idle"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-C",
+   "prioridad": "P0",
+   "entrega": "adulto_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 7,
+     "que": "walk 7",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 8,
+     "que": "walk 8",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-D",
+   "prioridad": "P0",
+   "entrega": "adulto_reacciones.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png",
+    "adulto_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "scared 1",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 2,
+     "que": "scared 2",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 3,
+     "que": "scared 3",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 4,
+     "que": "scared 4",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 5,
+     "que": "scared 5",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 6,
+     "que": "idle",
+     "destino": "assets/sprites/pedestrians/adult.png",
+     "tamano_final": [
+      46,
+      88
+     ],
+     "animacion": "idle"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-E",
+   "prioridad": "P0",
+   "entrega": "abuelita_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-F",
+   "prioridad": "P0",
+   "entrega": "abuelita_reacciones.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png",
+    "abuelita_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "scared 1",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 2,
+     "que": "scared 2",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 3,
+     "que": "scared 3",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 4,
+     "que": "scared 4",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 5,
+     "que": "scared 5",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 6,
+     "que": "idle",
+     "destino": "assets/sprites/pedestrians/elder.png",
+     "tamano_final": [
+      48,
+      78
+     ],
+     "animacion": "idle"
+    }
+   ]
+  },
+  {
+   "lote": "03_peatones",
+   "ficha": "03-G",
+   "prioridad": "P0",
+   "entrega": "silla_ruedas.png",
+   "lienzo": [
+    1024,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    4
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nino_sorprendido.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "scared 1",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 6,
+     "que": "scared 2",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 7,
+     "que": "scared 3",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 8,
+     "que": "scared 4",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "scared"
+    },
+    {
+     "n": 9,
+     "que": "happy 1",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "happy"
+    },
+    {
+     "n": 10,
+     "que": "happy 2",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "happy"
+    },
+    {
+     "n": 11,
+     "que": "happy 3",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "happy"
+    },
+    {
+     "n": 12,
+     "que": "happy 4",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "happy"
+    },
+    {
+     "n": 13,
+     "que": "idle",
+     "destino": "assets/sprites/pedestrians/wheelchair.png",
+     "tamano_final": [
+      55,
+      78
+     ],
+     "animacion": "idle"
+    }
+   ]
+  },
+  {
+   "lote": "04_vehiculos",
+   "ficha": "04-A",
+   "prioridad": "P0",
+   "entrega": "autos_trafico.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "auto_jugador.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "sedan azul cielo",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 0
+    },
+    {
+     "n": 2,
+     "que": "hatchback menta",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 1
+    },
+    {
+     "n": 3,
+     "que": "vochito turquesa",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 2
+    },
+    {
+     "n": 4,
+     "que": "sedan lila",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 3
+    },
+    {
+     "n": 5,
+     "que": "hatchback naranja",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 4
+    },
+    {
+     "n": 6,
+     "que": "pickup gris azulado",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 5
+    },
+    {
+     "n": 7,
+     "que": "combi durazno",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 6
+    },
+    {
+     "n": 8,
+     "que": "sedan blanco cal",
+     "destino": "assets/sprites/vehicles/npc_car.png",
+     "tamano_final": [
+      70,
+      38
+     ],
+     "variante": 7
+    }
+   ]
+  },
+  {
+   "lote": "04_vehiculos",
+   "ficha": "04-B",
+   "prioridad": "P0",
+   "entrega": "vehiculos_grandes.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    2
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "auto_jugador.png",
+    "autos_trafico.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "bus urbano",
+     "destino": "assets/sprites/vehicles/bus.png",
+     "tamano_final": [
+      139,
+      80
+     ]
+    },
+    {
+     "n": 2,
+     "que": "ambulancia",
+     "destino": "assets/sprites/vehicles/ambulance.png",
+     "tamano_final": [
+      94,
+      50
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "04_vehiculos",
+   "ficha": "04-C",
+   "prioridad": "P0",
+   "entrega": "moto.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "auto_jugador.png",
+    "autos_trafico.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "motocicleta",
+     "destino": "assets/sprites/vehicles/motorcycle.png",
+     "tamano_final": [
+      60,
+      27
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "04_vehiculos",
+   "ficha": "04-D",
+   "prioridad": "P0",
+   "entrega": "ciclista.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "auto_jugador.png",
+    "moto.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "ride 1",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    },
+    {
+     "n": 2,
+     "que": "ride 2",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    },
+    {
+     "n": 3,
+     "que": "ride 3",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    },
+    {
+     "n": 4,
+     "que": "ride 4",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    },
+    {
+     "n": 5,
+     "que": "ride 5",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    },
+    {
+     "n": 6,
+     "que": "ride 6",
+     "destino": "assets/sprites/vehicles/cyclist.png",
+     "tamano_final": [
+      60,
+      29
+     ],
+     "animacion": "ride"
+    }
+   ]
+  },
+  {
+   "lote": "05_senales",
+   "ficha": "05-A",
+   "prioridad": "P0",
+   "entrega": "senales.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "auto_jugador.png",
+    "casas_a.png",
+    "hud_iconos.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "alto sin texto",
+     "destino": "assets/sprites/signals/signs.png",
+     "tamano_final": [
+      72,
+      112
+     ],
+     "cuadro": 0
+    },
+    {
+     "n": 2,
+     "que": "limite vacio",
+     "destino": "assets/sprites/signals/signs.png",
+     "tamano_final": [
+      72,
+      112
+     ],
+     "cuadro": 1,
+     "nota": "centro del circulo blanco en (35.5,52) del cuadro"
+    },
+    {
+     "n": 3,
+     "que": "zona escolar",
+     "destino": "assets/sprites/signals/signs.png",
+     "tamano_final": [
+      72,
+      112
+     ],
+     "cuadro": 2
+    },
+    {
+     "n": 4,
+     "que": "ceda el paso",
+     "destino": "assets/sprites/signals/signs.png",
+     "tamano_final": [
+      72,
+      112
+     ],
+     "cuadro": 3
+    },
+    {
+     "n": 5,
+     "que": "semaforo peatonal apagado",
+     "destino": "assets/sprites/signals/pedestrian_light.png",
+     "tamano_final": [
+      43,
+      104
+     ],
+     "cuadro": 0
+    },
+    {
+     "n": 6,
+     "que": "semaforo peatonal rojo",
+     "destino": "assets/sprites/signals/pedestrian_light.png",
+     "tamano_final": [
+      43,
+      104
+     ],
+     "cuadro": 1
+    },
+    {
+     "n": 7,
+     "que": "semaforo peatonal verde",
+     "destino": "assets/sprites/signals/pedestrian_light.png",
+     "tamano_final": [
+      43,
+      104
+     ],
+     "cuadro": 2
+    },
+    {
+     "n": 8,
+     "que": "letrero parada de bus",
+     "destino": "assets/sprites/city/bus_stop_sign.png",
+     "tamano_final": [
+      28,
+      52
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "06_ciudad",
+   "ficha": "06-A",
+   "prioridad": "P0",
+   "entrega": "arboles.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    3
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "fresno",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 0
+    },
+    {
+     "n": 2,
+     "que": "jacaranda",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 1
+    },
+    {
+     "n": 3,
+     "que": "arbustos",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 2
+    },
+    {
+     "n": 4,
+     "que": "maceta flores",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 3
+    },
+    {
+     "n": 5,
+     "que": "laurel",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 4
+    },
+    {
+     "n": 6,
+     "que": "palma",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 5
+    },
+    {
+     "n": 7,
+     "que": "buganvilia",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 6
+    },
+    {
+     "n": 8,
+     "que": "jardinera talavera",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 7
+    },
+    {
+     "n": 9,
+     "que": "nopal en maceta",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 8
+    },
+    {
+     "n": 10,
+     "que": "seto",
+     "destino": "assets/sprites/city/arboles.png",
+     "tamano_final": [
+      64,
+      64
+     ],
+     "cuadro": 9
+    }
+   ]
+  },
+  {
+   "lote": "06_ciudad",
+   "ficha": "06-B",
+   "prioridad": "P0",
+   "entrega": "edificios.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "deptos menta",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 0
+    },
+    {
+     "n": 2,
+     "que": "cantera arcos",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 1
+    },
+    {
+     "n": 3,
+     "que": "terracota local",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 2
+    },
+    {
+     "n": 4,
+     "que": "azul talavera",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 3
+    },
+    {
+     "n": 5,
+     "que": "ocre azotea jardin",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 4
+    },
+    {
+     "n": 6,
+     "que": "rosa tendedero",
+     "destino": "assets/sprites/city/edificios.png",
+     "tamano_final": [
+      142,
+      160
+     ],
+     "cuadro": 5
+    }
+   ]
+  },
+  {
+   "lote": "06_ciudad",
+   "ficha": "06-C",
+   "prioridad": "P0",
+   "entrega": "mobiliario.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "parada de bus",
+     "destino": "assets/sprites/city/bus_stop.png",
+     "tamano_final": [
+      97,
+      80
+     ]
+    },
+    {
+     "n": 2,
+     "que": "farol colonial",
+     "destino": "nuevo"
+    },
+    {
+     "n": 3,
+     "que": "banca talavera",
+     "destino": "nuevo"
+    },
+    {
+     "n": 4,
+     "que": "bote de basura",
+     "destino": "nuevo"
+    },
+    {
+     "n": 5,
+     "que": "carrito de elotes",
+     "destino": "nuevo"
+    },
+    {
+     "n": 6,
+     "que": "puesto de fruta",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "07_destinos",
+   "ficha": "07-A",
+   "prioridad": "P0",
+   "entrega": "destino_escuela.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "escuela",
+     "destino": "assets/sprites/city/escuela.png",
+     "tamano_final": [
+      320,
+      224
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "07_destinos",
+   "ficha": "07-B",
+   "prioridad": "P0",
+   "entrega": "destino_hospital.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "hospital",
+     "destino": "assets/sprites/city/hospital.png",
+     "tamano_final": [
+      300,
+      217
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "07_destinos",
+   "ficha": "07-C",
+   "prioridad": "P0",
+   "entrega": "destino_terminal.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "terminal",
+     "destino": "assets/sprites/city/terminal.png",
+     "tamano_final": [
+      322,
+      190
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "07_destinos",
+   "ficha": "07-D",
+   "prioridad": "P0",
+   "entrega": "tunel.png",
+   "lienzo": [
+    1024,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tunel",
+     "destino": "assets/sprites/city/tunel_entrada.png",
+     "tamano_final": [
+      253,
+      256
+     ],
+     "tambien": [
+      {
+       "destino": "assets/sprites/city/tunel_salida.png",
+       "espejo_h": true,
+       "tamano_final": [
+        256,
+        251
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_00.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 0",
+     "destino": "assets/ui/habit_cards/card_00.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_01.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 1",
+     "destino": "assets/ui/habit_cards/card_01.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_02.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 2",
+     "destino": "assets/ui/habit_cards/card_02.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_03.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 3",
+     "destino": "assets/ui/habit_cards/card_03.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_04.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 4",
+     "destino": "assets/ui/habit_cards/card_04.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_05.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 5",
+     "destino": "assets/ui/habit_cards/card_05.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_06.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 6",
+     "destino": "assets/ui/habit_cards/card_06.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_07.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 7",
+     "destino": "assets/ui/habit_cards/card_07.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "08_tarjetas",
+   "ficha": "08",
+   "prioridad": "P1",
+   "entrega": "tarjeta_08.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "copiloto_maestra.png",
+    "auto_jugador.png",
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tarjeta nivel 8",
+     "destino": "assets/ui/habit_cards/card_08.png",
+     "tamano_final": [
+      720,
+      432
+     ],
+     "recorte": "5:3 centrado"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-A",
+   "prioridad": "P1",
+   "entrega": "casas_b.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    3,
+    2
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "casa b1",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    },
+    {
+     "n": 2,
+     "que": "casa b2",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    },
+    {
+     "n": 3,
+     "que": "casa b3",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    },
+    {
+     "n": 4,
+     "que": "casa b4",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    },
+    {
+     "n": 5,
+     "que": "casa b5",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    },
+    {
+     "n": 6,
+     "que": "casa b6",
+     "destino": "assets/sprites/city/casas.png",
+     "tamano_final": [
+      128,
+      128
+     ],
+     "agregar": true
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-B",
+   "prioridad": "P1",
+   "entrega": "destino_biblioteca.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png",
+    "destino_escuela.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "biblioteca",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-B",
+   "prioridad": "P1",
+   "entrega": "destino_mercado.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png",
+    "destino_escuela.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "mercado",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-B",
+   "prioridad": "P1",
+   "entrega": "destino_parque.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png",
+    "destino_escuela.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "parque",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-B",
+   "prioridad": "P1",
+   "entrega": "destino_abuela.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png",
+    "destino_escuela.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "abuela",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-B",
+   "prioridad": "P1",
+   "entrega": "destino_primos.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    1
+   ],
+   "clase_contorno": "L",
+   "referencias": [
+    "casas_a.png",
+    "edificios.png",
+    "destino_escuela.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "primos",
+     "destino": "nuevo"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-C",
+   "prioridad": "P1",
+   "entrega": "papa_carriola_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nina_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 7,
+     "que": "walk 7",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 8,
+     "que": "walk 8",
+     "destino": "nuevo",
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-C",
+   "prioridad": "P1",
+   "entrega": "joven_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nina_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 7,
+     "que": "walk 7",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 8,
+     "que": "walk 8",
+     "destino": "nuevo",
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-C",
+   "prioridad": "P1",
+   "entrega": "senora_mandado_camina.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    4,
+    2
+   ],
+   "clase_contorno": "XS",
+   "referencias": [
+    "nino_camina.png",
+    "nina_camina.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "walk 1",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 2,
+     "que": "walk 2",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 3,
+     "que": "walk 3",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 4,
+     "que": "walk 4",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 5,
+     "que": "walk 5",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 6,
+     "que": "walk 6",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 7,
+     "que": "walk 7",
+     "destino": "nuevo",
+     "animacion": "walk"
+    },
+    {
+     "n": 8,
+     "que": "walk 8",
+     "destino": "nuevo",
+     "animacion": "walk"
+    }
+   ]
+  },
+  {
+   "lote": "09_variedad",
+   "ficha": "09-D",
+   "prioridad": "P1",
+   "entrega": "papel_picado.png",
+   "lienzo": [
+    1536,
+    1024
+   ],
+   "cuadricula": [
+    1,
+    3
+   ],
+   "clase_contorno": "S",
+   "referencias": [
+    "casas_a.png"
+   ],
+   "celdas": [
+    {
+     "n": 1,
+     "que": "tira 1",
+     "destino": "nuevo"
+    },
+    {
+     "n": 2,
+     "que": "tira 2",
+     "destino": "nuevo"
+    },
+    {
+     "n": 3,
+     "que": "tira 3",
+     "destino": "nuevo"
+    }
+   ]
+  }
+ ]
+}

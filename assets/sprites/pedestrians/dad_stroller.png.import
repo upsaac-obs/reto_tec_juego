@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0vguupkc0qcb"
-path="res://.godot/imported/tunel_salida.png-0d78270aeb5cbea48b5b490ddae82ece.ctex"
+uid="uid://dw37vgugirv1h"
+path="res://.godot/imported/dad_stroller.png-ecd8519ff9e5f6271eb092acac1238b9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/city/tunel_salida.png"
-dest_files=["res://.godot/imported/tunel_salida.png-0d78270aeb5cbea48b5b490ddae82ece.ctex"]
+source_file="res://assets/sprites/pedestrians/dad_stroller.png"
+dest_files=["res://.godot/imported/dad_stroller.png-ecd8519ff9e5f6271eb092acac1238b9.ctex"]
 
 [params]
 

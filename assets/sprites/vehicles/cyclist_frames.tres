@@ -26,30 +26,6 @@ region = Rect2(240, 0, 60, 29)
 atlas = ExtResource("1_sheet")
 region = Rect2(300, 0, 60, 29)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6"]
-atlas = ExtResource("1_sheet")
-region = Rect2(360, 0, 60, 29)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7"]
-atlas = ExtResource("1_sheet")
-region = Rect2(420, 0, 60, 29)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8"]
-atlas = ExtResource("1_sheet")
-region = Rect2(480, 0, 60, 29)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_9"]
-atlas = ExtResource("1_sheet")
-region = Rect2(540, 0, 60, 29)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_10"]
-atlas = ExtResource("1_sheet")
-region = Rect2(600, 0, 60, 29)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_11"]
-atlas = ExtResource("1_sheet")
-region = Rect2(660, 0, 60, 29)
-
 [resource]
 animations = [{
 "frames": [{

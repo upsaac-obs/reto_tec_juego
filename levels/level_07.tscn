@@ -1,8 +1,6 @@
 [gd_scene format=4]
 
 [ext_resource type="PackedScene" path="res://scenes/level/level.tscn" id="0_base"]
-[ext_resource type="Texture2D" path="res://assets/sprites/city/tunel_entrada.png" id="2_5r10y"]
-[ext_resource type="Texture2D" path="res://assets/sprites/city/tunel_salida.png" id="3_hjpc8"]
 [ext_resource type="Texture2D" path="res://assets/sprites/city/casas.png" id="4_f1cbd"]
 [ext_resource type="PackedScene" path="res://scenes/rules/tutorial_hint.tscn" id="5_joyp0"]
 [ext_resource type="PackedScene" path="res://scenes/rules/bike_lane.tscn" id="7_symhl"]
@@ -10,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/rules/speed_zone.tscn" id="11_17uxu"]
 [ext_resource type="PackedScene" path="res://scenes/rules/dark_zone.tscn" id="13_2js5s"]
 [ext_resource type="Script" path="res://levels/level_07_dusk.gd" id="21_d5si2"]
+[ext_resource type="Script" path="res://scenes/level/tunnel_decor.gd" id="22_tunnel"]
 
 
 [sub_resource type="Curve2D" id="Curve2D_863hv"]
@@ -27,15 +26,10 @@ tile_map_data = PackedByteArray("AADy//T/AAACAAAAAADy//X/AAAHAAEAAADy//b/AAAAAAA
 [node name="Decor" type="Node2D" parent="." index="1"]
 
 
-[node name="TunelEntrada" type="Sprite2D" parent="Decor"]
-position = Vector2(3640, -190)
-texture = ExtResource("2_5r10y")
-
-
-[node name="TunelSalida" type="Sprite2D" parent="Decor"]
-position = Vector2(5260, -190)
-texture = ExtResource("3_hjpc8")
-
+[node name="Tunnel" type="Node2D" parent="Decor"]
+script = ExtResource("22_tunnel")
+start_x = 3800.0
+end_x = 5200.0
 
 [node name="Casa" type="Sprite2D" parent="Decor"]
 position = Vector2(8760, -200)
@@ -104,7 +98,6 @@ position = Vector2(3800, 0)
 kind = 1
 length = 1400.0
 darkness = 0.65
-walls = true
 cyclist_starts = PackedFloat32Array(250, 700)
 cyclist_speed = 50.0
 stripe_ys = PackedFloat32Array(-5, 3)

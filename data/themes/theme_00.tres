@@ -4,11 +4,12 @@
 
 [resource]
 script = ExtResource("1_theme")
+sidewalk_walkers = 3
 seed_value = 100
-lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0])
+lot_weights = Array[float]([1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 gap_chance = 0.3
 backfill = 1
-tree_kinds = Array[int]([0, 1, 1, 2])
+tree_kinds = Array[int]([0, 1, 1, 2, 4, 6])
 destination_nodes = PackedStringArray("*")
 destination_icon = 1
 tint = Color(0.97, 0.98, 1.0, 1)
