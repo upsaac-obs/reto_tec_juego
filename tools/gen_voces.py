@@ -2,10 +2,16 @@
 """Genera las voces del copiloto: assets/audio/voz/<CLAVE>.ogg para cada clave
 de i18n/textos.csv (columna "es").
 
-Voz PROVISIONAL con espeak-ng (sin internet). El motor es reemplazable: cada
-motor es una función `motor(texto, wav_salida)` registrada en ENGINES; para usar
-un TTS mejor (por ejemplo Piper con una voz mexicana descargada a mano) se agrega
-su función ahí y se corre con `--engine <nombre>`.
+Motores (los dos sin internet al generar; el juego solo lleva los .ogg):
+- piper (por defecto): voz neuronal en español de México. Se instala una vez,
+  fuera del repo (ver PIPER_HOME):
+      python3 -m venv ~/.local/share/rutakids-piper/venv
+      ~/.local/share/rutakids-piper/venv/bin/pip install piper-tts
+  y las voces (.onnx + .onnx.json) de huggingface.co/rhasspy/piper-voices van en
+  ~/.local/share/rutakids-piper/voices/. Voz por defecto: es_MX-claude-high
+  (Apache-2.0); alternativa es_MX-ald-medium (Unlicense).
+- espeak: la voz provisional robótica de antes (espeak-ng).
+Cada motor es una función `motor(texto, wav_salida, voz)` registrada en ENGINES.
 
 Solo regenera las claves cuyo texto (o motor/voz) cambió desde la última vez:
 guarda un hash por clave en tools/voz_manifest.json (fuera de res:// a propósito
@@ -17,6 +23,7 @@ Uso:
     python3 tools/gen_voces.py --force              # todas
     python3 tools/gen_voces.py --prune              # borra .ogg de claves que ya no existen
     python3 tools/gen_voces.py --engine espeak --voice es-419+f3
+    python3 tools/gen_voces.py --voice es_MX-ald-medium --out /tmp/prueba --key FALTA_ALTO
 """
 
 from __future__ import annotations
@@ -24,6 +31,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import os
 import json
 import re
 import subprocess
@@ -46,6 +54,14 @@ ESPEAK_VOICE = "es-419+f3"   # variante femenina, más suave
 ESPEAK_SPEED = 140           # palabras por minuto (lento y claro para peques)
 ESPEAK_PITCH = 62            # 0-99, un poco más agudo y amigable
 ESPEAK_GAP = 2               # pausa extra entre palabras (en 10 ms)
+
+# Piper: dónde está instalado y cómo habla. length_scale > 1 = más lento (para peques).
+PIPER_HOME = Path(os.environ.get("RUTAKIDS_PIPER", Path.home() / ".local/share/rutakids-piper"))
+PIPER_VOICE = "es_MX-claude-high"
+PIPER_LENGTH = 1.12
+PIPER_NOISE = 0.6
+PIPER_NOISE_W = 0.8
+PIPER_SENTENCE_SILENCE = 0.25
 
 # Palabras que el TTS lee mal: se reemplazan solo para hablar, no en pantalla.
 PRONUNCIATION = {
@@ -81,8 +97,22 @@ def engine_espeak(text: str, wav_out: Path, voice: str) -> None:
     )
 
 
+def engine_piper(text: str, wav_out: Path, voice: str) -> None:
+    model = Path(voice) if voice.endswith(".onnx") else PIPER_HOME / "voices" / f"{voice}.onnx"
+    exe = PIPER_HOME / "venv" / "bin" / "piper"
+    if not exe.exists() or not model.exists():
+        sys.exit(f"Falta Piper ({exe}) o la voz ({model}); ver el inicio de este archivo.")
+    subprocess.run(
+        [str(exe), "-m", str(model), "-f", str(wav_out), "--length-scale", str(PIPER_LENGTH),
+         "--noise-scale", str(PIPER_NOISE), "--noise-w-scale", str(PIPER_NOISE_W),
+         "--sentence-silence", str(PIPER_SENTENCE_SILENCE)],
+        input=text.encode("utf-8"), check=True, capture_output=True,
+    )
+
+
 ENGINES = {
     # nombre: (función, voz por defecto)
+    "piper": (engine_piper, PIPER_VOICE),
     "espeak": (engine_espeak, ESPEAK_VOICE),
 }
 
@@ -96,7 +126,11 @@ def read_texts() -> dict[str, str]:
 
 
 def fingerprint(text: str, engine: str, voice: str) -> str:
-    settings = f"{engine}|{voice}|{ESPEAK_SPEED}|{ESPEAK_PITCH}|{ESPEAK_GAP}|{OUT_RATE}|{OGG_QUALITY}"
+    if engine == "piper":
+        tuning = f"{PIPER_LENGTH}|{PIPER_NOISE}|{PIPER_NOISE_W}|{PIPER_SENTENCE_SILENCE}"
+    else:
+        tuning = f"{ESPEAK_SPEED}|{ESPEAK_PITCH}|{ESPEAK_GAP}"
+    settings = f"{engine}|{voice}|{tuning}|{OUT_RATE}|{OGG_QUALITY}"
     return hashlib.sha1(f"{settings}\n{speakable(text)}".encode()).hexdigest()[:16]
 
 
@@ -116,7 +150,8 @@ def wav_to_ogg(wav: Path, ogg: Path) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--engine", default="espeak", choices=sorted(ENGINES))
+    ap.add_argument("--engine", default="piper", choices=sorted(ENGINES))
+    ap.add_argument("--out", default=None, help="carpeta de salida para probar voces (no toca el juego ni el manifiesto)")
     ap.add_argument("--voice", default=None, help="voz del motor (por defecto la del motor)")
     ap.add_argument("--key", action="append", default=[], help="genera solo esta clave (se puede repetir)")
     ap.add_argument("--force", action="store_true", help="regenera aunque el texto no haya cambiado")
@@ -135,21 +170,28 @@ def main() -> int:
         return 1
     force = args.force or bool(args.key)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = Path(args.out) if args.out else OUT_DIR
+    trial = args.out is not None
+    out_dir.mkdir(parents=True, exist_ok=True)
     made = skipped = 0
     with tempfile.TemporaryDirectory() as tmp:
         for key in keys:
             fp = fingerprint(texts[key], args.engine, voice)
-            ogg = OUT_DIR / f"{key}.ogg"
-            if not force and manifest.get(key) == fp and ogg.exists():
+            ogg = out_dir / f"{key}.ogg"
+            if not trial and not force and manifest.get(key) == fp and ogg.exists():
                 skipped += 1
                 continue
             wav = Path(tmp) / f"{key}.wav"
             func(speakable(texts[key]), wav, voice)
             wav_to_ogg(wav, ogg)
-            manifest[key] = fp
+            if not trial:
+                manifest[key] = fp
             made += 1
             print(f"  {key}: {speakable(texts[key])}")
+
+    if trial:
+        print(f"Prueba: {made} voces en {out_dir} ({voice}, {args.engine}).")
+        return 0
 
     if args.prune:
         for ogg in OUT_DIR.glob("*.ogg"):
