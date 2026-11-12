@@ -383,8 +383,56 @@ def _shift(im: Image.Image, dx: int, dy: int) -> Image.Image:
     return out
 
 
+# ------------------------------------------------------------------ lote 06: ciudad
+
+def city() -> None:
+    folder = SPRITES / "city"
+    path = find("arboles")
+    if path:
+        # 10 plantas de 64 × 64 en el orden de la ficha (LevelTheme.tree_kinds usa estos índices).
+        plants = [desaturate(fit(c, (64, 64), anchor="bottom", fill=0.96)) for c in cells(load_rgba(path), 4, 3)[:10]]
+        strip(plants, (64, 64)).save(folder / "arboles.png")
+    path = find("edificios")
+    if path:
+        # Los 3 primeros reemplazan a los de antes (LOTS 4-6 del CityDresser).
+        blocks = [desaturate(fit(c, (142, 160), anchor="bottom")) for c in cells(load_rgba(path), 3, 2)]
+        strip(blocks, (142, 160)).save(folder / "edificios.png")
+    path = find("mobiliario")
+    if path:
+        props = cells(load_rgba(path), 3, 2)
+        desaturate(fit(props[0], (97, 80), anchor="bottom")).save(folder / "bus_stop.png")
+        # Objetos de banqueta (farol, banca, bote, elotes, fruta) para decorar después.
+        extras = [desaturate(fit(c, (64, 64), anchor="bottom", fill=0.96)) for c in props[1:]]
+        strip(extras, (64, 64)).save(folder / "mobiliario.png")
+
+
+# ------------------------------------------------------------------ lote 07: destinos
+
+DESTINATIONS = {
+    "destino_escuela": ("escuela.png", (320, 224)),
+    "destino_hospital": ("hospital.png", (300, 217)),
+    "destino_terminal": ("terminal.png", (322, 190)),
+}
+
+
+def destinations() -> None:
+    folder = SPRITES / "city"
+    for stem, (file, size) in DESTINATIONS.items():
+        path = find(stem)
+        if path:
+            desaturate(fit(load_rgba(path), size, anchor="bottom"), 0.92, 0.98).save(folder / file)
+    path = find("tunel")
+    if path:
+        # Codex dibujó el portal a la derecha: es la salida; la entrada (el auto llega
+        # por la izquierda) es su espejo. Abajo al centro para que el camino toque la calle.
+        exit_ = desaturate(fit(load_rgba(path), (256, 251), anchor="bottom"))
+        exit_.save(folder / "tunel_salida.png")
+        entrance = desaturate(fit(load_rgba(path), (253, 256), anchor="bottom"))
+        entrance.transpose(Image.FLIP_LEFT_RIGHT).save(folder / "tunel_entrada.png")
+
+
 if __name__ == "__main__":
-    for step in (player_car, houses, child, hud, phone, copilot, pedestrians, vehicles, signals):
+    for step in (player_car, houses, child, hud, phone, copilot, pedestrians, vehicles, signals, city, destinations):
         print(step.__name__)
         step()
     print("arte v2 integrado")

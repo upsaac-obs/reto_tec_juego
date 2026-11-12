@@ -12,9 +12,9 @@ enum Icon { NONE, TREE, BOOK, FRUIT, HOUSE, BELL, CROSS, BUS }
 ## Semilla propia del decorado: no mueve el aleatorio de las piezas.
 @export var seed_value: int = 1
 @export_group("Manzanas")
-## Peso de cada lote: casas 1-4 de casas.png, 3 edificios de edificios.png y casas 5-6.
+## Peso de cada lote: casas 1-4 de casas.png, edificios 1-3, casas 5-6 y edificios 4-6.
 ## 0 = ese lote no sale en este nivel.
-@export var lot_weights: Array[float] = [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0]
+@export var lot_weights: Array[float] = [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0]
 ## Probabilidad de dejar un hueco de un tile con árbol entre dos lotes.
 @export_range(0.0, 1.0) var gap_chance: float = 0.15
 ## Sin lotes (por ejemplo, el cerro del nivel 7): solo árboles sueltos.
@@ -24,8 +24,9 @@ enum Icon { NONE, TREE, BOOK, FRUIT, HOUSE, BELL, CROSS, BUS }
 @export_group("Banqueta")
 ## Cada cuántos tiles va un árbol en la orilla de la banqueta (0 = ninguno).
 @export var sidewalk_tree_every: int = 6
-## Regiones de arboles.png que salen en la banqueta y en los huecos (0 árbol, 1 jacaranda, 2 arbustos, 3 maceta).
-@export var tree_kinds: Array[int] = [0, 1, 3]
+## Regiones de arboles.png que salen en la banqueta y en los huecos (0 fresno, 1 jacaranda, 2 arbustos,
+## 3 maceta, 4 laurel, 5 palma, 6 buganvilia, 7 jardinera de talavera, 8 nopal, 9 seto).
+@export var tree_kinds: Array[int] = [0, 1, 3, 4, 6, 7, 8]
 ## Distancia libre de decoración alrededor de cada pieza de Rules (x).
 @export var calm_radius: float = 192.0
 @export_group("Destino")
