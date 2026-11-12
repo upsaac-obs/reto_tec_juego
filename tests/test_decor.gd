@@ -48,11 +48,40 @@ func run() -> void:
 					if absf(center_x - x) < dresser.theme.calm_radius:
 						too_close += 1
 		check(too_close == 0, "  nivel %d: nada en la banqueta cerca de una pieza de Rules" % id)
+		_check_walkers(id, dresser, city, half_road)
 		if dresser.theme.destination_icon != LevelTheme.Icon.NONE:
 			var marker := city.get_node_or_null(^"Destination/DestinationMarker") as Node2D
 			var end_x := route.curve.get_point_position(route.curve.point_count - 1).x
 			check(marker != null and marker.global_position.x > end_x * 0.5, "  nivel %d: el destino tiene su ícono en la segunda mitad del camino" % id)
 		await close_scene(level)
+
+
+## Gente de la banqueta: las que pide el tema, siempre en la banqueta (ni el dibujo
+## pisa los carriles) y nunca visibles dentro de una zona de cruce, también tras caminar.
+func _check_walkers(id: int, dresser: CityDresser, city: Node2D, half_road: float) -> void:
+	var layer := city.get_node_or_null(^"Walkers") as SidewalkWalkers
+	var expected := dresser.theme.sidewalk_walkers
+	if expected <= 0:
+		check(layer == null, "  nivel %d: sin gente en la banqueta" % id)
+		return
+	check(layer != null and layer.get_child_count() == expected, "  nivel %d: %d personas en la banqueta" % [id, expected])
+	if layer == null:
+		return
+	var bad_road := 0
+	var bad_zone := 0
+	for step in 3:
+		for walker: AnimatedSprite2D in layer.get_children():
+			# El dibujo ocupa el 80 % de alto del cuadro, apoyado abajo (tools/art/integrar_v2.py).
+			var feet := walker.global_position.y
+			var head := feet - walker.sprite_frames.get_frame_texture(&"walk", 0).get_height() * 0.8
+			if feet > -half_road and head < half_road:
+				bad_road += 1
+			if walker.visible and layer.is_avoided(walker.global_position.x):
+				bad_zone += 1
+		# Un segundo de caminata cada vez, sin esperar en tiempo real.
+		layer._process(1.0)
+	check(bad_road == 0, "  nivel %d: la gente de la banqueta no pisa los carriles" % id)
+	check(bad_zone == 0, "  nivel %d: la gente de la banqueta no entra a los cruces" % id)
 
 
 func _descendants(node: Node) -> Array[Node]:

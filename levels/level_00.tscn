@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://scenes/level/level.tscn" id="0_base"]
 [ext_resource type="Texture2D" path="res://assets/sprites/city/arboles.png" id="2_u4dht"]
 [ext_resource type="PackedScene" path="res://scenes/rules/tutorial_hint.tscn" id="3_7un5e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/parque.png" id="4_parque"]
 
 [sub_resource type="Curve2D" id="Curve2D_fg80w"]
 _data = {
@@ -19,11 +20,9 @@ tile_map_data = PackedByteArray("AADy//T/AAAHAAEAAADy//X/AAACAAAAAADy//b/AAAAAAA
 [node name="Decor" type="Node2D" parent="." index="1"]
 
 
-[node name="Sprite2D" type="Sprite2D" parent="Decor"]
-position = Vector2(3400, -260)
-texture = ExtResource("2_u4dht")
-region_enabled = true
-region_rect = Rect2(0, 0, 64, 64)
+[node name="Parque" type="Sprite2D" parent="Decor"]
+position = Vector2(3540, -347)
+texture = ExtResource("4_parque")
 
 
 [node name="Sprite2D2" type="Sprite2D" parent="Decor"]
@@ -33,12 +32,6 @@ region_enabled = true
 region_rect = Rect2(64, 0, 64, 64)
 
 
-[node name="Sprite2D3" type="Sprite2D" parent="Decor"]
-position = Vector2(3480, -300)
-texture = ExtResource("2_u4dht")
-region_enabled = true
-region_rect = Rect2(64, 0, 64, 64)
-
 
 [node name="Sprite2D4" type="Sprite2D" parent="Decor"]
 position = Vector2(3520, 300)
@@ -47,12 +40,6 @@ region_enabled = true
 region_rect = Rect2(128, 0, 64, 64)
 
 
-[node name="Sprite2D5" type="Sprite2D" parent="Decor"]
-position = Vector2(3560, -340)
-texture = ExtResource("2_u4dht")
-region_enabled = true
-region_rect = Rect2(128, 0, 64, 64)
-
 
 [node name="Sprite2D6" type="Sprite2D" parent="Decor"]
 position = Vector2(3600, 250)
@@ -60,12 +47,6 @@ texture = ExtResource("2_u4dht")
 region_enabled = true
 region_rect = Rect2(192, 0, 64, 64)
 
-
-[node name="Sprite2D7" type="Sprite2D" parent="Decor"]
-position = Vector2(3640, -260)
-texture = ExtResource("2_u4dht")
-region_enabled = true
-region_rect = Rect2(192, 0, 64, 64)
 
 
 [node name="Sprite2D8" type="Sprite2D" parent="Decor"]

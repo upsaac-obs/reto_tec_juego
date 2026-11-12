@@ -15,7 +15,7 @@ extends RulePiece
 
 enum State { IDLE, BALL, CHILD, CLEAR, GONE }
 
-const PARKED_CAR := preload("res://assets/sprites/vehicles/npc_car.png")
+const PARKED_CAR := preload("res://assets/sprites/vehicles/npc_cars.png")
 
 ## Ancho de la calle.
 @export var road_width: float = 128.0:
@@ -64,6 +64,8 @@ const PARKED_CAR := preload("res://assets/sprites/vehicles/npc_car.png")
 	set(value):
 		parked_car_y = value
 		queue_redraw()
+## Ya no se usa desde el arte v2 (los autos de npc_cars.png vienen pintados); se queda
+## para no romper escenas que lo guardaron.
 @export var parked_colors: Array[Color] = [Palette.COLOR_GLASS, Palette.COLOR_GOLD, Palette.COLOR_GREEN, Palette.COLOR_SKY_MID, Palette.COLOR_WHITE]:
 	set(value):
 		parked_colors = value
@@ -244,10 +246,11 @@ func _refresh() -> void:
 
 
 func _draw() -> void:
-	var size := PARKED_CAR.get_size()
+	# Autos estacionados: uno distinto de npc_cars.png cada vez (ya vienen pintados).
+	var size := NpcCar.CAR_SIZE
 	for i in parked_car_x.size():
-		var color: Color = parked_colors[i % parked_colors.size()] if not parked_colors.is_empty() else Palette.COLOR_WHITE
-		draw_texture(PARKED_CAR, Vector2(parked_car_x[i], parked_car_y) - size / 2.0, color)
+		var region := Rect2(Vector2((i * 3 + 1) % NpcCar.CAR_COLORS.size() * size.x, 0.0), size)
+		draw_texture_rect_region(PARKED_CAR, Rect2(Vector2(parked_car_x[i], parked_car_y) - size / 2.0, size), region)
 	if Engine.is_editor_hint():
 		var half := crossing_width / 2.0
 		draw_rect(Rect2(-trigger_distance, -road_width / 2.0, trigger_distance - half - fault_margin, road_width),

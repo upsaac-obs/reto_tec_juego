@@ -8,3 +8,6 @@
 *.aab
 *.ipa
 __pycache__/
+
+# Imágenes originales del arte v2 (pesadas; solo se sube el resultado integrado)
+/arte_v2/

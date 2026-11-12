@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/rules/checkpoint.tscn" id="4_wrb7r"]
 [ext_resource type="PackedScene" path="res://scenes/rules/parking_spot.tscn" id="5_park"]
 [ext_resource type="PackedScene" path="res://scenes/rules/door_exit.tscn" id="6_door"]
-[ext_resource type="Texture2D" path="res://assets/sprites/city/casas.png" id="7_casas"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/casa_abuela.png" id="8_abuela"]
 
 [sub_resource type="Curve2D" id="Curve2D_jx2nq"]
 _data = {
@@ -22,11 +22,8 @@ tile_map_data = PackedByteArray("AADy//T/AAACAAAAAADy//X/AAAHAAEAAADy//b/AAACAAA
 [node name="Decor" type="Node2D" parent="." index="1"]
 
 [node name="GrandmaHouse" type="Sprite2D" parent="Decor"]
-position = Vector2(5500, 300)
-texture = ExtResource("7_casas")
-flip_v = true
-region_enabled = true
-region_rect = Rect2(256, 0, 128, 128)
+position = Vector2(5500, 302)
+texture = ExtResource("8_abuela")
 
 [node name="BlindCrossing1" type="Node2D" parent="Rules" instance=ExtResource("2_j4ks3")]
 position = Vector2(1300, 0)
