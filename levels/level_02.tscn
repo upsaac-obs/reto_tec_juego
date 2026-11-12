@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/rules/checkpoint.tscn" id="7_go1sc"]
 [ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="9_jhp1k"]
 [ext_resource type="PackedScene" path="res://scenes/rules/speed_zone.tscn" id="11_trlnf"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/mercado.png" id="12_mercado"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/papel_picado.png" id="13_papel"]
 
 [sub_resource type="Curve2D" id="Curve2D_8eppb"]
 _data = {
@@ -30,18 +32,10 @@ region_enabled = true
 region_rect = Rect2(0, 0, 128, 128)
 
 
-[node name="Sprite2D2" type="Sprite2D" parent="Decor"]
-position = Vector2(6040, -300)
-texture = ExtResource("2_icmn4")
-region_enabled = true
-region_rect = Rect2(128, 0, 128, 128)
+[node name="Mercado" type="Sprite2D" parent="Decor"]
+position = Vector2(6110, -325)
+texture = ExtResource("12_mercado")
 
-
-[node name="Sprite2D3" type="Sprite2D" parent="Decor"]
-position = Vector2(6180, -300)
-texture = ExtResource("2_icmn4")
-region_enabled = true
-region_rect = Rect2(256, 0, 128, 128)
 
 
 [node name="Sprite2D4" type="Sprite2D" parent="Decor"]
@@ -49,6 +43,20 @@ position = Vector2(6320, -300)
 texture = ExtResource("2_icmn4")
 region_enabled = true
 region_rect = Rect2(384, 0, 128, 128)
+
+[node name="PapelPicado1" type="Sprite2D" parent="Decor"]
+position = Vector2(5900, -244)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("13_papel")
+region_enabled = true
+region_rect = Rect2(0, 0, 256, 48)
+
+[node name="PapelPicado2" type="Sprite2D" parent="Decor"]
+position = Vector2(6320, -244)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("13_papel")
+region_enabled = true
+region_rect = Rect2(256, 0, 256, 48)
 
 
 [node name="BikeLane" type="Node2D" parent="Rules" instance=ExtResource("3_62sbm")]

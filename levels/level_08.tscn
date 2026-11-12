@@ -1,7 +1,6 @@
 [gd_scene format=4]
 
 [ext_resource type="PackedScene" path="res://scenes/level/level.tscn" id="0_base"]
-[ext_resource type="Texture2D" path="res://assets/sprites/city/edificios.png" id="2_tp4tc"]
 [ext_resource type="PackedScene" path="res://scenes/rules/tutorial_hint.tscn" id="3_i0ocl"]
 [ext_resource type="PackedScene" path="res://scenes/rules/bike_lane.tscn" id="5_8rf2p"]
 [ext_resource type="PackedScene" path="res://scenes/rules/cyclist_distance.tscn" id="7_fglid"]
@@ -12,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://scenes/rules/traffic_light.tscn" id="15_7miex"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/girl_frames.tres" id="17_casdk"]
 [ext_resource type="Script" path="res://levels/level_08_traffic.gd" id="24_y3tx1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/city/biblioteca.png" id="26_biblio"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/teen_frames.tres" id="27_teen"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/shopper_frames.tres" id="28_shopper"]
 
 
 [sub_resource type="Curve2D" id="Curve2D_an36y"]
@@ -30,10 +32,8 @@ tile_map_data = PackedByteArray("AADy//T/AAAHAAEAAADy//X/AAACAAAAAADy//b/AAAHAAE
 
 
 [node name="Library" type="Sprite2D" parent="Decor"]
-position = Vector2(10850, 340)
-texture = ExtResource("2_tp4tc")
-region_enabled = true
-region_rect = Rect2(284, 0, 142, 160)
+position = Vector2(10850, 333)
+texture = ExtResource("26_biblio")
 
 
 [node name="HintStart" type="Node2D" parent="Rules" instance=ExtResource("3_i0ocl")]
@@ -87,7 +87,7 @@ road_width = 256.0
 
 [node name="BusStop1" type="Node2D" parent="Rules" instance=ExtResource("11_equp3")]
 position = Vector2(5200, 0)
-passengers_off = Array[SpriteFrames]([ExtResource("13_4u804")])
+passengers_off = Array[SpriteFrames]([ExtResource("27_teen")])
 passengers_on = Array[SpriteFrames]([ExtResource("14_xsewd")])
 min_dwell = 4.0
 
@@ -134,7 +134,7 @@ cyclist_end_x = 2600.0
 position = Vector2(9200, 0)
 bus_end_x = 1300.0
 passengers_off = Array[SpriteFrames]([ExtResource("14_xsewd"), ExtResource("17_casdk")])
-passengers_on = Array[SpriteFrames]([ExtResource("13_4u804"), ExtResource("17_casdk")])
+passengers_on = Array[SpriteFrames]([ExtResource("28_shopper"), ExtResource("17_casdk")])
 
 
 [node name="Route" parent="."]

@@ -16,7 +16,8 @@ const ARBOLES := preload("res://assets/sprites/city/arboles.png")
 const DestinationMarkerScript := preload("res://scenes/level/destination_marker.gd")
 
 ## Lotes en el orden de LevelTheme.lot_weights: casas 1-4 de casas.png (128×128), 3 edificios
-## (142×160), las casas 5-6 y los edificios 4-6 del arte v2 (al final para no mover los índices).
+## (142×160), las casas 5-6 y los edificios 4-6 del arte v2 y las casas 7-12 del lote 09
+## (al final para no mover los índices).
 const LOTS: Array[Dictionary] = [
 	{"tex": CASAS, "rect": Rect2(0, 0, 128, 128)},
 	{"tex": CASAS, "rect": Rect2(128, 0, 128, 128)},
@@ -30,6 +31,12 @@ const LOTS: Array[Dictionary] = [
 	{"tex": EDIFICIOS, "rect": Rect2(426, 0, 142, 160)},
 	{"tex": EDIFICIOS, "rect": Rect2(568, 0, 142, 160)},
 	{"tex": EDIFICIOS, "rect": Rect2(710, 0, 142, 160)},
+	{"tex": CASAS, "rect": Rect2(768, 0, 128, 128)},
+	{"tex": CASAS, "rect": Rect2(896, 0, 128, 128)},
+	{"tex": CASAS, "rect": Rect2(1024, 0, 128, 128)},
+	{"tex": CASAS, "rect": Rect2(1152, 0, 128, 128)},
+	{"tex": CASAS, "rect": Rect2(1280, 0, 128, 128)},
+	{"tex": CASAS, "rect": Rect2(1408, 0, 128, 128)},
 ]
 const TILE := 64
 ## Tiles de calle, banqueta y meta (street_v2.png): marcan la franja de la calle.

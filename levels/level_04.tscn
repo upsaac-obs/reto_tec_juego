@@ -8,6 +8,8 @@
 [ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/wheelchair_frames.tres" id="wheel"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/girl_frames.tres" id="girl"]
 [ext_resource type="Texture2D" path="res://assets/sprites/city/hospital.png" id="hosp"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/shopper_frames.tres" id="shopper"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/dad_stroller_frames.tres" id="dad"]
 
 [sub_resource type="Curve2D" id="Curve2D_l4"]
 _data = {
@@ -31,7 +33,7 @@ texture = ExtResource("hosp")
 
 [node name="PatienceCrossing1" type="Node2D" parent="Rules" instance=ExtResource("pz")]
 position = Vector2(1400, 0)
-walkers = Array[SpriteFrames]([ExtResource("elder"), ExtResource("adult")])
+walkers = Array[SpriteFrames]([ExtResource("elder"), ExtResource("shopper")])
 walk_speed = 30.0
 green_after = 3.0
 
@@ -42,7 +44,7 @@ position = Vector2(1900, 0)
 
 [node name="PatienceCrossing2" type="Node2D" parent="Rules" instance=ExtResource("pz")]
 position = Vector2(3000, 0)
-walkers = Array[SpriteFrames]([ExtResource("wheel"), ExtResource("adult")])
+walkers = Array[SpriteFrames]([ExtResource("wheel"), ExtResource("dad")])
 walk_speed = 34.0
 green_after = 3.0
 

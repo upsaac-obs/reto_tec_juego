@@ -53,3 +53,21 @@ letters, no frame, no border.
 - el copiloto es el de la ficha maestra;
 - no hay letras en ningún letrero;
 - nadie se ve en peligro.
+
+---
+
+## Anexo: tarjetas 09 y 10
+
+Los niveles 9 y 10 también tienen tarjeta y faltaban en la tabla. Mismas reglas del
+lote: lienzo, contorno **L**, referencias, auto rojo del piloto, sin texto ni marcos.
+Agrega a las referencias `vehiculos_grandes.png` en la 09, para que la ambulancia sea la del juego.
+
+**Ojo con el margen de abajo:** en las nueve primeras el copiloto salió grande y muy
+abajo. Pide al copiloto **chico (≈20 % de la altura) y con su base por encima de y = 900**.
+
+| Tarjeta | Nivel (hábito) | `{ESCENA}` |
+|---|---|---|
+| 09 | Piensa en todos | `The red car has pulled over calmly to the side of the street to let a white ambulance with a blue plus sign (no red cross, no letters) pass, its lights glowing softly; neighbors on the sidewalk smile and a dog sits calmly.` |
+| 10 | Hábito de campeón | `The red car is parked in front of a colorful school with a cantera portal (no text) while happy children with backpacks wave; golden stars and confetti float in the sky.` En esta tarjeta el copiloto es **más grande (≈35 % de la altura)**, va en la esquina inferior derecha y levanta un trofeo dorado. |
+
+**Entregas:** `tarjeta_09.png` y `tarjeta_10.png`, que reemplazan a `card_09.png` y `card_10.png`.
