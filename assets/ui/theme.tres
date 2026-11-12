@@ -1,5 +1,13 @@
 [gd_resource type="Theme" format=3]
 
+[ext_resource type="FontFile" path="res://assets/fonts/fredoka/Fredoka.ttf" id="1_fredoka"]
+
+[sub_resource type="FontVariation" id="FontVariation_fredoka"]
+base_font = ExtResource("1_fredoka")
+variation_opentype = {
+2003265652: 600
+}
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
 content_margin_left = 24.0
 content_margin_top = 12.0
@@ -161,7 +169,40 @@ corner_radius_bottom_left = 24
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_idle"]
 bg_color = Color(0.2471, 0.1059, 0.3059, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_medallion_good"]
+bg_color = Color(0.498, 0.7843, 0.9098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.7804, 0, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+corner_detail = 16
+shadow_color = Color(0.1176, 0.05882, 0.149, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_medallion_bad"]
+bg_color = Color(0.498, 0.7843, 0.9098, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.8667, 0.1569, 0.2078, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+corner_detail = 16
+shadow_color = Color(0.1176, 0.05882, 0.149, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
 [resource]
+default_font = SubResource("FontVariation_fredoka")
 default_font_size = 32
 Button/colors/font_color = Color(1, 1, 1, 1)
 Button/colors/font_hover_color = Color(1, 1, 1, 1)
@@ -187,6 +228,10 @@ MessageBad/base_type = &"PanelContainer"
 MessageBad/styles/panel = SubResource("StyleBoxFlat_message_bad")
 MessageGood/base_type = &"PanelContainer"
 MessageGood/styles/panel = SubResource("StyleBoxFlat_message_good")
+MedallionBad/base_type = &"Panel"
+MedallionBad/styles/panel = SubResource("StyleBoxFlat_medallion_bad")
+MedallionGood/base_type = &"Panel"
+MedallionGood/styles/panel = SubResource("StyleBoxFlat_medallion_good")
 MessageLabel/base_type = &"Label"
 MessageLabel/colors/font_color = Color(0.2471, 0.1059, 0.3059, 1)
 MessageLabel/constants/outline_size = 0

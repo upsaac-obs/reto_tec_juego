@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_theme")
+prop_kinds = Array[int]([0, 1, 3, 3, 4, 4])
 sidewalk_walkers = 10
 seed_value = 102
 lot_weights = Array[float]([1.0, 1.0, 1.0, 0.5, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
