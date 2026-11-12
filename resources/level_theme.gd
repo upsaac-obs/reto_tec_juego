@@ -28,6 +28,11 @@ enum Icon { NONE, TREE, BOOK, FRUIT, HOUSE, BELL, CROSS, BUS }
 ## Regiones de arboles.png que salen en la banqueta y en los huecos (0 fresno, 1 jacaranda, 2 arbustos,
 ## 3 maceta, 4 laurel, 5 palma, 6 buganvilia, 7 jardinera de talavera, 8 nopal, 9 seto).
 @export var tree_kinds: Array[int] = [0, 1, 3, 4, 6, 7, 8]
+## Cada cuántos tiles va un objeto de banqueta (0 = ninguno), entre los árboles.
+@export var sidewalk_prop_every: int = 5
+## Objetos de mobiliario.png que salen: 0 farol, 1 banca, 2 bote, 3 carrito de elotes,
+## 4 puesto de fruta.
+@export var prop_kinds: Array[int] = [0, 0, 1, 2, 3, 4]
 ## Distancia libre de decoración alrededor de cada pieza de Rules (x).
 @export var calm_radius: float = 192.0
 ## Personas que caminan por las banquetas sin interactuar con el auto (0 = nadie).

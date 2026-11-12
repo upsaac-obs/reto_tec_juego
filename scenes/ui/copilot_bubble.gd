@@ -16,6 +16,8 @@ enum Mood { GOOD, BAD, INFO }
 @onready var _message: PanelContainer = %Message
 @onready var _label: Label = %MessageLabel
 @onready var _points: Label = %PointsPopup
+@onready var _medallion: Panel = %Medallion
+@onready var _tail: BubbleTail = %Tail
 
 var _points_start: Vector2
 var _box_tween: Tween
@@ -24,14 +26,19 @@ var _points_tween: Tween
 
 func _ready() -> void:
 	_box.hide()
+	_tail.hide()
 	_points.hide()
 	_points_start = _points.position
 	_copilot.animation_finished.connect(_on_copilot_animation_finished)
+	# El globo cambia de alto con el texto: la colita lo sigue.
+	_message.item_rect_changed.connect(_attach_tail)
+	_box.item_rect_changed.connect(_attach_tail)
 
 
 func show_message(text: String, mood: Mood) -> void:
 	_label.text = text
 	_message.theme_type_variation = &"MessageBad" if mood == Mood.BAD else &"MessageGood"
+	_medallion.theme_type_variation = &"MedallionBad" if mood == Mood.BAD else &"MedallionGood"
 	match mood:
 		Mood.GOOD:
 			_copilot.play(&"happy")
@@ -43,15 +50,25 @@ func show_message(text: String, mood: Mood) -> void:
 		_box_tween.kill()
 	_box.show()
 	_box.modulate.a = 0.0
-	_box_tween = create_tween()
+	_tail.modulate.a = 0.0
+	_tail.show()
+	_attach_tail.call_deferred()
+	_box_tween = create_tween().set_parallel()
 	_box_tween.tween_property(_box, ^"modulate:a", 1.0, appear_time)
+	_box_tween.tween_property(_tail, ^"modulate:a", 1.0, appear_time)
 
 
 func hide_message() -> void:
 	if _box_tween != null:
 		_box_tween.kill()
 	_box.hide()
+	_tail.hide()
 	_copilot.stop()
+
+
+## Tras acomodarse el texto (cambia el alto del globo), la colita se pega al mensaje.
+func _attach_tail() -> void:
+	_tail.attach_to(_message)
 
 
 func pop_points(points: int) -> void:
