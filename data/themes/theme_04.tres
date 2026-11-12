@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_theme")
+prop_kinds = Array[int]([0, 1, 2])
 seed_value = 104
 lot_weights = Array[float]([1.0, 1.0, 0.5, 1.0, 0.6, 0.6, 0.6, 1.0, 1.0, 0.6, 0.6, 0.6, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 destination_nodes = PackedStringArray("Hospital")

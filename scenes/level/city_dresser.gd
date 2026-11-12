@@ -13,6 +13,10 @@ extends Node
 const CASAS := preload("res://assets/sprites/city/casas.png")
 const EDIFICIOS := preload("res://assets/sprites/city/edificios.png")
 const ARBOLES := preload("res://assets/sprites/city/arboles.png")
+## Objetos de banqueta (64 × 64): 0 farol, 1 banca, 2 bote, 3 carrito de elotes, 4 puesto de fruta.
+const MOBILIARIO := preload("res://assets/sprites/city/mobiliario.png")
+## Escala de cada objeto (vienen todos a 64 de alto; el bote y la banca son más chicos).
+const PROP_SCALES: Array[float] = [1.0, 0.72, 0.5, 0.85, 0.9]
 const DestinationMarkerScript := preload("res://scenes/level/destination_marker.gd")
 
 ## Lotes en el orden de LevelTheme.lot_weights: casas 1-4 de casas.png (128×128), 3 edificios
@@ -83,6 +87,8 @@ var _rng := RandomNumberGenerator.new()
 var _ground: TileMapLayer
 var _reserved: Array[Rect2] = []
 var _calm_x: Array[float] = []
+## Tiles de la banqueta que ya tienen árbol (x por lado), para no encimar objetos.
+var _sidewalk_used: Dictionary = {}
 
 
 func _ready() -> void:
@@ -114,7 +120,9 @@ func _dress() -> void:
 		for side: int in [-1, 1]:
 			_place_lots(side, lots, trees)
 	_place_backfill_trees(trees)
-	_place_sidewalk_trees(_add_layer("Sidewalk"))
+	var sidewalk := _add_layer("Sidewalk")
+	_place_sidewalk_trees(sidewalk)
+	_place_sidewalk_props(sidewalk)
 	_place_destination(level)
 	_place_walkers(level)
 	_apply_tint(level)
@@ -328,6 +336,35 @@ func _place_sidewalk_trees(layer: Node2D) -> void:
 			if _is_calm(pos.x + TILE / 2.0):
 				continue
 			_add_tree(layer, pos)
+			_sidewalk_used[Vector2i(tx, side)] = true
+
+
+## Farol, banca, bote, elotes o fruta cada sidewalk_prop_every tiles en la misma losa
+## que los árboles, sin encimarse con ellos y lejos de las piezas de Rules.
+func _place_sidewalk_props(layer: Node2D) -> void:
+	if theme.sidewalk_prop_every <= 0 or theme.prop_kinds.is_empty():
+		return
+	var used := _ground.get_used_rect()
+	var step := theme.sidewalk_prop_every
+	for side: int in [-1, 1]:
+		var row := street_top if side < 0 else street_bottom
+		var offset := _rng.randi_range(0, step - 1)
+		for tx in range(used.position.x + offset, used.end.x, step):
+			if _sidewalk_used.has(Vector2i(tx, side)) or _sidewalk_used.has(Vector2i(tx - 1, side)) \
+					or _sidewalk_used.has(Vector2i(tx + 1, side)):
+				continue
+			var pos := Vector2(tx * TILE, row * TILE + (-10.0 if side < 0 else 10.0))
+			if _is_calm(pos.x + TILE / 2.0) or _is_reserved(Rect2(pos, Vector2(TILE, TILE))):
+				continue
+			var kind: int = theme.prop_kinds[_rng.randi() % theme.prop_kinds.size()]
+			var prop_scale := PROP_SCALES[kind]
+			# Escala desde abajo al centro: el objeto queda parado en la misma línea.
+			var sprite := _make_sprite(MOBILIARIO, Rect2(kind * TILE, 0, TILE, TILE),
+					pos + Vector2(TILE * (1.0 - prop_scale) / 2.0, TILE * (1.0 - prop_scale)))
+			sprite.scale = Vector2(prop_scale, prop_scale)
+			sprite.flip_h = _rng.randf() < 0.5
+			layer.add_child(sprite)
+			_sidewalk_used[Vector2i(tx, side)] = true
 
 
 func _add_tree(layer: Node2D, pos: Vector2) -> void:
