@@ -5,7 +5,8 @@ extends Node
 ##   que sea mayor); el mensaje se queda al menos lo mismo.
 ## - show_good_action: copiloto feliz, sonido alegre y "+10". No pausa.
 ## - show_info: el copiloto habla (instrucciones como el cinturón). No pausa.
-## Siempre reproduce assets/audio/voz/<CLAVE>.ogg si existe.
+## Siempre reproduce assets/audio/voz/<CLAVE>.ogg si existe. Los mensajes que no
+## son falta duran lo que su voz más message_time (sin voz, solo message_time).
 
 const BUBBLE_SCENE := preload("res://scenes/ui/copilot_bubble.tscn")
 const GOOD_SOUND := preload("res://assets/audio/sfx/good.wav")
@@ -16,7 +17,8 @@ signal voice_played(message_key: String, length: float)
 
 ## Segundos que el juego queda en pausa después de una falta.
 @export var pause_time: float = 2.0
-## Segundos que el mensaje queda en pantalla.
+## Segundos base que el mensaje queda en pantalla. En show_info y
+## show_good_action se suman a lo que dure la voz (ver message_duration).
 @export var message_time: float = 2.5
 ## Segundos extra después de la voz antes de quitar la pausa de una falta.
 @export var voice_margin: float = 0.3
@@ -66,6 +68,16 @@ func infraction_pause_time(message_key: String) -> float:
 	return clampf(voice.get_length() + voice_margin, pause_time, maxf(pause_time, max_infraction_pause))
 
 
+## Segundos que se queda en pantalla un mensaje que no es falta (show_info,
+## show_good_action): lo que dure su voz más message_time, o solo message_time
+## si la clave no tiene voz.
+func message_duration(message_key: String) -> float:
+	var voice := _voice_for(message_key)
+	if voice == null:
+		return message_time
+	return voice.get_length() + message_time
+
+
 func show_good_action(message_key: String, points := 10) -> void:
 	_show(message_key, CopilotBubble.Mood.GOOD)
 	_sfx.play()
@@ -97,7 +109,8 @@ func _show(message_key: String, mood: CopilotBubble.Mood, duration := -1.0) -> v
 	var id := _message_id
 	_bubble.show_message(tr(message_key), mood)
 	play_voice(message_key)
-	await get_tree().create_timer(duration if duration > 0.0 else message_time).timeout
+	# Con duration (faltas) se respeta; si no, dura la voz más message_time.
+	await get_tree().create_timer(duration if duration > 0.0 else message_duration(message_key)).timeout
 	if id == _message_id:
 		_bubble.hide_message()
 
