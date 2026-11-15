@@ -1,6 +1,7 @@
 extends TestCase
 ## La pausa de una falta dura lo que dure su voz (mínimo pause_time) y el
 ## mensaje se queda al menos lo mismo. Sin voz, todo sigue igual (2 s).
+## Los consejos (show_info) y acciones buenas duran la voz más message_time.
 
 
 ## Voz falsa de `seconds` segundos (silencio de 8 bits a 8 kHz).
@@ -45,6 +46,23 @@ func run() -> void:
 	check(not get_tree().paused, "al terminar la voz (más el margen) se quita la pausa")
 	await wait(Feedback.message_time)
 	check(not box.visible, "el mensaje se va después")
+
+	# Consejos y acciones buenas: duran la voz más message_time.
+	Feedback._voices["TUTO_PRUEBA"] = null
+	check(is_equal_approx(Feedback.message_duration("TUTO_PRUEBA"), Feedback.message_time), "sin voz el consejo dura message_time")
+	Feedback._voices["TUTO_PRUEBA"] = fake_voice(3.0)
+	check(is_equal_approx(Feedback.message_duration("TUTO_PRUEBA"), 3.0 + Feedback.message_time), "con voz de 3 s el consejo dura la voz más message_time")
+
+	# Regresión: antes el consejo se escondía a los message_time aunque la voz siguiera.
+	Feedback._voices["TUTO_PRUEBA"] = fake_voice(1.0)
+	var info_time := 1.0 + Feedback.message_time
+	Feedback.show_info("TUTO_PRUEBA")
+	await frames(1)
+	check(box.visible and not get_tree().paused, "el consejo aparece sin pausar")
+	await wait(info_time - 0.3)
+	check(box.visible, "el consejo sigue visible mientras dura la voz más message_time")
+	await wait(0.5)
+	check(not box.visible, "el consejo se va al terminar la voz más message_time")
 
 	Feedback.voice_played.disconnect(on_voice)
 	Feedback._voices.clear()

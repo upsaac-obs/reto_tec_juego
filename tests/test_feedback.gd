@@ -16,7 +16,8 @@ func run() -> void:
 	check(box.visible and label.text == "¡Bien, alto completo!", "acción buena muestra el texto traducido")
 	check(points.visible and points.text == "+10", "aparece +10")
 	check(copilot.animation == &"happy" and not get_tree().paused, "copiloto feliz y sin pausa")
-	await wait(2.6)
+	# Dura lo que su voz más message_time (test_feedback_voice).
+	await wait(Feedback.message_duration("BIEN_ALTO") + 0.1)
 	check(not box.visible and not points.visible, "el mensaje y el +10 se van solos")
 
 	# Sin voz la pausa es de 2 s; con voz dura lo que la voz (test_feedback_voice).
