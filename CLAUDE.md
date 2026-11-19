@@ -47,7 +47,7 @@ res://
   scenes/ui/       main_menu, level_select, age_select, hud, pause_menu, habit_card, tutor_screen
   scenes/level/    level.tscn, player_car.tscn, rule_manager.gd
   scenes/rules/    stop_zone, crosswalk, traffic_light, speed_zone, bike_lane,
-                   look_mark, dark_zone, phone_event, bus_stop, ambulance_event
+                   look_mark, dark_zone, phone_event, bus_stop, ambulance_event, lane_merge
   scenes/actors/   pedestrian, npc_car, cyclist
   levels/          level_00.tscn … level_10.tscn
   data/            level_00.tres … level_10.tres

@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://scenes/rules/departure_board.tscn" id="16_gl76r"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/pedestrians/adult_frames.tres" id="20_adult"]
 [ext_resource type="Script" path="res://scenes/level/street_section.gd" id="20_6wgwh"]
+[ext_resource type="PackedScene" path="res://scenes/rules/lane_merge.tscn" id="21_lanemerge"]
 
 [sub_resource type="Curve2D" id="Curve2D_5h2uh"]
 _data = {
@@ -85,6 +86,11 @@ position = Vector2(3584, 0)
 position = Vector2(3904, 0)
 
 
+[node name="LaneMerge" type="Node2D" parent="Rules" instance=ExtResource("21_lanemerge")]
+position = Vector2(4150, 0)
+obstacle_distance = 8.0
+
+
 [node name="SpeedZone30" type="Node2D" parent="Rules" instance=ExtResource("6_6tpke")]
 position = Vector2(3968, 0)
 zone_length = 1376.0
@@ -131,7 +137,7 @@ curve = SubResource("Curve2D_5h2uh")
 start_lane = 1
 
 [node name="OneLane" type="Node2D" parent="Route"]
-position = Vector2(4096, 0)
+position = Vector2(4126, 0)
 script = ExtResource("20_6wgwh")
 lane_count = 1
 lane_shift = -32.0

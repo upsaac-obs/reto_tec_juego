@@ -23,11 +23,13 @@ Ficha de diseño (fase 1 del `docs/plan_cierre.md`). Roles: game-designer + leve
 - Límite de velocidad (`speed`, repaso del nivel 2).
 - Semáforo en rojo (`red_light`, repaso del nivel 2).
 - Peatón, falta grave (`crosswalk`, repaso del nivel 1). La pelota usa esta misma regla.
+- Carril (`lane`, falta no grave): agregada después, a pedido del equipo. Antes de la calle de los autos estacionados hay que ir en el carril izquierdo (ver §3c).
 
 **Piezas nuevas:**
 - `ball_event`: la pieza que pidió el sprint.
 - `yellow_crossing`: un cruce con semáforo que se pone en amarillo cuando llega el auto. Hace falta porque un `traffic_light` normal cambia con su propio reloj y no garantiza que el niño vea el amarillo.
 - `departure_board`: el tablero de salidas. No es una regla, solo se muestra.
+- `lane_merge`: revisa que el auto vaya en el carril izquierdo antes de que la calle se angoste (§3c).
 
 Ninguna toca `hud.tscn`, `player_car.gd` ni `traffic_light.gd`.
 
@@ -52,7 +54,7 @@ Es una calle recta como en los niveles 1 a 4: el auto avanza hacia +x, con 2 car
 | B | Calle de 40 | 640 – 1536 | Repaso del límite. Primer +10 |
 | C | Primer amarillo (enseña) | 1700 – 2752 | Aviso del copiloto y semáforo que se pone en amarillo al llegar |
 | D | Segundo amarillo (tentación) | 2944 – 3904 | El copiloto recuerda que vamos a tiempo; el amarillo sale un poco más cerca |
-| E | Calle de los autos estacionados (clímax) | 4096 – 5440 | Un carril (`Route/OneLane`, `lane_shift = -32`: el auto va en el carril izquierdo dibujado, lejos de los autos estacionados), límite 30, la pelota y la niña |
+| E | Calle de los autos estacionados (clímax) | 3968 – 5440 | En 4150, a ras del primer auto estacionado, `LaneMerge`: si el auto no va en el carril izquierdo, falta `FALTA_CARRIL` (§3c). Desde 4126, un carril (`Route/OneLane`, `lane_shift = -32`: el auto va en el carril izquierdo dibujado, lejos de los autos estacionados; si venía por el derecho, se pasa solo), límite 30, la pelota y la niña |
 | F | Llegada a la terminal | 5440 – 6560 | Paso peatonal frente a la terminal, tablero en la banqueta y meta |
 
 ### Piezas, en orden
@@ -69,7 +71,8 @@ Todas van en `Rules` con `y = 0`, salvo las que se indican. Los valores que no a
 | 6 | `HintBoard` | `tutorial_hint.tscn` | 2944 | `message_key = "PRISA_TABLERO_AVISO"` |
 | 7 | `YellowCrossing2` | `yellow_crossing.tscn` | 3584 | `trigger_distance = 360.0` (dispara en x = 3224), `yellow_time = 3.0`, `red_time = 4.0` |
 | 8 | `CheckpointAfterLight2` | `checkpoint.tscn` | 3904 | — |
-| 9 | `OneLane` | `StreetSection` (**hijo de `Route`**, no de `Rules`) | 4096 | `lane_count = 1`. El auto se acomoda solo al centro (y = 0) |
+| 8b | `LaneMerge` | `lane_merge.tscn` (nueva) | 4150 | `required_lane = 0`, `message_key = "FALTA_CARRIL"`, `obstacle_distance = 8.0` (primer auto estacionado en x = 4158). Ver §3c |
+| 9 | `OneLane` | `StreetSection` (**hijo de `Route`**, no de `Rules`) | 4126 | `lane_count = 1`, `lane_shift = -32`. El auto se acomoda solo al carril izquierdo dibujado (y = −32) |
 | 10 | `CheckpointBallStreet` | `checkpoint.tscn` | 4128 | — (después de la falta grave se vuelve aquí: queda 350 px antes del disparo de la pelota) |
 | 11 | `HintBallStreet` | `tutorial_hint.tscn` | 4176 | `message_key = "PELOTA_CALLE_AVISO"` |
 | 12 | `SpeedZone30` | `speed_zone.tscn` | 4256 | `kind = STREET (0)`, `limit_kmh = 30`, `zone_length = 1088.0` (termina en 5344) |
@@ -300,6 +303,27 @@ Para las pruebas de recorrido expone:
 - `func careful_stop_x() -> float: return position.x - 45.0`
 - `func must_wait() -> bool: return Light.light != TrafficLight.Light.GREEN or is_busy()`
 
+## 3c. Pieza nueva `lane_merge` (carril antes de los autos estacionados)
+
+Archivos: `scenes/rules/lane_merge.gd` y `.tscn`, con `class_name LaneMerge extends RulePiece` y `@tool`. No toca `player_car.gd`.
+
+- **Origen:** donde se revisa el frente del auto (x = 4150, 8 px antes del borde del primer auto estacionado). `Zone` es un `Area2D` de `zone_depth` (16) × `road_width` (128).
+- **Falta (`lane`, `FALTA_CARRIL`, no grave):** si el auto entra a `Zone` y no va en `required_lane` (0, el izquierdo) ni tiene la direccional hacia ese carril. Una vez por pasada. La falta pausa el juego (voz + `message_time`) **antes** de que empiece `OneLane` (x = 4126); al seguir, `OneLane` lo pasa solo al carril izquierdo.
+- **Cambio preventivo:** si ya va en el carril 0, o ya puso la direccional hacia él (el cambio está en marcha), no pasa nada: ni mensaje, ni puntos, ni sonido, ni pausa. Al entrar a `OneLane` la distancia al carril único es 0, así que no se nota el paso de dos carriles a uno.
+- **Por qué esas x:** el trigger va a ras del primer auto estacionado (borde en x = 4158). El frente del auto va 33 px delante de su centro, así que `LaneMerge` revisa en x = 4150 (centro en 4117) y `OneLane` empieza en x = 4126 (centro; frente en 4159): primero se evalúa la falta y, tras su pausa, el cambio automático (`lane_change_time` = 0.4 s) arranca justo al llegar al primer auto. A 120 px/s el cambio recorre ~48 px y a 240 px/s (60 km/h, la velocidad máxima) ~96 px, así que durante el cambio el auto se encima visualmente con los primeros autos estacionados (no hay colisiones). El aviso de voz `HintBallStreet` (x = 4000) se oye antes, mucho antes del trigger.
+- **Puntos de control:** `CheckpointAfterLight2` (3904) va antes: al volver ahí, `_on_car_restarted()` la vuelve a revisar. `CheckpointBallStreet` (4160) va después y dentro de `OneLane` (4126): al volver ahí el auto aparece en el carril izquierdo y no se revisa otra vez.
+- **Conductor cuidadoso:** `careful_lane()` = 0 y `careful_range()` = (4150, 4158), así `tests/test_levels.gd` se pasa al carril izquierdo antes (desde 400 px antes).
+- **Tutores:** `REGLA_LANE` ("Carril") en `textos.csv` y su línea en `TutorsScreen.kt` (iOS la toma sola de `REGLA_` + id).
+
+**Voz pendiente:** `FALTA_CARRIL` y `REGLA_LANE` todavía no tienen `.ogg` (se agregaron en una máquina sin Piper). Sin voz el juego funciona: el mensaje dura solo `message_time` y no suena nada. En la máquina que tiene Piper:
+
+```sh
+python3 tools/gen_voces.py --key FALTA_CARRIL --key REGLA_LANE   # o sin argumentos: solo las nuevas o cambiadas
+godot --headless --path . --import                                # crea los .import
+```
+
+y commitear `assets/audio/voz/FALTA_CARRIL.ogg`, `assets/audio/voz/FALTA_CARRIL.ogg.import`, `assets/audio/voz/REGLA_LANE.ogg`, `assets/audio/voz/REGLA_LANE.ogg.import` y las líneas nuevas de `tools/voz_manifest.json` (las escribe el script; no se editan a mano).
+
 ## 4. Tablero de salidas (`departure_board`)
 
 Archivos: `scenes/rules/departure_board.gd` y `.tscn`, con `class_name DepartureBoard extends RulePiece` y `@tool`. **No toca `hud.tscn` ni `player_car.gd`.**
@@ -367,7 +391,7 @@ Tiempos aproximados en Grande con un conductor cuidadoso (Peque, en paréntesis)
 | 0:25 | 2944 | **Copiloto:** "Mira el tablero: seguimos a tiempo…" | El tablero sigue igual aunque esperamos |
 | 0:28 | 3224 | **Amarillo 2**, un poco más cerca (360 px) | Prueba sin aviso |
 | 0:35 (0:40) | 3584 | Verde: **+10** | |
-| 0:39 | 4096 | La calle se angosta a un carril y hay autos estacionados a la derecha | Cambio de ambiente: atención |
+| 0:39 | 4000 – 4158 | La calle se angosta a un carril y hay autos estacionados a la derecha (aviso en 4000). Si al llegar al primer auto no va en el carril izquierdo: falta `FALTA_CARRIL` y el auto se pasa solo | Cambio de ambiente: atención |
 | 0:40 | 4176 | **Copiloto:** "Calle con autos estacionados. Despacio…" | |
 | 0:41 | 4256 | Letrero de 30 km/h | Pocos segundos para bajar la velocidad antes de la pelota |
 | **0:44 (0:52)** | 4520 | **CLÍMAX:** sale la pelota rodando entre dos autos; 0.6 s después, la niña corre tras ella | Sorpresa. Frena |

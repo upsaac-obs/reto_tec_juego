@@ -117,6 +117,7 @@
     <string name="REGLA_DISTANCE">Distancia con ciclista</string>
     <string name="REGLA_AMBULANCE">Ambulancia</string>
     <string name="REGLA_CRASH">Choque</string>
+    <string name="REGLA_LANE">Carril</string>
     <string name="MENU_OPCIONES">Opciones</string>
     <string name="MENU_MUSICA">Música</string>
     <string name="MENU_CERRAR">Cerrar</string>
@@ -129,6 +130,7 @@
     <string name="BIEN_AMARILLO">¡Bien! Frenaste con la amarilla. Esperar un ratito nos cuida a todos.</string>
     <string name="PRISA_TABLERO_AVISO">Mira el tablero: seguimos a tiempo. Manejando bien, siempre llegamos.</string>
     <string name="PELOTA_CALLE_AVISO">Calle con autos estacionados. Despacio: alguien podría salir de entre ellos.</string>
+    <string name="FALTA_CARRIL">¡Cuidado! Aquí hay autos estacionados y la calle se angosta. Antes de llegar, cámbiate al carril izquierdo.</string>
     <string name="FALTA_PELOTA">¡Uy! Detrás de una pelota casi siempre viene alguien. Despacio sí alcanzamos a frenar.</string>
     <string name="BIEN_PELOTA">¡Así se hace! Frenaste a tiempo y la niña recuperó su pelota.</string>
     <string name="LLEGADA_A_TIEMPO">¡Llegamos a tiempo! Y llegamos bien, que es lo más importante.</string>
