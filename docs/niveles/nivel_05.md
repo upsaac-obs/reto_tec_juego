@@ -52,7 +52,7 @@ Es una calle recta como en los niveles 1 a 4: el auto avanza hacia +x, con 2 car
 | B | Calle de 40 | 640 – 1536 | Repaso del límite. Primer +10 |
 | C | Primer amarillo (enseña) | 1700 – 2752 | Aviso del copiloto y semáforo que se pone en amarillo al llegar |
 | D | Segundo amarillo (tentación) | 2944 – 3904 | El copiloto recuerda que vamos a tiempo; el amarillo sale un poco más cerca |
-| E | Calle de los autos estacionados (clímax) | 4096 – 5440 | Un carril, límite 30, la pelota y la niña |
+| E | Calle de los autos estacionados (clímax) | 4096 – 5440 | Un carril (`Route/OneLane`, `lane_shift = -32`: el auto va en el carril izquierdo dibujado, lejos de los autos estacionados), límite 30, la pelota y la niña |
 | F | Llegada a la terminal | 5440 – 6560 | Paso peatonal frente a la terminal, tablero en la banqueta y meta |
 
 ### Piezas, en orden
@@ -397,7 +397,7 @@ Las reglas son **idénticas** (decisión del plan de cierre). Solo cambia lo de 
 | Amarillo | Falta si **no frena** más de 1.0 s dentro de la zona (propiedad de la base técnica, punto 3) | Falta si **acelera** más de 1.0 s dentro de la zona |
 | Autos que cruzan en cada rojo | **1** (`cars_per_red_peque`) | **2** (`cars_per_red_grande`) |
 | Pelota y niña | Sí, iguales | Sí, iguales |
-| Autos estacionados | 9, iguales (no son tráfico: forman el lugar de donde sale la pelota) | 9 |
+| Autos estacionados | 13 en la escena (`parked_car_x` del nivel), iguales (no son tráfico: forman el lugar de donde sale la pelota) | 13 |
 | Avisos del copiloto | `HintYellow` usa `PRISA_AMARILLO_AVISO_PEQUE` ("toca el freno") | `PRISA_AMARILLO_AVISO` ("deja de acelerar y frena") |
 | Tablero | Se ve (`show_in_peque = true`) | Se ve |
 
