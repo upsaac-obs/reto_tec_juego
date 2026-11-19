@@ -18,7 +18,14 @@ object Palette {
     val Outline = Color(0xFF1E0F26)
     val Asphalt = Color(0xFF534A5E)
 
+    /** Tarjetas de los menús (mismo degradado que iOS). */
+    val CardTop = Color(0xFF4A2A85)
+    val CardBottom = Color(0xFF2E1660)
+    val Banner = Color(0xFFD9302F)
+
     /** Fondo de los menús mientras llega el arte del prompt #19. */
+    val Card = Brush.verticalGradient(listOf(CardTop, CardBottom))
+
     val Sky = Brush.verticalGradient(listOf(SkyTop, SkyMiddle, SkyBottom))
 }
 

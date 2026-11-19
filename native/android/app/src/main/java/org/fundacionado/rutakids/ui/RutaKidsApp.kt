@@ -105,6 +105,7 @@ fun RutaKidsApp(vm: BridgeViewModel) {
                         maxStars = Levels.maxStars,
                         muted = muted,
                         kiosk = kiosk,
+                        loading = !godot.engineReady,
                         onPlay = {
                             scope.launch {
                                 if (vm.settings.mode.first() == null) nav.navigate(Routes.AGE_SELECT)

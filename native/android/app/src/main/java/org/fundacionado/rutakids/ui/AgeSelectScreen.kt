@@ -2,11 +2,12 @@ package org.fundacionado.rutakids.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +30,7 @@ import org.fundacionado.rutakids.data.SettingsStore
 
 /**
  * Selección de edad: solo sale la primera vez. Un toque elige el modo y se guarda.
- * Los dibujos grandes llegan con el prompt #20; mientras, tarjetas de color.
+ * Dos tarjetas grandes con degradado (como iOS); los dibujos llegan con el prompt #20.
  */
 @Composable
 fun AgeSelectScreen(onModeSelected: (String) -> Unit) {
@@ -33,61 +38,58 @@ fun AgeSelectScreen(onModeSelected: (String) -> Unit) {
         Column(
             Modifier.fillMaxSize().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 stringResource(R.string.MENU_EDAD_TITULO),
                 color = Palette.White,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Black,
+                style = TextStyle(shadow = Shadow(Color.Black.copy(alpha = 0.4f), Offset(0f, 4f), 6f)),
             )
-            Row(
-                Modifier.weight(1f).padding(horizontal = 48.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
+            Spacer(Modifier.height(24.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(28.dp)) {
                 AgeCard(
+                    emoji = "🙂",
                     title = stringResource(R.string.MENU_PEQUE),
                     ages = stringResource(R.string.MENU_PEQUE_EDADES),
-                    color = Palette.DarkPurple,
-                    textColor = Palette.Gold,
                     onClick = { onModeSelected(SettingsStore.MODE_PEQUE) },
-                    modifier = Modifier.weight(1f),
                 )
                 AgeCard(
+                    emoji = "🎮",
                     title = stringResource(R.string.MENU_GRANDE),
                     ages = stringResource(R.string.MENU_GRANDE_EDADES),
-                    color = Palette.DarkPurple,
-                    textColor = Palette.Gold,
                     onClick = { onModeSelected(SettingsStore.MODE_GRANDE) },
-                    modifier = Modifier.weight(1f),
                 )
             }
         }
     }
 }
 
+/** Tarjeta con degradado morado y borde rojo, como en iOS. El emoji es provisional hasta tener el dibujo. */
 @Composable
 private fun AgeCard(
+    emoji: String,
     title: String,
     ages: String,
-    color: Color,
-    textColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val shape = RoundedCornerShape(32.dp)
+    val shape = RoundedCornerShape(28.dp)
     Column(
         modifier
-            .fillMaxHeight()
+            .width(240.dp)
+            .shadow(8.dp, shape)
             .clip(shape)
-            .background(color)
-            .border(5.dp, Palette.AdoRed, shape)
-            .clickable(onClick = onClick)
-            .padding(24.dp),
+            .background(Palette.Card)
+            .border(4.dp, Palette.AdoRed, shape)
+            .pressClickable(onClick = onClick)
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(title, color = textColor, fontSize = 48.sp, fontWeight = FontWeight.Black)
-        Text(ages, color = Palette.White, fontSize = 24.sp)
+        Text(emoji, fontSize = 64.sp)
+        Text(title, color = Palette.White, fontSize = 26.sp, fontWeight = FontWeight.Black)
+        Text(ages, color = Palette.White.copy(alpha = 0.8f), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }
 }

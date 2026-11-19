@@ -3,6 +3,7 @@ package org.fundacionado.rutakids.ui
 import android.content.res.Resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -60,19 +61,20 @@ fun TutorsScreen(
 ) {
     var confirmReset by remember { mutableStateOf(false) }
     val resources = LocalContext.current.resources
+    val packageName = LocalContext.current.packageName
 
     MenuBackground {
         Column(Modifier.fillMaxSize().padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ImageButton(R.drawable.btn_exit, stringResource(R.string.MENU_REGRESAR), onBack, Modifier.size(56.dp))
+                ImageButton(R.drawable.icon_back, stringResource(R.string.MENU_REGRESAR), onBack, Modifier.size(56.dp))
                 Spacer(Modifier.width(16.dp))
-                Surface(shape = RoundedCornerShape(20.dp), color = Palette.DarkPurple) {
+                Surface(shape = RoundedCornerShape(50), color = Palette.DarkPurple) {
                     Text(
                         stringResource(R.string.TUTOR_TITULO),
                         color = Palette.Gold,
                         fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        fontWeight = FontWeight.Black,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
                     )
                 }
             }
@@ -146,6 +148,11 @@ fun TutorsScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                 )
+                                Text(
+                                    decalogo(resources, packageName, level.id),
+                                    color = Palette.Asphalt,
+                                    fontSize = 12.sp,
+                                )
                                 if (stars > 0) {
                                     Text(
                                         if (infractions.isEmpty()) stringResource(R.string.TUTOR_SIN_FALTAS)
@@ -164,7 +171,7 @@ fun TutorsScreen(
                 item {
                     Button(
                         onClick = { confirmReset = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Palette.AdoRed),
+                        colors = ButtonDefaults.buttonColors(containerColor = Palette.Banner),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth().height(50.dp),
                     ) {
@@ -198,7 +205,8 @@ fun TutorsScreen(
 private fun TutorCard(content: @Composable () -> Unit) {
     Card(
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Palette.White.copy(alpha = 0.93f)),
+        colors = CardDefaults.cardColors(containerColor = Palette.White.copy(alpha = 0.94f)),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
     }
@@ -206,18 +214,31 @@ private fun TutorCard(content: @Composable () -> Unit) {
 
 @Composable
 private fun CardTitle(text: String) {
-    Text(text, color = Palette.DarkPurple, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+    Text(text, color = Palette.Banner, fontSize = 17.sp, fontWeight = FontWeight.Black)
 }
 
 @Composable
 private fun ModeButton(label: String, selected: Boolean, onClick: () -> Unit) {
-    if (selected) {
-        Button(onClick = onClick, colors = ButtonDefaults.buttonColors(containerColor = Palette.DarkPurple)) {
-            Text(label, color = Palette.Gold, fontWeight = FontWeight.Bold)
-        }
-    } else {
-        OutlinedButton(onClick = onClick) { Text(label, color = Palette.DarkPurple) }
+    Box(
+        Modifier
+            .clip(RoundedCornerShape(50))
+            .background(if (selected) Palette.Gold else Palette.DarkPurple)
+            .pressClickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            label,
+            color = if (selected) Palette.DarkPurple else Palette.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+        )
     }
+}
+
+/** "Decálogo N · …" del nivel (DECALOGO_01…); si no hay texto, queda vacío. */
+private fun decalogo(res: Resources, packageName: String, levelId: Int): String {
+    val id = res.getIdentifier("DECALOGO_%02d".format(levelId), "string", packageName)
+    return if (id != 0) res.getString(id) else ""
 }
 
 /** Nombre corto de cada rule_id del RuleManager (docs/arquitectura.md, sección 3). */

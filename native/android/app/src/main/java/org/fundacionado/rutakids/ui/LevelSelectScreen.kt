@@ -3,7 +3,6 @@ package org.fundacionado.rutakids.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -28,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,9 +60,10 @@ fun LevelSelectScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                ImageButton(R.drawable.btn_exit, stringResource(R.string.MENU_REGRESAR), onBack, Modifier.size(60.dp))
+                ImageButton(R.drawable.icon_back, stringResource(R.string.MENU_REGRESAR), onBack, Modifier.size(60.dp))
                 StarsBanner(progress.totalStars, Levels.maxStars)
-                Box(Modifier.size(60.dp))
+                // Mientras Godot arranca, "Cargando…" (como iOS); si no, el espacio queda vacío.
+                if (!godot.engineReady) LoadingChip() else Box(Modifier.size(60.dp))
             }
             // 8 tarjetas en 2 filas de 4, del tamaño que quepa sin scroll (como iOS).
             BoxWithConstraints(
@@ -71,7 +72,7 @@ fun LevelSelectScreen(
             ) {
                 val rows = Levels.menu.chunked(COLUMNS)
                 val byWidth = (maxWidth - CARD_GAP * (COLUMNS - 1)) / COLUMNS
-                val byHeight = ((maxHeight - ROW_GAP * (rows.size - 1)) / rows.size - STARS_HEIGHT) * CARD_ASPECT
+                val byHeight = ((maxHeight - ROW_GAP * (rows.size - 1)) / rows.size) * CARD_ASPECT
                 val cardWidth = minOf(byWidth, byHeight, MAX_CARD_WIDTH)
                 Column(verticalArrangement = Arrangement.spacedBy(ROW_GAP)) {
                     rows.forEach { row ->
@@ -104,10 +105,9 @@ fun LevelSelectScreen(
 }
 
 private const val COLUMNS = 4
-private const val CARD_ASPECT = 130f / 134f
+private const val CARD_ASPECT = 1f
 private val CARD_GAP = 20.dp
 private val ROW_GAP = 12.dp
-private val STARS_HEIGHT = 30.dp
 private val MAX_CARD_WIDTH = 180.dp
 
 @Composable
@@ -122,7 +122,7 @@ private fun LevelCard(
 ) {
     val name = stringResource(level.nameRes)
     Column(
-        modifier.clickable(enabled = !locked, onClick = onClick),
+        modifier.pressClickable(enabled = !locked, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(Modifier.fillMaxWidth().aspectRatio(CARD_ASPECT)) {
@@ -138,21 +138,13 @@ private fun LevelCard(
                 val shape = RoundedCornerShape(18.dp)
                 Box(
                     Modifier.fillMaxSize().padding(3.dp).clip(shape)
-                        .background(Palette.DarkPurple).border(4.dp, Palette.AdoRed, shape)
+                        .background(Palette.Card).border(4.dp, Palette.AdoRed, shape)
                         .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(name, color = Palette.White, fontSize = 14.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
                 }
             }
-            // El número va encima del arte (los dibujos originales traían otro número).
-            Text(
-                "${level.id}",
-                color = Palette.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier.align(Alignment.TopStart).padding(start = 12.dp, top = 6.dp),
-            )
             if (locked) {
                 Box(
                     Modifier.fillMaxSize().padding(3.dp).clip(RoundedCornerShape(18.dp))
@@ -166,15 +158,40 @@ private fun LevelCard(
                         fontWeight = FontWeight.Bold,
                     )
                 }
-            } else if (loading) {
-                CircularProgressIndicator(
-                    color = Palette.Gold,
-                    strokeWidth = 3.dp,
-                    modifier = Modifier.align(Alignment.Center).size(28.dp),
+            } else {
+                StarsCapsule(
+                    stars,
+                    Modifier.align(Alignment.BottomCenter).padding(bottom = 10.dp),
                 )
+                if (loading) {
+                    CircularProgressIndicator(
+                        color = Palette.Gold,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.align(Alignment.Center).size(28.dp),
+                    )
+                }
             }
         }
-        StarsRow(stars, Modifier.height(STARS_HEIGHT))
+    }
+}
+
+/** Cápsula morada con las 3 estrellas encima de la tarjeta: llenas las ganadas, vacías las que faltan (como iOS). */
+@Composable
+private fun StarsCapsule(stars: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .clip(RoundedCornerShape(50))
+            .background(Palette.DarkPurple.copy(alpha = 0.78f))
+            .padding(horizontal = 10.dp, vertical = 2.dp),
+    ) {
+        repeat(3) { i ->
+            Text(
+                if (i < stars) "★" else "☆",
+                color = if (i < stars) Palette.Gold else Palette.White.copy(alpha = 0.55f),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
 }
 

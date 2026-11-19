@@ -26,6 +26,7 @@ fun HomeScreen(
     maxStars: Int,
     muted: Boolean,
     kiosk: Boolean,
+    loading: Boolean,
     onPlay: () -> Unit,
     onExit: () -> Unit,
     onToggleSound: () -> Unit,
@@ -59,5 +60,9 @@ fun HomeScreen(
             onPlay,
             Modifier.align(Alignment.Center).size(220.dp),
         )
+        // Godot arranca escondido: Jugar ya funciona, pero se avisa que el nivel tardará un momento.
+        if (loading) {
+            LoadingChip(Modifier.align(Alignment.BottomCenter).padding(bottom = 28.dp))
+        }
     }
 }

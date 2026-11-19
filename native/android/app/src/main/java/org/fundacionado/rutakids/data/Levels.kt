@@ -18,14 +18,14 @@ data class LevelInfo(
 object Levels {
     val all = listOf(
         LevelInfo(0, R.string.NIVEL_00_NOMBRE, R.drawable.icon_seatbelt),
-        LevelInfo(1, R.string.NIVEL_01_NOMBRE, R.drawable.icon_crosswalk),
-        LevelInfo(2, R.string.NIVEL_02_NOMBRE, R.drawable.icon_stop),
-        LevelInfo(3, R.string.NIVEL_03_NOMBRE, R.drawable.icon_look_both_ways),
-        LevelInfo(4, R.string.NIVEL_04_NOMBRE, R.drawable.icon_pedestrian_light),
-        LevelInfo(5, R.string.NIVEL_05_NOMBRE, R.drawable.icon_speed_limit),
-        LevelInfo(6, R.string.NIVEL_06_NOMBRE, null),
-        LevelInfo(7, R.string.NIVEL_07_NOMBRE, null),
-        LevelInfo(8, R.string.NIVEL_08_NOMBRE, R.drawable.icon_bike),
+        LevelInfo(1, R.string.NIVEL_01_NOMBRE, R.drawable.imagen_nl1),
+        LevelInfo(2, R.string.NIVEL_02_NOMBRE, R.drawable.imagen_nl2),
+        LevelInfo(3, R.string.NIVEL_03_NOMBRE, R.drawable.imagen_nl3),
+        LevelInfo(4, R.string.NIVEL_04_NOMBRE, R.drawable.imagen_nl4),
+        LevelInfo(5, R.string.NIVEL_05_NOMBRE, R.drawable.imagen_nl5),
+        LevelInfo(6, R.string.NIVEL_06_NOMBRE, R.drawable.imagen_nl6),
+        LevelInfo(7, R.string.NIVEL_07_NOMBRE, R.drawable.imagen_nl7),
+        LevelInfo(8, R.string.NIVEL_08_NOMBRE, R.drawable.imagen_nl8),
     )
 
     /** El 0 es el tutorial: se abre solo la primera vez que se toca Jugar (fuera del kiosco). */
