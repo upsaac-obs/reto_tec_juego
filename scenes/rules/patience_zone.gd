@@ -3,7 +3,9 @@ class_name PatienceZone
 extends RulePiece
 ## Cruce con semáforo y gente que necesita más tiempo (nivel 4). El origen es el
 ## centro de la cebra y el auto llega desde -x (gira el nodo para otras direcciones).
-## - Cuando el auto se acerca, la luz de peatones se pone verde y el grupo empieza a cruzar despacio.
+## - Cuando el auto se acerca, la luz de peatones se pone verde y todas las personas
+##   empiezan a cruzar a la vez, cada una a su paso (walker_speeds), lado a lado o en
+##   fila (chain_spacing).
 ## - A los green_after segundos el semáforo de autos se pone en verde, aunque
 ##   todavía haya gente en el cruce: esa es la prueba de paciencia.
 ## - Si el auto pasa la línea del semáforo mientras alguien cruza: falta "patience"
@@ -48,11 +50,20 @@ enum PedLight { OFF, RED, GREEN }
 @export var green_after: float = 3.0
 ## Segundos entre que el auto se acerca y la gente empieza a cruzar.
 @export var start_delay: float = 0.3
-## Quién cruza, una persona por cuadro de animación. Caminan juntas, en grupo.
+## Quién cruza, una persona por cuadro de animación. En fila, la primera va adelante.
 @export var walkers: Array[SpriteFrames] = []
-## Velocidad de caminata en px/s: más lenta que la de un peatón normal.
+## Velocidad de caminata en px/s de quien no tenga la suya en walker_speeds: más lenta
+## que la de un peatón normal.
 @export var walk_speed: float = 30.0
+## Velocidad de cada persona en px/s, en el mismo orden que walkers. Si falta su
+## entrada o vale 0 o menos, camina a walk_speed.
+@export var walker_speeds: Array[float] = []
+## Separación en x (a lo ancho de la cebra) cuando cruzan lado a lado.
 @export var walker_spacing: float = 18.0
+## Separación en px de la fila a lo largo del cruce. Con 0 cruzan lado a lado
+## (walker_spacing); con más de 0, una detrás de otra: la primera de walkers en Start
+## y cada siguiente chain_spacing px más atrás, sobre la banqueta.
+@export var chain_spacing: float = 0.0
 @export var stop_speed: float = 10.0
 @export var points: int = 10
 @export var stripe_height: float = 14.0
@@ -134,10 +145,12 @@ func _start_crossing() -> void:
 
 
 func _spawn_walkers() -> void:
+	# La gente se dibuja por su y: la de adelante (más abajo) queda encima de la de atrás.
+	y_sort_enabled = true
 	for i in walkers.size():
 		var pedestrian := PEDESTRIAN.instantiate() as Pedestrian
 		pedestrian.sprite_frames = walkers[i]
-		pedestrian.walk_speed = walk_speed
+		pedestrian.walk_speed = _walker_speed(i)
 		pedestrian.z_index = 1
 		add_child(pedestrian)
 		pedestrian.position = _walker_start(i)
@@ -146,8 +159,18 @@ func _spawn_walkers() -> void:
 	_remaining = _pedestrians.size()
 
 
-## Cada persona espera en su lugar del grupo, centrado sobre la cebra.
+## Velocidad de una persona: la suya en walker_speeds o, si no tiene, walk_speed.
+func _walker_speed(index: int) -> float:
+	if index < walker_speeds.size() and walker_speeds[index] > 0.0:
+		return walker_speeds[index]
+	return walk_speed
+
+
+## Cada persona espera en su lugar: lado a lado, centradas sobre la cebra, o en fila
+## detrás de la primera (chain_spacing > 0).
 func _walker_start(index: int) -> Vector2:
+	if chain_spacing > 0.0:
+		return _start.position - Vector2(0.0, index * chain_spacing)
 	var offset := (index - (walkers.size() - 1) / 2.0) * walker_spacing
 	return _start.position + Vector2(offset, 0.0)
 
