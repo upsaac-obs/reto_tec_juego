@@ -24,13 +24,15 @@ func _init() -> void:
 	b.add(R + "crosswalk.tscn", Vector2(5952, 0), "CrosswalkTerminal", {"approach_length": 448.0, "start_delay": 0.3})
 	b.add(R + "checkpoint.tscn", Vector2(6208, 0), "CheckpointAfterCrosswalk")
 	b.add(R + "departure_board.tscn", Vector2(6304, -160), "DepartureBoard")
-	# Tramo de un carril (autos estacionados a la derecha).
+	# Tramo de un carril (autos estacionados a la derecha). El carril único va
+	# sobre el carril izquierdo dibujado (lane_shift = -32), no sobre la raya.
 	var route := root.get_node("Route")
-	for s: Array in [["OneLane", 4096, 1], ["TwoLanes", 5440, 2]]:
+	for s: Array in [["OneLane", 4096, 1, -32.0], ["TwoLanes", 5440, 2, 0.0]]:
 		var section := StreetSection.new()
 		section.name = s[0]
 		section.position = Vector2(s[1], 0)
 		section.lane_count = s[2]
+		section.lane_shift = s[3]
 		route.add_child(section)
 		section.owner = root
 	# Decoración: la terminal y dos árboles.

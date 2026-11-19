@@ -134,6 +134,7 @@ start_lane = 1
 position = Vector2(4096, 0)
 script = ExtResource("20_6wgwh")
 lane_count = 1
+lane_shift = -32.0
 
 
 [node name="TwoLanes" type="Node2D" parent="Route"]

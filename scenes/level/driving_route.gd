@@ -51,20 +51,36 @@ func get_turn_points() -> Array[TurnPoint]:
 
 
 func lane_count_at(progress: float) -> int:
-	var count := default_lane_count
+	var section := _section_at(progress)
+	return section.lane_count if section != null else default_lane_count
+
+
+## Desplazamiento lateral (px) de los carriles en ese punto de la ruta; 0 sin StreetSection.
+func lane_shift_at(progress: float) -> float:
+	var section := _section_at(progress)
+	return section.lane_shift if section != null else 0.0
+
+
+## Desplazamiento lateral del centro de un carril. El carril 0 es el de la izquierda.
+## Con at_progress (>= 0) suma el lane_shift de la sección que haya en ese punto.
+func lane_offset(index: int, count: int, at_progress := -1.0) -> float:
+	var offset := (index - (count - 1) / 2.0) * lane_width
+	if at_progress >= 0.0:
+		offset += lane_shift_at(at_progress)
+	return offset
+
+
+## Último StreetSection que empieza antes o en ese punto de la ruta, o null.
+func _section_at(progress: float) -> StreetSection:
+	var found: StreetSection = null
 	var best := -1.0
 	for child in get_children():
 		if child is StreetSection:
 			var section_progress := progress_of(child as Node2D)
 			if section_progress <= progress and section_progress > best:
 				best = section_progress
-				count = (child as StreetSection).lane_count
-	return count
-
-
-## Desplazamiento lateral del centro de un carril. El carril 0 es el de la izquierda.
-func lane_offset(index: int, count: int) -> float:
-	return (index - (count - 1) / 2.0) * lane_width
+				found = child as StreetSection
+	return found
 
 
 func _draw() -> void:
