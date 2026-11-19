@@ -235,5 +235,6 @@ private fun ruleName(res: Resources, ruleId: String): String = when (ruleId) {
     "distance" -> res.getString(R.string.REGLA_DISTANCE)
     "ambulance" -> res.getString(R.string.REGLA_AMBULANCE)
     "crash" -> res.getString(R.string.REGLA_CRASH)
+    "lane" -> res.getString(R.string.REGLA_LANE)
     else -> ruleId
 }

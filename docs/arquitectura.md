@@ -66,7 +66,7 @@ Reglas del contrato:
 - Cada `start_level` termina con exactamente un `level_exited`. Si el nivel se cierra mientras todavía carga (`abort_level` o otro `start_level` encima), llega `level_exited` **sin** `level_started` antes. El nativo no debe esperar los dos en pareja.
 - `infractions` solo trae las reglas con al menos una falta; la que no aparece vale 0. `duration_s` son segundos jugados, sin contar pausas.
 - `level_id` sale de `data/level_XX.tres` (LevelData): 0 a 10 y el 99, nivel de prueba del spike (botones Falta, Terminar y Salir, con la tarjeta de hábito real). El 1 abre por ahora la calle de prueba.
-- `infractions` usa los mismos `rule_id` del RuleManager: `stop`, `red_light`, `speed`, `crosswalk`, `bike_lane`, `look`, `patience`, `yellow`, `phone`, `lights`, `distance`, `ambulance`, `crash`.
+- `infractions` usa los mismos `rule_id` del RuleManager: `stop`, `red_light`, `speed`, `crosswalk`, `bike_lane`, `look`, `patience`, `yellow`, `phone`, `lights`, `distance`, `ambulance`, `crash`, `lane`.
 
 ## 4. Ciclo de vida
 

@@ -1,11 +1,13 @@
 extends TestCase
 ## StreetSection.lane_shift en levels/level_05.tscn: la calle de los autos
-## estacionados (Route/OneLane, x = 4096 a 5440) es de un carril, pero el suelo
+## estacionados (Route/OneLane, x = 4126 a 5440) es de un carril, pero el suelo
 ## tiene dos dibujados; con lane_shift = -32 el auto va en el carril izquierdo y
 ## no sobre la raya. La ruta es recta y empieza en x = 64: progreso = x - 64.
+## Si llega por el carril derecho, LaneMerge (x = 4150) marca antes la falta
+## lane (ver tests/test_lane_merge.gd).
 
-## Progreso del inicio (x = 4096) y del fin (x = 5440) de la sección de un carril.
-const ONE_LANE := 4032.0
+## Progreso del inicio (x = 4126) y del fin (x = 5440) de la sección de un carril.
+const ONE_LANE := 4062.0
 const TWO_LANES := 5376.0
 ## Punto de control CheckpointBallStreet (x = 4160).
 const CHECKPOINT := 4096.0
@@ -65,13 +67,15 @@ func run() -> void:
 	check(is_equal_approx(route.lane_offset(0, 2, 5500.0), -32.0) and is_equal_approx(route.lane_offset(1, 2, 5500.0), 32.0), "después, dos carriles en -32 y +32")
 	check(is_equal_approx(route.lane_offset(0, 1), 0.0) and is_equal_approx(route.lane_offset(1, 2), 32.0), "sin progreso lane_offset da lo de siempre")
 
-	# 2. Viniendo del carril derecho, al entrar se pasa al carril izquierdo
+	# 2. Viniendo del carril derecho: falta lane (LaneMerge) y al entrar se pasa al carril izquierdo
+	var rm := level.get_node("RuleManager") as RuleManager
 	car.lane_index = 1
-	car.restart_at(ONE_LANE - 120.0)
+	car.restart_at(ONE_LANE - 160.0)
 	check(car.lane_index == 1 and is_equal_approx(car.v_offset, 32.0), "antes de la sección el auto va en el carril derecho")
 	await drive_to(ONE_LANE + 150.0)
 	await wait(car.lane_change_time + 0.1)
 	check(car.lane_index == 0 and absf(car.v_offset + 32.0) < 0.5, "dentro de la sección queda en el carril izquierdo (%.1f)" % car.v_offset)
+	check(rm.infractions.get(&"lane", 0) == 1 and rm.faults == 1, "llegar por el carril derecho es una falta lane (y solo una)")
 
 	# 3. Las flechas no lo mueven dentro de la sección
 	for action in [&"car_right", &"car_left"]:

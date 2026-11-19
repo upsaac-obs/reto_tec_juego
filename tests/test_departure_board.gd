@@ -27,6 +27,9 @@ func run() -> void:
 	driver.car = car
 	add_child(driver)
 	driver.target = 40.0
+	# Se pasa al carril izquierdo desde el inicio, como pide LaneMerge antes de
+	# los autos estacionados (si no, sería falta lane).
+	await tap(&"car_left")
 	var digits := RegEx.create_from_string("\\d")
 	var always_on_time := board.has_widget()
 	var no_digits := true
