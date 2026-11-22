@@ -54,8 +54,8 @@ TURN_X = 600.0                       # centro de la vuelta en U (su orilla llega
 STOPS_X = [90.0, 240.0, 390.0, 540.0]
 ROAD_HALF, SIDEWALK, LANE = 24, 11, 12
 DEST_MAX = (112, 76)
-SIGN_W, SIGN_H = 46, 69              # letrero en unidades (aro de ~38)
-SIGN_DX = -52                        # el letrero va a la izquierda de su destino
+SIGN_W, SIGN_H = 52, 78              # letrero en unidades (aro de ~43)
+SIGN_DX = -54                        # el letrero va a la izquierda de su destino
 CAR_W = 34
 
 ASPHALT = (83, 74, 94)
@@ -165,6 +165,18 @@ def font(size: int) -> ImageFont.FreeTypeFont:
     return f
 
 
+def plate(frame: Image.Image) -> Image.Image:
+    """La placa de una señal de signs.png sin su poste: corta donde la figura se angosta al poste."""
+    a = frame.getchannel("A")
+    rows = [sum(1 for x in range(frame.width) if a.getpixel((x, y)) > 100) for y in range(frame.height)]
+    widest = max(rows)
+    top = next(y for y, w in enumerate(rows) if w > 0)
+    mid = rows.index(widest)
+    bottom = next((y for y in range(mid, frame.height) if rows[y] < widest * 0.3), frame.height)
+    im = frame.crop((0, top, frame.width, bottom))
+    return im.crop(im.getchannel("A").getbbox())
+
+
 def pictogram(level: int) -> Image.Image:
     """Dibujo del hábito: la hoja de Codex (10-D) si ya está; si no, un sprite del juego."""
     path = v2.find("pictogramas")
@@ -173,17 +185,17 @@ def pictogram(level: int) -> Image.Image:
         cell = cells[level]
         return cell.crop(v2.bbox(cell))
     signs = Image.open(SPRITES / "signals/signs.png").convert("RGBA")
-    if level == 1:
-        im = signs.crop((144, 0, 216, 74))
-    elif level == 2:
-        im = signs.crop((0, 0, 72, 74))
+    if level in (1, 2, 5):
+        frame = {1: 2, 2: 0, 5: 1}[level]
+        im = plate(signs.crop((frame * 72, 0, frame * 72 + 72, 112)))
+        if level == 5:
+            ImageDraw.Draw(im).text((im.width / 2, im.height / 2), "30", font=font(round(im.height * 0.42)),
+                                    fill=OUTLINE, anchor="mm")
     elif level == 3:
-        im = Image.open(SPRITES / "copilot/copilot.png").convert("RGBA").crop((0, 0, 105, 106))
+        # Provisional hasta la 10-D: el copiloto de menú de cuerpo entero.
+        im = Image.open(ROOT / "native/android/app/src/main/res/drawable-nodpi/copilot_point.png").convert("RGBA")
     elif level == 4:
         im = Image.open(SPRITES / "pedestrians/elder.png").convert("RGBA").crop((11 * 64, 0, 12 * 64, 78))
-    elif level == 5:
-        im = signs.crop((72, 0, 144, 74))
-        ImageDraw.Draw(im).text((35.5, 45), "30", font=font(26), fill=OUTLINE, anchor="mm")
     elif level == 6:
         im = Image.open(ROOT / "assets/ui/phone.png").convert("RGBA")
     elif level == 7:
@@ -211,18 +223,18 @@ def sign(level: int, locked: bool) -> Image.Image:
         a = i * 2 * math.pi / 14
         x, y = cx + (r - 4 * k) * math.cos(a), cy + (r - 4 * k) * math.sin(a)
         d.ellipse((x - 1.5 * k, y - 1.5 * k, x + 1.5 * k, y + 1.5 * k), fill=(190, 182, 200) if locked else WHITE)
-    ri = r - 8 * k
+    ri = r - 7.5 * k
     d.ellipse((cx - ri - k, cy - ri - k, cx + ri + k, cy + ri + k), fill=OUTLINE)
     d.ellipse((cx - ri, cy - ri, cx + ri, cy + ri), fill=(222, 216, 228) if locked else WHITE)
     pic = pictogram(level)
-    s = min(2 * ri * 0.8 / pic.width, 2 * ri * 0.8 / pic.height)
+    s = min(2 * ri * 0.9 / pic.width, 2 * ri * 0.9 / pic.height)
     pic = pic.resize((max(1, round(pic.width * s)), max(1, round(pic.height * s))), Image.LANCZOS)
     if locked:
         gray = ImageOps.grayscale(pic.convert("RGB")).convert("RGBA")
         gray.putalpha(pic.getchannel("A").point(lambda a: int(a * 0.55)))
         pic = gray
     im.alpha_composite(pic, (round(cx - pic.width / 2), round(cy - pic.height / 2)))
-    bx, by, br = cx + r * 0.72, cy + r * 0.72, 10 * k
+    bx, by, br = cx + r * 0.8, cy + r * 0.8, 9.5 * k
     d.ellipse((bx - br - 2 * k, by - br - 2 * k, bx + br + 2 * k, by + br + 2 * k), fill=OUTLINE)
     d.ellipse((bx - br, by - br, bx + br, by + br), fill=GRAY if locked else GOLD)
     if locked:
@@ -254,13 +266,18 @@ def build(preview: Path | None) -> None:
     for _ in range(110):
         x, y = rnd.uniform(0, BG_W), rnd.choice([rnd.uniform(10, OY + 60), rnd.uniform(OY + CONTENT_H - 4, BG_H + 8)])
         place(canvas, fit(rnd.choice(trees), 24, 24), x, y)
-    # Hilera de casas de atrás (más oscuras) a lo largo de cada calle.
+    # Hilera de casas de atrás, solo entre destinos (detrás de ellos queda pasto para que resalten).
+    def behind_destination(x0: float, x1: float) -> bool:
+        return any(x1 > sx + SIGN_DX - SIGN_W / 2 - 4 and x0 < sx + 10 + DEST_MAX[0] / 2 + 6 for sx in STOPS_X)
     for top in (top_a, top_b):
         x = -OX
         while x < right_edge:
             w = rnd.uniform(40, 46)
-            place(canvas, darker(fit(rnd.choice(houses), w, w), 0.22), *bg(x + w / 2, top - 40))
-            x += w + rnd.uniform(0, 3)
+            if not behind_destination(x, x + w):
+                place(canvas, fit(rnd.choice(houses), w, w), *bg(x + w / 2, top - 40))
+                x += w + rnd.uniform(0, 3)
+            else:
+                x += 6
     # Enfrente, entre destinos: solo árboles y objetos de banqueta.
     for top in (top_a, top_b):
         x = -OX + 6
