@@ -83,13 +83,17 @@ fun ImageButton(
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
+    val audio = LocalMenuAudio.current
     Image(
         painterResource(image),
         contentDescription = label,
         contentScale = ContentScale.Fit,
         modifier = modifier
             .scale(if (pressed) 0.92f else 1f)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .clickable(interactionSource = interaction, indication = null) {
+                audio?.tap()
+                onClick()
+            }
             .semantics { role = Role.Button },
     )
 }

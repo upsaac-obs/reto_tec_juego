@@ -68,10 +68,16 @@ final class AudioManager: ObservableObject {
     }
 
     // MARK: Música de fondo
-    // Coloca el archivo de música en el bundle con el nombre "bg_music.mp3".
+    // Resources/Audio/menu_music.m4a (la música del juego; tools/menu_sounds.sh). M4A porque
+    // AVAudioPlayer no lee .ogg.
+
+    private func url(_ name: String, _ ext: String) -> URL? {
+        Bundle.main.url(forResource: name, withExtension: ext)
+            ?? Bundle.main.url(forResource: name, withExtension: ext, subdirectory: "Audio")
+    }
 
     private func prepareMusic() {
-        guard let url = Bundle.main.url(forResource: "bg_music", withExtension: "mp3") else { return }
+        guard let url = url("menu_music", "m4a") else { return }
         do {
             musicPlayer = try AVAudioPlayer(contentsOf: url)
             musicPlayer?.numberOfLoops = -1   // loop infinito
@@ -79,7 +85,7 @@ final class AudioManager: ObservableObject {
             musicPlayer?.prepareToPlay()
             if isMusicEnabled { musicPlayer?.play() }
         } catch {
-            print("AudioManager: no se pudo cargar bg_music – \(error)")
+            print("AudioManager: no se pudo cargar menu_music – \(error)")
         }
     }
 
@@ -93,13 +99,14 @@ final class AudioManager: ObservableObject {
     }
 
     // MARK: Efectos de sonido
-    // AudioManager.shared.playSound(named: "tap")
+    // menu_tap (botones), menu_locked (parada cerrada), menu_unlock (el auto llega a una
+    // parada nueva). Resources/Audio/, de tools/menu_sounds.sh.
 
     private var activePlayers: [AVAudioPlayer] = []
 
-    func playSound(named name: String, extension ext: String = "mp3") {
+    func playSound(named name: String, extension ext: String = "m4a") {
         guard isSoundEnabled else { return }
-        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else { return }
+        guard let url = url(name, ext) else { return }
         do {
             let player = try AVAudioPlayer(contentsOf: url)
             player.volume = soundVolume

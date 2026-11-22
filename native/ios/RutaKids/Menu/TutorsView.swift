@@ -19,7 +19,7 @@ struct TutorsView: View {
                 // ── Barra de arriba ─────────────────────────────────────
                 HStack(spacing: 16) {
                     BackButton {
-                        AudioManager.shared.playSound(named: "tap")
+                        AudioManager.shared.playSound(named: "menu_tap")
                         model.showTutors = false
                     }
                     Text(L("TUTOR_TITULO"))

@@ -87,10 +87,12 @@ fun LevelSelectScreen(
     val prefs = remember { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
     val from = if (kiosk) target else prefs.getInt(KEY_CAR, map.startIndex).coerceIn(0, map.path.lastIndex)
     val car = remember { Animatable(minOf(from, target).toFloat()) }
+    val audio = LocalMenuAudio.current
     LaunchedEffect(target) {
         if (car.value < target) {
             val steps = target - car.value
             car.animateTo(target.toFloat(), tween((steps * CAR_MS_PER_STEP).roundToInt().coerceIn(500, 2600), easing = FastOutSlowInEasing))
+            audio?.unlock()
         } else {
             car.snapTo(target.toFloat())
         }
@@ -160,8 +162,16 @@ fun LevelSelectScreen(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        enabled = unlocked && godot.engineReady && godot.requestedLevel == null,
-                    ) { onLevelSelected(id) }
+                        enabled = godot.engineReady && godot.requestedLevel == null,
+                    ) {
+                        // Cerrada: dos tonos graves y nada más (igual que iOS, que además avisa).
+                        if (unlocked) {
+                            audio?.tap()
+                            onLevelSelected(id)
+                        } else {
+                            audio?.locked()
+                        }
+                    }
                     .semantics {
                         role = Role.Button
                         contentDescription = label

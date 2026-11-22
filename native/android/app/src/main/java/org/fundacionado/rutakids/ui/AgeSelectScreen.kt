@@ -86,6 +86,7 @@ private fun AgeCard(
     val shape = RoundedCornerShape(28.dp)
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
+    val audio = LocalMenuAudio.current
     Column(
         Modifier
             .fillMaxHeight()
@@ -94,7 +95,10 @@ private fun AgeCard(
             .clip(shape)
             .background(Palette.DarkPurple)
             .border(5.dp, Palette.Gold, shape)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .clickable(interactionSource = interaction, indication = null) {
+                audio?.tap()
+                onClick()
+            }
             .semantics { role = Role.Button; contentDescription = "$title, $ages" }
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

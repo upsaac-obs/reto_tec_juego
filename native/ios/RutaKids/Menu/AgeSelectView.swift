@@ -42,7 +42,7 @@ private struct AgeCard: View {
 
     var body: some View {
         Button {
-            AudioManager.shared.playSound(named: "tap")
+            AudioManager.shared.playSound(named: "menu_tap")
             action()
         } label: {
             VStack(spacing: 2) {

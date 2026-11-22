@@ -21,7 +21,7 @@ struct MainMenuView: View {
                         Spacer()
                         OpcionesButton(
                             onTap: {
-                                AudioManager.shared.playSound(named: "tap")
+                                AudioManager.shared.playSound(named: "menu_tap")
                                 model.showOptions = true
                             },
                             onLongPress: { model.openTutors() }
@@ -32,7 +32,7 @@ struct MainMenuView: View {
                 }
 
                 JugarButton(loading: !model.bridge.engineReady || model.bridge.starting) {
-                    AudioManager.shared.playSound(named: "tap")
+                    AudioManager.shared.playSound(named: "menu_tap")
                     model.play()
                 }
                 .padding(.top, 24)

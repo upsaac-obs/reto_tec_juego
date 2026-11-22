@@ -146,7 +146,7 @@ struct LevelSelectView: View {
         VStack {
             HStack {
                 BackButton {
-                    AudioManager.shared.playSound(named: "tap")
+                    AudioManager.shared.playSound(named: "menu_tap")
                     dismiss()
                 }
                 Spacer()
@@ -172,6 +172,10 @@ struct LevelSelectView: View {
         if Double(target) > carIndex {
             let duration = min(2.6, max(0.5, (Double(target) - carIndex) * Self.secondsPerStep))
             withAnimation(.easeInOut(duration: duration)) { carIndex = Double(target) }
+            // "Ding" cuando el auto llega a la parada nueva.
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                AudioManager.shared.playSound(named: "menu_unlock")
+            }
         } else {
             carIndex = Double(target)
         }

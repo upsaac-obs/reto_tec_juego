@@ -48,6 +48,7 @@ final class AppModel {
     func tapLevel(_ id: Int) {
         guard bridge.engineReady else { return }
         guard store.isUnlocked(id) else {
+            AudioManager.shared.playSound(named: "menu_locked")
             showToast("MENU_DESBLOQUEAR")
             return
         }
@@ -55,7 +56,7 @@ final class AppModel {
     }
 
     private func start(_ id: Int) {
-        AudioManager.shared.playSound(named: "tap")
+        AudioManager.shared.playSound(named: "menu_tap")
         // La música del menú se calla mientras juega Godot; el sonido del juego respeta Opciones.
         AudioManager.shared.pauseMusic()
         bridge.startLevel(
