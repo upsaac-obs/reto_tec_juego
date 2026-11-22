@@ -40,13 +40,17 @@ OUTS = [ROOT / "native/android/app/src/menu/assets/menu_map",
         ROOT / "native/ios/RutaKids/Resources/menu_map"]
 
 CONTENT_W, CONTENT_H = 712, 400      # 16:9; todo lo importante cabe aquí
-BG_W, BG_H = 960, 540                # cubre de 4:3 a 21:9
-OX, OY = (BG_W - CONTENT_W) // 2, (BG_H - CONTENT_H) // 2
+# El contenido se pega a la derecha de la pantalla (ANCHOR_X = 1): la vuelta en U llega al
+# borde y lo que sobra en pantallas anchas queda a la izquierda, donde las calles siguen.
+ANCHOR_X = 1.0
+LEFT_EXT, RIGHT_EXT, V_EXT = 300, 24, 70   # fondo extra: cubre hasta ~23:9 y la altura del iPad
+BG_W, BG_H = LEFT_EXT + CONTENT_W + RIGHT_EXT, CONTENT_H + 2 * V_EXT
+OX, OY = LEFT_EXT, V_EXT
 PX = 2                               # px por unidad en el fondo
 SIGN_PX = 3                          # px por unidad en los letreros (se ven más de cerca)
 
 ROW_A, ROW_B = 200.0, 352.0          # centro de cada calle (contenido)
-TURN_X = 600.0                       # centro de la vuelta en U
+TURN_X = 600.0                       # centro de la vuelta en U (su orilla llega a ~711)
 STOPS_X = [90.0, 240.0, 390.0, 540.0]
 ROAD_HALF, SIDEWALK, LANE = 24, 11, 12
 DEST_MAX = (112, 76)
@@ -250,9 +254,6 @@ def build(preview: Path | None) -> None:
     for _ in range(110):
         x, y = rnd.uniform(0, BG_W), rnd.choice([rnd.uniform(10, OY + 60), rnd.uniform(OY + CONTENT_H - 4, BG_H + 8)])
         place(canvas, fit(rnd.choice(trees), 24, 24), x, y)
-    for _ in range(26):
-        x = rnd.uniform(OX + TURN_X + 120, BG_W)
-        place(canvas, fit(rnd.choice(trees), 26, 26), x, rnd.uniform(OY + 40, OY + CONTENT_H))
     # Hilera de casas de atrás (más oscuras) a lo largo de cada calle.
     for top in (top_a, top_b):
         x = -OX
@@ -312,6 +313,7 @@ def build(preview: Path | None) -> None:
     layout = {
         "_doc": "Generado por tools/menu_map.py; no editar a mano. Unidades del contenido.",
         "content": [CONTENT_W, CONTENT_H],
+        "anchor_x": ANCHOR_X,
         "background": {"file": "map_bg.jpg", "x": -OX, "y": -OY, "width": BG_W, "height": BG_H},
         "car": {"file": "map_car.png", "width": CAR_W, "height": round(car.height / SIGN_PX, 1)},
         "path": [[round(x, 1), round(y, 1)] for x, y in path],
