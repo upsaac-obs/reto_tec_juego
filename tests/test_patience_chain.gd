@@ -1,3 +1,4 @@
+# Creación y desarrollo: Angel Mael Vera Carpio
 extends TestCase
 ## Gente de la zona de paciencia (nivel 4): cada persona a su paso (walker_speeds)
 ## y cruces en fila (chain_spacing). La lógica de faltas y puntos está en test_patience.gd.

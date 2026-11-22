@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 extends Node
 ## Mensajes del copiloto. Tres tipos:
 ## - show_infraction: pausa el juego con el copiloto asustado. El mensaje y la

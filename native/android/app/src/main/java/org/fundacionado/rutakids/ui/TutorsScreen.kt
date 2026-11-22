@@ -1,4 +1,4 @@
-// Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
+// Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz, Angel Mael Vera Carpio
 package org.fundacionado.rutakids.ui
 
 import android.content.res.Resources

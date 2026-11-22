@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Angel Mael Vera Carpio, Dylan Isaac Mancilla López
 extends TestCase
 ## Todo mensaje dura lo que su voz más message_time (sin voz, solo
 ## message_time). En una falta, la pausa dura lo mismo que el mensaje y no

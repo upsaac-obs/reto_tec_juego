@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 extends TestCase
 ## Pelota en la calle (nivel 5) en levels/level_05.tscn: Rules/BallEvent en
 ## x = 4800. Las distancias son progreso sobre la ruta (la ruta empieza en

@@ -1,3 +1,4 @@
+# Creación y desarrollo: Angel Mael Vera Carpio
 extends TestCase
 ## RuleManager: la pausa de una falta solo se puede saltar con un toque si esa
 ## misma falta (rule_id) ya ocurrió antes en el nivel. La primera vez se espera

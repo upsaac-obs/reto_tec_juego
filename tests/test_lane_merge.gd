@@ -1,3 +1,4 @@
+# Creación y desarrollo: Angel Mael Vera Carpio
 extends TestCase
 ## LaneMerge en levels/level_05.tscn (Rules/LaneMerge, x = 4150): a ras del primer
 ## auto estacionado (borde en x = 4158) hay que ir en el carril izquierdo (0).

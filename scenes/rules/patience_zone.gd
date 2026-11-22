@@ -1,4 +1,4 @@
-# Creación y desarrollo: José Paulo Vélez Ortiz
+# Creación y desarrollo: José Paulo Vélez Ortiz, Angel Mael Vera Carpio
 @tool
 class_name PatienceZone
 extends RulePiece

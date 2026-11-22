@@ -1,3 +1,4 @@
+# Creación y desarrollo: Angel Mael Vera Carpio
 @tool
 class_name LaneMerge
 extends RulePiece

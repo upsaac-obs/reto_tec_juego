@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 class_name TestCase
 extends Node
 ## Base de las pruebas automáticas. Cada archivo tests/test_*.gd extiende esta

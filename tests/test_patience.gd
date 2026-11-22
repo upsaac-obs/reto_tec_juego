@@ -1,4 +1,4 @@
-# Creación y desarrollo: José Paulo Vélez Ortiz
+# Creación y desarrollo: José Paulo Vélez Ortiz, Angel Mael Vera Carpio
 extends TestCase
 ## Zona de paciencia (nivel 4) en levels/level_04.tscn. El primer cruce está en
 ## x = 1400: la línea del semáforo en progreso 1248 y la cebra desde 1288
