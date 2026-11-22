@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 class_name TestCase
 extends Node
 ## Base de las pruebas automáticas. Cada archivo tests/test_*.gd extiende esta
@@ -61,6 +61,14 @@ func close_scene(level: Node) -> void:
 func release_inputs() -> void:
 	for action in [&"car_accelerate", &"car_brake", &"car_left", &"car_right", &"car_seatbelt"]:
 		Input.action_release(action)
+
+
+## Toque en la pantalla, como lo manda Godot (pasa por todos los _input y la interfaz).
+func touch(pressed := true) -> void:
+	var event := InputEventScreenTouch.new()
+	event.position = Vector2(50.0, 50.0)
+	event.pressed = pressed
+	get_tree().root.push_input(event)
 
 
 func tap(action: StringName) -> void:

@@ -1,4 +1,4 @@
-# Creación y desarrollo: José Paulo Vélez Ortiz
+# Creación y desarrollo: José Paulo Vélez Ortiz, Angel Mael Vera Carpio
 extends TestCase
 ## Zona de paciencia (nivel 4) en levels/level_04.tscn. El primer cruce está en
 ## x = 1400: la línea del semáforo en progreso 1248 y la cebra desde 1288
@@ -103,9 +103,12 @@ func run() -> void:
 	car.restart_at(500.0)
 	driver.target = 240.0
 	t = 0.0
+	# El límite cuenta tiempo de juego: la pausa de la falta del rojo dura lo que
+	# su voz más message_time y no debe gastar los 10 s.
 	while rm.infractions.get(&"crosswalk", 0) == 0 and t < 10.0:
 		await get_tree().physics_frame
-		t += get_physics_process_delta_time()
+		if not get_tree().paused:
+			t += get_physics_process_delta_time()
 	check(rm.infractions.get(&"red_light", 0) == 1, "pasarse el rojo es falta red_light")
 	check(rm.infractions.get(&"crosswalk", 0) == 1, "entrar a la cebra ocupada es falta grave")
 	check(car.progress < 1400.0, "el auto frena solo antes de llegar a la gente")

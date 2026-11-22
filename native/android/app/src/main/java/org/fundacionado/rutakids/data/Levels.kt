@@ -11,19 +11,21 @@ import org.fundacionado.rutakids.R
 data class LevelInfo(
     val id: Int,
     @StringRes val nameRes: Int,
+    /** Punto del decálogo que enseña (el decalogo_key de data/level_XX.tres); null en el tutorial. */
+    @StringRes val decalogoRes: Int?,
 )
 
 object Levels {
     val all = listOf(
-        LevelInfo(0, R.string.NIVEL_00_NOMBRE),
-        LevelInfo(1, R.string.NIVEL_01_NOMBRE),
-        LevelInfo(2, R.string.NIVEL_02_NOMBRE),
-        LevelInfo(3, R.string.NIVEL_03_NOMBRE),
-        LevelInfo(4, R.string.NIVEL_04_NOMBRE),
-        LevelInfo(5, R.string.NIVEL_05_NOMBRE),
-        LevelInfo(6, R.string.NIVEL_06_NOMBRE),
-        LevelInfo(7, R.string.NIVEL_07_NOMBRE),
-        LevelInfo(8, R.string.NIVEL_08_NOMBRE),
+        LevelInfo(0, R.string.NIVEL_00_NOMBRE, null),
+        LevelInfo(1, R.string.NIVEL_01_NOMBRE, R.string.DECALOGO_01),
+        LevelInfo(2, R.string.NIVEL_02_NOMBRE, R.string.DECALOGO_04),
+        LevelInfo(3, R.string.NIVEL_03_NOMBRE, R.string.DECALOGO_03),
+        LevelInfo(4, R.string.NIVEL_04_NOMBRE, R.string.DECALOGO_08),
+        LevelInfo(5, R.string.NIVEL_05_NOMBRE, R.string.DECALOGO_02),
+        LevelInfo(6, R.string.NIVEL_06_NOMBRE, R.string.DECALOGO_06),
+        LevelInfo(7, R.string.NIVEL_07_NOMBRE, R.string.DECALOGO_07),
+        LevelInfo(8, R.string.NIVEL_08_NOMBRE, R.string.DECALOGO_05),
     )
 
     /** El 0 es el tutorial: se abre solo la primera vez que se toca Jugar (fuera del kiosco). */

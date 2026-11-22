@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 @tool
 class_name PlayerCar
 extends PathFollow2D
@@ -89,6 +89,8 @@ var _turns: Array[TurnPoint] = []
 var _next_turn: int = 0
 var _turn_unlocked: bool = false
 var _lane_count: int = 1
+## lane_shift de la sección en la que va el auto (px).
+var _lane_shift: float = 0.0
 var _lane_tween: Tween
 var _maneuver: Maneuver = Maneuver.NONE
 var _maneuver_lane: int = 0
@@ -114,8 +116,9 @@ func _ready() -> void:
 	AudioManager.start_loop(&"engine")
 	_turns = _route.get_turn_points()
 	_lane_count = _route.lane_count_at(progress)
+	_lane_shift = _route.lane_shift_at(progress)
 	lane_index = clampi(start_lane, 0, _lane_count - 1)
-	v_offset = _route.lane_offset(lane_index, _lane_count)
+	v_offset = _route.lane_offset(lane_index, _lane_count, progress)
 	_headlight_cone = Node2D.new()
 	_headlight_cone.name = "HeadlightCone"
 	_headlight_cone.show_behind_parent = true
@@ -171,8 +174,9 @@ func restart_at(new_progress: float) -> void:
 	if _lane_tween != null:
 		_lane_tween.kill()
 	_lane_count = _route.lane_count_at(progress)
+	_lane_shift = _route.lane_shift_at(progress)
 	lane_index = clampi(lane_index, 0, _lane_count - 1)
-	v_offset = _route.lane_offset(lane_index, _lane_count)
+	v_offset = _route.lane_offset(lane_index, _lane_count, progress)
 
 
 func _physics_process(delta: float) -> void:
@@ -334,21 +338,24 @@ func _upcoming_turn() -> TurnPoint:
 	return null
 
 
-## Al cambiar el número de carriles, se queda en el carril más cercano sin brincar.
+## Al cambiar el número de carriles (o su lane_shift), se queda en el carril más
+## cercano sin brincar.
 func _update_lane_count() -> void:
 	var count := _route.lane_count_at(progress)
-	if count == _lane_count:
+	var shift := _route.lane_shift_at(progress)
+	if count == _lane_count and is_equal_approx(shift, _lane_shift):
 		return
 	_lane_count = count
+	_lane_shift = shift
 	if _maneuver == Maneuver.LANE_CHANGE and _maneuver_lane >= count:
 		_maneuver = Maneuver.NONE
 		_set_turn_signal(0)
 	var nearest := 0
 	for i in count:
-		var distance := absf(_route.lane_offset(i, count) - v_offset)
-		var best := absf(_route.lane_offset(nearest, count) - v_offset)
+		var distance := absf(_route.lane_offset(i, count, progress) - v_offset)
+		var best := absf(_route.lane_offset(nearest, count, progress) - v_offset)
 		# En empate se queda del mismo lado de la calle, no en el centro.
-		var same_side := absf(_route.lane_offset(i, count)) > absf(_route.lane_offset(nearest, count))
+		var same_side := absf(_route.lane_offset(i, count, progress)) > absf(_route.lane_offset(nearest, count, progress))
 		if distance < best or (is_equal_approx(distance, best) and same_side):
 			nearest = i
 	if _lane_tween != null and _lane_tween.is_running():
@@ -361,7 +368,7 @@ func _move_to_lane(index: int, signal_off_after: bool) -> void:
 	if _lane_tween != null:
 		_lane_tween.kill()
 	_lane_tween = create_tween()
-	_lane_tween.tween_property(self, ^"v_offset", _route.lane_offset(index, _lane_count), lane_change_time) \
+	_lane_tween.tween_property(self, ^"v_offset", _route.lane_offset(index, _lane_count, progress), lane_change_time) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	if signal_off_after:
 		_lane_tween.tween_callback(_on_lane_change_finished)

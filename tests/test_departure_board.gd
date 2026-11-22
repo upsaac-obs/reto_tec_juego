@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 extends TestCase
 ## Tablero de salidas (nivel 5) en levels/level_05.tscn: siempre dice "A
 ## tiempo", no se puede perder por tiempo y al llegar el copiloto dice
@@ -28,6 +28,9 @@ func run() -> void:
 	driver.car = car
 	add_child(driver)
 	driver.target = 40.0
+	# Se pasa al carril izquierdo desde el inicio, como pide LaneMerge antes de
+	# los autos estacionados (si no, sería falta lane).
+	await tap(&"car_left")
 	var digits := RegEx.create_from_string("\\d")
 	var always_on_time := board.has_widget()
 	var no_digits := true

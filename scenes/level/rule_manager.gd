@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 class_name RuleManager
 extends Node
 ## Cuenta faltas y puntos del nivel, guarda el último punto de control y
@@ -48,7 +48,9 @@ func report_infraction(rule_id: StringName, message_key: String, grave := false)
 	infractions[rule_id] = infractions.get(rule_id, 0) + 1
 	infraction_reported.emit(rule_id, grave)
 	AudioManager.play_sfx(&"fault")
-	Feedback.show_infraction(message_key)
+	# La primera vez de cada falta se espera la pausa completa; desde la segunda
+	# (mismo rule_id en este nivel), un toque la quita.
+	Feedback.show_infraction(message_key, infractions[rule_id] > 1)
 	if grave:
 		_return_to_checkpoint()
 

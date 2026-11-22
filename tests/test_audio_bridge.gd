@@ -1,4 +1,4 @@
-# Creación y desarrollo: Dylan Isaac Mancilla López
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 extends TestCase
 ## Audio al abrir y cerrar niveles por el puente, como en las apps nativas: el
 ## motor suena dentro del nivel, y al salir no se queda ni la música ni el motor
@@ -30,9 +30,8 @@ func run() -> void:
 	check(not AudioManager.is_music_playing(), "al salir del nivel la música se apaga")
 	check(not AudioManager.is_loop_playing(&"engine"), "al salir del nivel el motor se apaga")
 
-	# La pausa de una falta tiene tope aunque la voz dure más.
-	var longest := 0.0
+	# La pausa de una falta dura su voz más message_time: nunca menos que message_time.
+	var shortest := INF
 	for key in ["FALTA_PACIENCIA", "FALTA_PELOTA", "FALTA_MIRA"]:
-		longest = maxf(longest, Feedback.infraction_pause_time(key))
-	check(longest <= Feedback.max_infraction_pause + 0.001, "la pausa de una falta nunca pasa de max_infraction_pause")
-	check(longest >= Feedback.pause_time, "la pausa de una falta dura al menos pause_time")
+		shortest = minf(shortest, Feedback.message_duration(key))
+	check(shortest >= Feedback.message_time, "la pausa de una falta nunca dura menos que message_time")

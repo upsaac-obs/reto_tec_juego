@@ -40,7 +40,7 @@ Son los únicos cambios en archivos compartidos (`player_car.gd`, `hud.tscn`/`hu
 2. **Estacionamiento reutilizable:** `parking_spot` puede soltar el auto después de estacionar (nivel 6) y `door_exit` usa su propio cajón, no el primero del grupo.
 3. **Amarillo en Peque:** el auto tiene una propiedad que dice si el niño "deja avanzar" el auto (Grande: acelera; Peque: no frena). `traffic_light` la usa para la regla del amarillo.
 4. **Luces:** `player_car.headlights_on` y un botón de luces en el HUD que solo aparece si el nivel lo pide (nivel 7).
-5. **Pausa con voz:** la pausa de una falta dura lo que dure su voz (mínimo `pause_time`).
+5. **Pausa con voz:** la pausa de una falta dura lo mismo que su mensaje: su voz más `message_time` (sin voz, solo `message_time`; `Feedback.message_duration()`).
 6. **Constructor:** `level_builder` puede pintar avenidas de 4 carriles (nivel 8).
 7. **Pruebas:** `test_levels` toma la lista de niveles de los `LevelData` construidos.
 8. **Versión:** `engine_ready` manda el commit del build (`{"build": "..."}`), y `tools/export_all.sh` exporta el `main.pck` para las dos apps.
