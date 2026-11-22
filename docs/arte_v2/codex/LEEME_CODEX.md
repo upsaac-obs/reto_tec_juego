@@ -77,6 +77,7 @@ referencia de calidad y de estilo:
 | 7 | `lotes/07_destinos.md`: escuela, hospital, terminal y túnel | P0 | 4 |
 | 8 | `lotes/08_tarjetas.md`: tarjetas de hábito de los niveles 0-10 (09 y 10 en el anexo) | P1 | 11 |
 | 9 | `lotes/09_variedad.md`: más casas, destinos poblanos, más peatones y papel picado | P1 | 6 |
+| 10 | `lotes/10_menus.md`: menús de Android e iOS (fondos, botones, íconos de nivel, estrellas, copiloto de menú, edades) | P0 | 8 |
 
 Haz todo el P0 antes de empezar el P1. Si el tiempo se acaba, **se recorta variedad, no
 se deja pixel art**: es mejor menos versiones que lotes sin hacer.

@@ -41,6 +41,10 @@ android {
 
     buildFeatures { compose = true }
 
+    // src/main/assets lo borra y llena la exportación de Godot (sync_godot.sh); lo del menú
+    // (mapa de niveles de tools/menu_map.py, licencia de la fuente) va aparte para no perderse.
+    sourceSets["main"].assets.srcDir("src/menu/assets")
+
     buildTypes {
         release {
             signingConfig = if (keystoreFile.exists()) {
