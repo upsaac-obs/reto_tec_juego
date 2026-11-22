@@ -1,4 +1,4 @@
-// Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
+// Creación y desarrollo: José Paulo Vélez Ortiz, Dylan Isaac Mancilla López
 package org.fundacionado.rutakids.ui
 
 import androidx.compose.foundation.layout.Arrangement
