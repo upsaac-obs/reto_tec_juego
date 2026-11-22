@@ -71,19 +71,24 @@ struct MenuBackground: View {
     var image: String = "bg_menus"
 
     var body: some View {
-        ZStack {
-            if UIImage(named: image) != nil {
-                Image(image)
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                LinearGradient(
-                    colors: [Color(hex: "4A235A"), Color(hex: "9C4B79"), Color(hex: "E86F56")],
-                    startPoint: .top, endPoint: .bottom
-                )
+        // GeometryReader + frame: la imagen llena la pantalla y se recorta a ella. Sin esto,
+        // scaledToFill agranda el ZStack que la contiene y el contenido se sale de la pantalla.
+        GeometryReader { geo in
+            Group {
+                if UIImage(named: image) != nil {
+                    Image(image)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    LinearGradient(
+                        colors: [Color(hex: "4A235A"), Color(hex: "9C4B79"), Color(hex: "E86F56")],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                }
             }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .clipped()
         }
-        .clipped()
         .ignoresSafeArea()
     }
 }
