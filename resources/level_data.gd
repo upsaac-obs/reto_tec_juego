@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name LevelData
 extends Resource
 ## Datos de un nivel. Un archivo por nivel en data/level_XX.tres, donde XX es el
@@ -20,6 +21,9 @@ const IDS: Array[int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 99]
 ## Vacío mientras el nivel no está construido. Es una ruta y no un PackedScene
 ## para no cargar todos los niveles al leer sus datos.
 @export_file("*.tscn") var scene_path: String
+## Al tocar Continuar en la tarjeta de hábito se ven los créditos antes de salir
+## (el último nivel de la entrega, el 8).
+@export var show_credits: bool = false
 
 
 static func load_by_id(level_id: int) -> LevelData:

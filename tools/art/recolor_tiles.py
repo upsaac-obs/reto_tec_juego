@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Genera assets/tiles/street_v2.png desde street_provisional.png (docs/plan_visual.md, fase 0).
 
 - Filas 0-3: las mismas posiciones del tileset provisional, recoloreadas

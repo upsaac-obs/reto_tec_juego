@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import Foundation
 import SwiftGodot
 import SwiftGodotKit
@@ -11,6 +12,12 @@ struct RutaKidsApp: App {
     @State private var godot = GodotApp(packFile: "main.pck")
     @State private var model = AppModel()
 
+    init() {
+        registerAppFonts()
+        // Configura la sesión de audio antes de que arranque Godot (ver AudioManager).
+        _ = AudioManager.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView(app: godot, model: model)
@@ -21,7 +28,8 @@ struct RutaKidsApp: App {
 struct RootView: View {
     let app: GodotApp
     let model: AppModel
-    @Environment(\.scenePhase) private var scenePhase
+    // SwiftUI.Environment: SwiftGodot también tiene una clase Environment (la de Godot).
+    @SwiftUI.Environment(\.scenePhase) private var scenePhase
 
     private let secondTimer = Foundation.Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 

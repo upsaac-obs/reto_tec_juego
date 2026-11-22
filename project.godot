@@ -16,6 +16,11 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.2471, 0.1059, 0.3059, 1)
 config/icon="res://assets/ui/app_icon.png"
 
+[audio]
+
+general/ios/session_category=3
+general/ios/mix_with_others=true
+
 [autoload]
 
 GameState="*res://autoload/game_state.gd"

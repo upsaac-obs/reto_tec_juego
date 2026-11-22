@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name LevelTheme
 extends Resource
 ## Cómo se viste la ciudad de un nivel (docs/plan_visual.md). Lo lee CityDresser

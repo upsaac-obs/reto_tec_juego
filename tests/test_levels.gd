@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz, Diego Sánchez López
 extends TestCase
 ## Recorridos completos de los niveles construidos por el puente (FakeBridge):
 ## - Un conductor cuidadoso los termina con 3 estrellas y sin faltas.

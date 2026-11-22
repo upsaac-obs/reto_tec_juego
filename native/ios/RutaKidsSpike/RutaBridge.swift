@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 import Foundation
 import SwiftGodot
 import SwiftGodotKit

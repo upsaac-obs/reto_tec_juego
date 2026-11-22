@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Puente del lado de Godot (BridgeClient) con el FakeBridge: contrato de
 ## docs/arquitectura.md, sección 3.

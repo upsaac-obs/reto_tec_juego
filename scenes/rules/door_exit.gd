@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 class_name DoorExit
 extends RulePiece
 ## Salida del auto en el destino (nivel 3). El origen es el centro del cajón y

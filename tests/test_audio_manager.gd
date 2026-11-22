@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## AudioManager: buses, efectos, bucles y música (los .wav/.ogg de tools/gen_*.py).
 

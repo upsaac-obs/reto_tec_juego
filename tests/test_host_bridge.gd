@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## HostBridge (iOS con SwiftGodotKit): la app llama receive_packet("comando|json")
 ## y escucha message("evento|json").

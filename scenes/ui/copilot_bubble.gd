@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name CopilotBubble
 extends CanvasLayer
 ## Copiloto ajolote con su globo de texto y el "+10" de las acciones correctas.

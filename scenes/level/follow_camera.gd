@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name FollowCamera
 extends Camera2D
 ## Cámara que sigue al auto desde arriba y mira un poco hacia adelante,

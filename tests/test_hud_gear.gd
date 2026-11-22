@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Engrane del HUD: mantenerlo presionado tutor_hold_time segundos pide la
 ## pantalla de tutores al nativo (tutor_requested); un toque corto no hace nada.

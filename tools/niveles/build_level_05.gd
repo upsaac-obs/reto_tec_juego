@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends SceneTree
 ## Arma levels/level_05.tscn (Sin prisa). Después: python3 tools/make_inherited.py levels/level_05.tscn
 

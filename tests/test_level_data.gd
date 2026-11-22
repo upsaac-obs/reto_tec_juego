@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Archivos data/level_XX.tres: claves en textos.csv, ilustración y escena.
 

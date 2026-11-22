@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 import SwiftUI
 
 /// Menú nativo del spike. Los textos están fijos porque es una prueba; en la

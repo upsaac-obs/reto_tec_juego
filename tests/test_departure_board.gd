@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Tablero de salidas (nivel 5) en levels/level_05.tscn: siempre dice "A
 ## tiempo", no se puede perder por tiempo y al llegar el copiloto dice

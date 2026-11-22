@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends RefCounted
 ## Marca de versión que BridgeClient manda en engine_ready ({"build": BUILD}).
 ## tools/export_all.sh la reescribe con el commit al exportar y luego la deja

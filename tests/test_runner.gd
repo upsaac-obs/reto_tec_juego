@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Corre todas las pruebas tests/test_*.gd en orden alfabético y cierra Godot con
 ## código 0 si todas pasan. Uso: tests/run_tests.sh (o tests/run_tests.tscn con F6).

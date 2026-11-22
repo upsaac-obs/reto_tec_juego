@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node2D
 ## Brillo de frenos y direccionales del auto (plan visual, fase 0): los cuadritos que
 ## dibuja PlayerCar casi no se ven en el teléfono, así que aquí se les pone un halo

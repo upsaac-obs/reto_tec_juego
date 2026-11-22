@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Limpia imágenes generadas (Gemini) y las convierte en sprites del juego.
 
 - Quita el fondo magenta (también las líneas de cuadrícula magenta oscuro).

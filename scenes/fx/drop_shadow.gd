@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node2D
 ## Sombra ovalada bajo un vehículo (plan visual, fase 0). Cae abajo a la derecha, como
 ## las sombras pintadas de los edificios. Va como primer hijo para quedar debajo del

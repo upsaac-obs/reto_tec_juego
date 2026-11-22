@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Audio al abrir y cerrar niveles por el puente, como en las apps nativas: el
 ## motor suena dentro del nivel, y al salir no se queda ni la música ni el motor

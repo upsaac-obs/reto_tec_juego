@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node2D
 ## Motos del nivel 8: van por el carril del camión (+y), salen muy atrás del
 ## auto al cargar el nivel y se pierden más allá del final del mapa.

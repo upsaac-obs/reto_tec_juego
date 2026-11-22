@@ -12,3 +12,4 @@ phrase_key = "FRASE_08"
 destination_key = "DESTINO_BIBLIOTECA"
 illustration = ExtResource("2_card")
 scene_path = "res://levels/level_08.tscn"
+show_credits = true

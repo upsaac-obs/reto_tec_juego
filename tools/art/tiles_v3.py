@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Tileset de calle del arte v2 (caricatura vectorial), por código.
 
 Reescribe assets/tiles/street_v2.png con las MISMAS coordenadas de atlas que ya

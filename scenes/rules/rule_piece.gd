@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 @tool
 class_name RulePiece
 extends Node2D

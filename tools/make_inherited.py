@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Convierte un nivel guardado como copia completa de level.tscn en escena heredada.
 
 Godot solo escribe escenas heredadas desde el editor; los niveles armados por

@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
 package org.fundacionado.rutakids.ui
 
 import android.app.Activity
@@ -5,7 +6,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,6 +74,30 @@ fun RutaKidsApp(vm: BridgeViewModel) {
     val route = nav.currentBackStackEntryAsState().value?.destination?.route
     val inLevel = godot.requestedLevel != null
 
+    // Sonidos del menú: música solo con la app al frente, sin nivel abierto y sin silencio.
+    val context = LocalContext.current
+    val audio = remember { MenuAudio(context) }
+    var foreground by remember { mutableStateOf(true) }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> foreground = true
+                Lifecycle.Event.ON_PAUSE -> foreground = false
+                else -> Unit
+            }
+        }
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+            audio.release()
+        }
+    }
+    audio.muted = muted
+    LaunchedEffect(muted, inLevel, foreground) {
+        audio.setMusicPlaying(foreground && !inLevel)
+    }
+
     // Primera vez sin modo guardado: Selección de edad. Después: el tutorial (si toca) o la lista.
     val openLevelsOrTutorial: suspend () -> Unit = {
         if (vm.playTutorialIfNeeded()) nav.popBackStack(Routes.HOME, inclusive = false)
@@ -97,6 +130,7 @@ fun RutaKidsApp(vm: BridgeViewModel) {
     }
 
     RutaKidsTheme {
+      CompositionLocalProvider(LocalMenuAudio provides audio) {
         Box(Modifier.fillMaxSize()) {
             NavHost(navController = nav, startDestination = Routes.HOME) {
                 composable(Routes.HOME) {
@@ -151,5 +185,6 @@ fun RutaKidsApp(vm: BridgeViewModel) {
         BackHandler(enabled = inLevel && !godot.tutorsOverLevel && !kiosk) { vm.abortLevel() }
         BackHandler(enabled = kiosk && !godot.tutorsOverLevel && (inLevel || route == Routes.HOME)) { }
         BackHandler(enabled = godot.tutorsOverLevel) { vm.closeTutorsOverLevel() }
+      }
     }
 }

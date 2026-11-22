@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López, Angel Mael Vera Carpio
 @tool
 class_name SpeedZone
 extends RulePiece

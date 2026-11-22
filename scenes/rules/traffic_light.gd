@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
 @tool
 class_name TrafficLight
 extends RulePiece

@@ -1,3 +1,4 @@
+// Creación y desarrollo: Diego Sánchez López
 import Foundation
 
 /// Resultado de un nivel terminado (evento level_finished del puente).

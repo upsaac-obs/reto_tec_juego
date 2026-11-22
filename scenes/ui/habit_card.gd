@@ -1,10 +1,11 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name HabitCard
 extends CanvasLayer
 ## Tarjeta del hábito al terminar el nivel: ilustración, nombre del nivel, punto
 ## del decálogo, frase final (con voz si existe) y estrellas que aparecen una
 ## por una. Se abre sola con level_finished del RuleManager y pausa el juego.
 ## Repetir y Continuar pasan por BridgeClient (Continuar cierra el nivel y
-## avisa al nativo). Los datos salen del LevelData del nivel (data/level_XX.tres).
+## avisa al nativo). Si el nivel tiene show_credits, antes se ven los créditos. Los datos salen del LevelData del nivel (data/level_XX.tres).
 
 @export var rule_manager: RuleManager
 @export var star_full: Texture2D
@@ -74,4 +75,11 @@ func _on_retry_pressed() -> void:
 
 
 func _on_continue_pressed() -> void:
+	var level := LevelData.of(self)
+	if level != null and level.show_credits:
+		# Último nivel: créditos antes de salir (Credits se salta con un toque).
+		hide()
+		var credits := Credits.new()
+		get_tree().root.add_child(credits)
+		await credits.finished
 	BridgeClient.exit_level(true)

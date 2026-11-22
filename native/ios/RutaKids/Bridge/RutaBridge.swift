@@ -1,3 +1,4 @@
+// Creación y desarrollo: Diego Sánchez López
 import Foundation
 import SwiftGodot
 import SwiftGodotKit

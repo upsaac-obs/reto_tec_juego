@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Control
 ## Menú principal provisional. Por ahora solo muestra el título y el botón Jugar
 ## para comprobar el tema, los textos y el viewport.

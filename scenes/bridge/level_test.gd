@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Control
 ## Nivel de prueba del spike (level_id 99): sin manejo, solo botones para
 ## probar el puente de ida y vuelta con la tarjeta de hábito real.

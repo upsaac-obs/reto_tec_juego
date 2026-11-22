@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends CanvasModulate
 ## Tinte cálido de atardecer del nivel 7: una sola multiplicación de color sobre
 ## el mundo, sin shaders. El HUD y el copiloto no se tiñen (son CanvasLayer).

@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 @tool
 class_name ParkingSpot
 extends RulePiece

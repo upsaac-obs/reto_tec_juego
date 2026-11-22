@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name RuleManager
 extends Node
 ## Cuenta faltas y puntos del nivel, guarda el último punto de control y

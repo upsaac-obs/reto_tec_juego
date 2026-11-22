@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Parada de camión (nivel 8) en levels/level_08.tscn. BusStop1 tiene su origen
 ## en x = 5200 (parte de atrás del camión detenido en 5130) y su disparo en

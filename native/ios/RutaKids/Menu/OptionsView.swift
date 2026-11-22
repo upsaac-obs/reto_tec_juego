@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import SwiftUI
 
 // MARK: - Menú de opciones (diseño de whoisdiego/menuIOS)
@@ -15,7 +16,7 @@ struct OptionsView: View {
                 // ── Título ──────────────────────────────────────────────
                 Text(L("MENU_OPCIONES"))
                     .textCase(.uppercase)
-                    .font(.system(size: 28, weight: .black, design: .rounded))
+                    .font(.fredoka(28, .black))
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 2)
                     .padding(.top, 32)
@@ -61,7 +62,7 @@ struct OptionsView: View {
                 } label: {
                     Text(L("MENU_CERRAR"))
                         .textCase(.uppercase)
-                        .font(.system(size: 18, weight: .black, design: .rounded))
+                        .font(.fredoka(18, .black))
                         .foregroundColor(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 12)
@@ -96,7 +97,7 @@ private struct OptionRow: View {
                     .frame(width: 30)
 
                 Text(label)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.fredoka(18, .bold))
                     .foregroundColor(.white)
 
                 Spacer()

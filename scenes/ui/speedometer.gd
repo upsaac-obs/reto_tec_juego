@@ -1,3 +1,4 @@
+# Creación y desarrollo: Angel Mael Vera Carpio
 class_name Speedometer
 extends Control
 ## Velocímetro de aguja. Solo se ve si el nivel tiene alguna SpeedZone

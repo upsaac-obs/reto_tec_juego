@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Estado global de la partida: modo de edad, kiosco y nivel actual.
 ## También guarda la paleta de colores del juego (la misma que assets/ui/theme.tres).

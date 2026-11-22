@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Cajón reutilizable (nivel 6): ParkingSpot puede soltar al auto después de
 ## estacionarse y DoorExit usa su propio cajón. Se prueba sobre levels/level_03.tscn

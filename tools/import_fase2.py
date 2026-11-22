@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Importa los assets de ~/claude/assest2 (fase 2) al proyecto.
 Uso: python3 tools/import_fase2.py  (desde la raíz del proyecto de Godot)"""
 import os
