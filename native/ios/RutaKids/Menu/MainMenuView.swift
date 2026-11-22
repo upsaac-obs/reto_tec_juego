@@ -1,7 +1,9 @@
 import SwiftUI
 
-// MARK: - Pantalla de inicio (diseño de whoisdiego/menuIOS)
-// Jugar y Opciones, en el mismo lugar. Opciones, mantenido 3 s, abre Tutores.
+// MARK: - Pantalla de inicio
+// Fondo postal de Puebla (lote 10, "bg_home": el auto y el copiloto saludando a la
+// izquierda), Jugar grande en el centro libre, estrellas arriba al centro y el engrane
+// arriba a la derecha (toque: Opciones; mantenido 3 s: Tutores).
 
 struct MainMenuView: View {
     let model: AppModel
@@ -9,26 +11,31 @@ struct MainMenuView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                MenuBackground()
+                MenuBackground(image: "bg_home")
 
-                VStack(spacing: 18) {
-                    Spacer()
-
-                    JugarButton(loading: !model.bridge.engineReady || model.bridge.starting) {
-                        AudioManager.shared.playSound(named: "tap")
-                        model.play()
+                VStack {
+                    HStack(alignment: .center) {
+                        Color.clear.frame(width: Theme.cornerButton, height: Theme.cornerButton)
+                        Spacer()
+                        StarsBanner(total: model.store.totalStars, max: model.store.maxStars)
+                        Spacer()
+                        OpcionesButton(
+                            onTap: {
+                                AudioManager.shared.playSound(named: "tap")
+                                model.showOptions = true
+                            },
+                            onLongPress: { model.openTutors() }
+                        )
                     }
-
-                    OpcionesButton(
-                        onTap: {
-                            AudioManager.shared.playSound(named: "tap")
-                            model.showOptions = true
-                        },
-                        onLongPress: { model.openTutors() }
-                    )
-
+                    .padding(16)
                     Spacer()
                 }
+
+                JugarButton(loading: !model.bridge.engineReady || model.bridge.starting) {
+                    AudioManager.shared.playSound(named: "tap")
+                    model.play()
+                }
+                .padding(.top, 24)
             }
             .statusBar(hidden: true)
             .navigationDestination(isPresented: Bindable(model).showLevels) {
@@ -42,7 +49,7 @@ struct MainMenuView: View {
     }
 }
 
-// MARK: - Botón JUGAR
+// MARK: - Botón JUGAR (lote 10: "btn_play", dorado con aro rojo)
 
 private struct JugarButton: View {
     /// Godot todavía está arrancando: el botón se ve apagado con un indicador.
@@ -52,62 +59,31 @@ private struct JugarButton: View {
     var body: some View {
         Button(action: action) {
             ZStack {
-                if UIImage(named: "btn_jugar") != nil {
-                    // Si existe el asset completo del botón, se usa directo
-                    Image("btn_jugar")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
-                        .shadow(color: .black.opacity(0.4), radius: 6, x: 0, y: 4)
-                } else {
-                    // Reemplazo mientras no llegue la imagen
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(hex: "5C3499"), Color(hex: "3B1F6A")],
-                                    startPoint: .top, endPoint: .bottom
-                                )
-                            )
-                        RoundedRectangle(cornerRadius: 28)
-                            .strokeBorder(Color(hex: "D42F35"), lineWidth: 4)
-
-                        VStack(spacing: 6) {
-                            Image(systemName: "play.fill")
-                                .font(.system(size: 48, weight: .bold))
-                                .foregroundColor(.white)
-
-                            Text(L("MENU_JUGAR"))
-                                .textCase(.uppercase)
-                                .font(.system(size: 32, weight: .black, design: .rounded))
-                                .italic()
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 2)
-                        }
-                    }
-                    .frame(width: 180, height: 180)
-                    .shadow(color: .black.opacity(0.45), radius: 8, x: 0, y: 5)
-                }
+                Image("btn_play")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 170, height: 170)
+                    .opacity(loading ? 0.6 : 1)
                 if loading {
                     // "Cargando…": Godot arranca en segundo plano mientras se ve el menú.
-                    RoundedRectangle(cornerRadius: 28)
-                        .fill(Color.black.opacity(0.35))
-                        .frame(width: 180, height: 180)
                     VStack(spacing: 8) {
                         ProgressView().tint(Theme.gold)
                         Text(L("MENU_CARGANDO"))
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                            .font(.fredoka(14, .bold))
                             .foregroundColor(.white)
                     }
+                    .padding(10)
+                    .background(Capsule().fill(Theme.darkPurple.opacity(0.85)))
                 }
             }
         }
         .buttonStyle(ScaleButtonStyle())
         .disabled(loading)
+        .accessibilityLabel(L("MENU_JUGAR"))
     }
 }
 
-// MARK: - Botón OPCIONES (toque: Opciones; 3 s: Tutores)
+// MARK: - Botón OPCIONES (lote 10: "btn_tutors"; toque: Opciones; 3 s: Tutores)
 
 private struct OpcionesButton: View {
     let onTap: () -> Void
@@ -116,52 +92,24 @@ private struct OpcionesButton: View {
     @State private var longPressed = false
 
     var body: some View {
-        Group {
-            if UIImage(named: "btn_opciones") != nil {
-                Image("btn_opciones")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 56)
-                    .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 3)
-            } else {
-                // Cápsula roja con engranaje, mientras no llegue la imagen
-                HStack(spacing: 10) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 20, weight: .bold))
-                    Text(L("MENU_OPCIONES"))
-                        .textCase(.uppercase)
-                        .font(.system(size: 20, weight: .black, design: .rounded))
+        Image("btn_tutors")
+            .resizable()
+            .scaledToFit()
+            .frame(width: Theme.cornerButton, height: Theme.cornerButton)
+            .contentShape(Circle())
+            // Una sola vista con dos gestos: toque corto abre Opciones, 3 s abre Tutores.
+            .onLongPressGesture(minimumDuration: 3) {
+                longPressed = true
+                onLongPress()
+            }
+            .simultaneousGesture(TapGesture().onEnded {
+                if longPressed {
+                    longPressed = false
+                } else {
+                    onTap()
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 12)
-                .background(
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color(hex: "D9302F"), Color(hex: "9B1F1F")],
-                                startPoint: .top, endPoint: .bottom
-                            )
-                        )
-                        .overlay(Capsule().strokeBorder(Color(hex: "FF6860"), lineWidth: 2))
-                )
-                .shadow(color: .black.opacity(0.4), radius: 5, x: 0, y: 3)
-            }
-        }
-        .contentShape(Rectangle())
-        // Una sola vista con dos gestos: toque corto abre Opciones, 3 s abre Tutores.
-        .onLongPressGesture(minimumDuration: 3) {
-            longPressed = true
-            onLongPress()
-        }
-        .simultaneousGesture(TapGesture().onEnded {
-            if longPressed {
-                longPressed = false
-            } else {
-                onTap()
-            }
-        })
-        .accessibilityLabel(L("MENU_OPCIONES"))
-        .accessibilityAddTraits(.isButton)
+            })
+            .accessibilityLabel(L("MENU_OPCIONES"))
+            .accessibilityAddTraits(.isButton)
     }
 }
