@@ -20,7 +20,8 @@ struct RutaKidsSpikeApp: App {
 private struct SpikeView: View {
     let app: GodotApp
     let bridge: RutaBridge
-    @Environment(\.scenePhase) private var scenePhase
+    // SwiftUI.Environment: SwiftGodot también tiene una clase Environment (la de Godot).
+    @SwiftUI.Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
