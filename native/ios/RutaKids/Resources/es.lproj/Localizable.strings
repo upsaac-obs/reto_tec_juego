@@ -115,6 +115,7 @@
 "REGLA_DISTANCE" = "Distancia con ciclista";
 "REGLA_AMBULANCE" = "Ambulancia";
 "REGLA_CRASH" = "Choque";
+"REGLA_LANE" = "Carril";
 "MENU_OPCIONES" = "Opciones";
 "MENU_MUSICA" = "Música";
 "MENU_CERRAR" = "Cerrar";
@@ -127,6 +128,7 @@
 "BIEN_AMARILLO" = "¡Bien! Frenaste con la amarilla. Esperar un ratito nos cuida a todos.";
 "PRISA_TABLERO_AVISO" = "Mira el tablero: seguimos a tiempo. Manejando bien, siempre llegamos.";
 "PELOTA_CALLE_AVISO" = "Calle con autos estacionados. Despacio: alguien podría salir de entre ellos.";
+"FALTA_CARRIL" = "¡Cuidado! Aquí hay autos estacionados y la calle se angosta. Antes de llegar, cámbiate al carril izquierdo.";
 "FALTA_PELOTA" = "¡Uy! Detrás de una pelota casi siempre viene alguien. Despacio sí alcanzamos a frenar.";
 "BIEN_PELOTA" = "¡Así se hace! Frenaste a tiempo y la niña recuperó su pelota.";
 "LLEGADA_A_TIEMPO" = "¡Llegamos a tiempo! Y llegamos bien, que es lo más importante.";
@@ -167,3 +169,17 @@
 "FALTA_CAMION" = "Con el camión detenido, alguien puede cruzar por enfrente. Esperamos detrás.";
 "BIEN_CAMION" = "¡Qué paciencia! Esperaste detrás del camión mientras la gente subía y bajaba.";
 "DESTINO_BIBLIOTECA" = "Biblioteca";
+"CREDITOS_TITULO" = "Ruta Kids";
+"CREDITOS_INTEGRANTE_1" = "Dylan Isaac Mancilla López";
+"CREDITOS_INTEGRANTE_2" = "José Paulo Vélez Ortiz";
+"CREDITOS_INTEGRANTE_3" = "Angel Mael Vera Carpio";
+"CREDITOS_INTEGRANTE_4" = "Diego Sánchez López";
+"CREDITOS_DIRECCION" = "Dirección, producción y desarrollo principal";
+"CREDITOS_DIRECTOR" = "Dylan Isaac Mancilla";
+"CREDITOS_AGRADECIMIENTOS" = "Agradecimientos y en colaboración de";
+"CREDITOS_FUNDACION" = "Fundación ADO";
+"CREDITOS_TECNOLOGIA" = "Tecnología";
+"CREDITOS_GODOT" = "Godot Engine (licencia MIT)";
+"CREDITOS_FUENTE" = "Fuente Fredoka (SIL Open Font License)";
+"CREDITOS_VOZ" = "Voz Piper es_MX (licencia Apache 2.0)";
+"CREDITOS_GRACIAS" = "¡Gracias por manejar con cuidado!";

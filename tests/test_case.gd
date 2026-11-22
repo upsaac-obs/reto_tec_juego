@@ -63,6 +63,14 @@ func release_inputs() -> void:
 		Input.action_release(action)
 
 
+## Toque en la pantalla, como lo manda Godot (pasa por todos los _input y la interfaz).
+func touch(pressed := true) -> void:
+	var event := InputEventScreenTouch.new()
+	event.position = Vector2(50.0, 50.0)
+	event.pressed = pressed
+	get_tree().root.push_input(event)
+
+
 func tap(action: StringName) -> void:
 	Input.action_press(action)
 	await get_tree().physics_frame

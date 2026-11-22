@@ -9,8 +9,9 @@ const TRIGGER := 4423.0
 ## Progreso del inicio de la zona de falta (x = 4752).
 const ZONE := 4688.0
 const HALF_CAR := 33.0
-## Antes del punto de control de la calle de los autos estacionados (x = 4160).
-const START := 4050.0
+## Antes del punto de control de la calle de los autos estacionados (x = 4160) y
+## ya dentro del carril único (Route/OneLane, x = 4126; LaneMerge ya quedó atrás).
+const START := 4080.0
 
 var level: Node
 var rm: RuleManager

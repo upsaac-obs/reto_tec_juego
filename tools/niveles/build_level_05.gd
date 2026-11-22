@@ -16,6 +16,11 @@ func _init() -> void:
 	b.add(R + "tutorial_hint.tscn", Vector2(2944, 0), "HintBoard", {"message_key": "PRISA_TABLERO_AVISO"})
 	b.add(R + "yellow_crossing.tscn", Vector2(3584, 0), "YellowCrossing2", {"trigger_distance": 420.0, "yellow_time": 3.0, "red_time": 4.0})
 	b.add(R + "checkpoint.tscn", Vector2(3904, 0), "CheckpointAfterLight2")
+	# Hay que ir en el carril izquierdo antes del primer auto estacionado (borde en
+	# x = 4158). Aquí se revisa el frente del auto (falta FALTA_CARRIL si va en el
+	# derecho), a ras del primer auto (8 px antes, para evaluarse antes de que
+	# empiece OneLane en 4126). El aviso de voz (HintBallStreet) va antes, en 4000.
+	b.add(R + "lane_merge.tscn", Vector2(4150, 0), "LaneMerge", {"obstacle_distance": 8.0})
 	b.add(R + "speed_zone.tscn", Vector2(3968, 0), "SpeedZone30", {"kind": 0, "limit_kmh": 30, "zone_length": 1376.0})
 	b.add(R + "tutorial_hint.tscn", Vector2(4000, 0), "HintBallStreet", {"message_key": "PELOTA_CALLE_AVISO"})
 	b.add(R + "checkpoint.tscn", Vector2(4160, 0), "CheckpointBallStreet")
@@ -25,13 +30,19 @@ func _init() -> void:
 	b.add(R + "crosswalk.tscn", Vector2(5952, 0), "CrosswalkTerminal", {"approach_length": 448.0, "start_delay": 0.3})
 	b.add(R + "checkpoint.tscn", Vector2(6208, 0), "CheckpointAfterCrosswalk")
 	b.add(R + "departure_board.tscn", Vector2(6304, -160), "DepartureBoard")
-	# Tramo de un carril (autos estacionados a la derecha).
+	# Tramo de un carril (autos estacionados a la derecha). El carril único va
+	# sobre el carril izquierdo dibujado (lane_shift = -32), no sobre la raya.
+	# Empieza en 4126 (el frente del auto, 33 px adelante del centro, llega a 4159:
+	# el borde del primer auto estacionado), justo después de LaneMerge. Si el auto
+	# viene por el derecho, el cambio automático (lane_change_time = 0.4 s) arranca
+	# ahí, tras la pausa de la falta.
 	var route := root.get_node("Route")
-	for s: Array in [["OneLane", 4096, 1], ["TwoLanes", 5440, 2]]:
+	for s: Array in [["OneLane", 4126, 1, -32.0], ["TwoLanes", 5440, 2, 0.0]]:
 		var section := StreetSection.new()
 		section.name = s[0]
 		section.position = Vector2(s[1], 0)
 		section.lane_count = s[2]
+		section.lane_shift = s[3]
 		route.add_child(section)
 		section.owner = root
 	# Decoración: la terminal y dos árboles.
