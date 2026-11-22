@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
@@ -37,6 +36,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -103,8 +104,14 @@ fun LevelSelectScreen(
         val unit: Dp = min(maxWidth / map.width, maxHeight / map.height)
         val left = (maxWidth - unit * map.width) / 2
         val top = (maxHeight - unit * map.height) / 2
-        fun Modifier.at(x: Float, y: Float, w: Float, h: Float) =
-            this.offset(left + unit * x, top + unit * y).size(unit * w, unit * h)
+        // Cada pieza se mide a su tamaño exacto y se coloca en su lugar, aunque se salga de la
+        // pantalla (el fondo es más grande a propósito): offset + size lo encogerían.
+        fun Modifier.at(x: Float, y: Float, w: Float, h: Float) = this.layout { measurable, _ ->
+            val width = (unit * w).roundToPx()
+            val height = (unit * h).roundToPx()
+            val placeable = measurable.measure(Constraints.fixed(width, height))
+            layout(0, 0) { placeable.place((left + unit * x).roundToPx(), (top + unit * y).roundToPx()) }
+        }
 
         val bg = map.background
         Image(map.image(bg.file), null, Modifier.at(bg.x, bg.y, bg.width, bg.height), contentScale = ContentScale.FillBounds)
