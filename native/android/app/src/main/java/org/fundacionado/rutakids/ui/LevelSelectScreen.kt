@@ -102,7 +102,8 @@ fun LevelSelectScreen(
 
     BoxWithConstraints(Modifier.fillMaxSize().background(Palette.Grass)) {
         val unit: Dp = min(maxWidth / map.width, maxHeight / map.height)
-        val left = (maxWidth - unit * map.width) / 2
+        // Lo que sobra a lo ancho va a la izquierda (anchor_x = 1): ahí las calles siguen.
+        val left = (maxWidth - unit * map.width) * map.anchorX
         val top = (maxHeight - unit * map.height) / 2
         // Cada pieza se mide a su tamaño exacto y se coloca en su lugar, aunque se salga de la
         // pantalla (el fondo es más grande a propósito): offset + size lo encogerían.
@@ -203,6 +204,8 @@ private class MenuMap(private val context: Context, json: JSONObject) {
 
     val width: Float
     val height: Float
+    /** 0 = pegado a la izquierda, 0.5 = centrado, 1 = pegado a la derecha. */
+    val anchorX: Float
     val background: Image
     val car: Image
     val path: List<Pair<Float, Float>>
@@ -214,6 +217,7 @@ private class MenuMap(private val context: Context, json: JSONObject) {
         val content = json.getJSONArray("content")
         width = content.getDouble(0).toFloat()
         height = content.getDouble(1).toFloat()
+        anchorX = json.optDouble("anchor_x", 0.5).toFloat()
         background = json.getJSONObject("background").let {
             Image(it.getString("file"), it.f("x"), it.f("y"), it.f("width"), it.f("height"))
         }
