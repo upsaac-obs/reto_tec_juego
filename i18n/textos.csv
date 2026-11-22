@@ -167,3 +167,17 @@ BIEN_DISTANCIA_BICI,"¡Bien! Le dejaste un carril de espacio a la bici."
 FALTA_CAMION,"Con el camión detenido, alguien puede cruzar por enfrente. Esperamos detrás."
 BIEN_CAMION,"¡Qué paciencia! Esperaste detrás del camión mientras la gente subía y bajaba."
 DESTINO_BIBLIOTECA,Biblioteca
+CREDITOS_TITULO,Ruta Kids
+CREDITOS_INTEGRANTE_1,Dylan Isaac Mancilla López
+CREDITOS_INTEGRANTE_2,José Paulo Vélez Ortiz
+CREDITOS_INTEGRANTE_3,Angel Mael Vera Carpio
+CREDITOS_INTEGRANTE_4,Diego Sánchez López
+CREDITOS_DIRECCION,"Dirección, producción y desarrollo principal"
+CREDITOS_DIRECTOR,Dylan Isaac Mancilla
+CREDITOS_AGRADECIMIENTOS,Agradecimientos y en colaboración de
+CREDITOS_FUNDACION,Fundación ADO
+CREDITOS_TECNOLOGIA,Tecnología
+CREDITOS_GODOT,Godot Engine (licencia MIT)
+CREDITOS_FUENTE,Fuente Fredoka (SIL Open Font License)
+CREDITOS_VOZ,Voz Piper es_MX (licencia Apache 2.0)
+CREDITOS_GRACIAS,¡Gracias por manejar con cuidado!

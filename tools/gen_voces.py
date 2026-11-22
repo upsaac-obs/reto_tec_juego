@@ -119,10 +119,15 @@ ENGINES = {
 
 # --- Proceso ------------------------------------------------------------------
 
+# Claves que no llevan voz: los créditos (nombres y licencias) solo se leen en pantalla.
+NO_VOICE_PREFIXES = ("CREDITOS_",)
+
+
 def read_texts() -> dict[str, str]:
     with CSV_PATH.open(encoding="utf-8", newline="") as f:
         rows = csv.DictReader(f)
-        return {r["keys"].strip(): r[LANG_COLUMN] for r in rows if r.get("keys", "").strip()}
+        return {r["keys"].strip(): r[LANG_COLUMN] for r in rows
+                if r.get("keys", "").strip() and not r["keys"].strip().startswith(NO_VOICE_PREFIXES)}
 
 
 def fingerprint(text: str, engine: str, voice: str) -> str:
