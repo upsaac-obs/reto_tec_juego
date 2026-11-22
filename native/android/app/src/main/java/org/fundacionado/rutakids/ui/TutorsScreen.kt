@@ -4,6 +4,7 @@ package org.fundacionado.rutakids.ui
 import android.content.res.Resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -147,6 +148,9 @@ fun TutorsScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                 )
+                                level.decalogoRes?.let {
+                                    Text(stringResource(it), color = Palette.Asphalt, fontSize = 12.sp)
+                                }
                                 if (stars > 0) {
                                     Text(
                                         if (infractions.isEmpty()) stringResource(R.string.TUTOR_SIN_FALTAS)
@@ -212,12 +216,20 @@ private fun CardTitle(text: String) {
 
 @Composable
 private fun ModeButton(label: String, selected: Boolean, onClick: () -> Unit) {
-    if (selected) {
-        Button(onClick = onClick, colors = ButtonDefaults.buttonColors(containerColor = Palette.DarkPurple)) {
-            Text(label, color = Palette.Gold, fontWeight = FontWeight.Bold)
-        }
-    } else {
-        OutlinedButton(onClick = onClick) { Text(label, color = Palette.DarkPurple) }
+    // Cápsula: dorada la elegida, morada la otra (de Paulo, feature/ui-android).
+    Box(
+        Modifier
+            .clip(RoundedCornerShape(50))
+            .background(if (selected) Palette.Gold else Palette.DarkPurple)
+            .pressClickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            label,
+            color = if (selected) Palette.DarkPurple else Palette.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 

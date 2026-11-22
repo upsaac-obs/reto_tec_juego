@@ -26,6 +26,8 @@ fun HomeScreen(
     maxStars: Int,
     muted: Boolean,
     kiosk: Boolean,
+    /** Godot sigue arrancando: Jugar ya funciona, pero se avisa que el nivel tardará un momento. */
+    loading: Boolean,
     onPlay: () -> Unit,
     onExit: () -> Unit,
     onToggleSound: () -> Unit,
@@ -56,5 +58,8 @@ fun HomeScreen(
             onPlay,
             Modifier.align(Alignment.Center).padding(top = 24.dp).size(170.dp),
         )
+        if (loading) {
+            LoadingChip(Modifier.align(Alignment.BottomCenter).padding(bottom = 28.dp))
+        }
     }
 }

@@ -4,6 +4,9 @@ package org.fundacionado.rutakids.ui
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +38,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -74,7 +79,7 @@ fun MenuBackground(
     }
 }
 
-/** Botón que es solo una imagen (los botones "caramelo" del lote 10). Se hunde un poco al tocarlo. */
+/** Botón que es solo una imagen (los botones "caramelo" del lote 10). Rebota al tocarlo. */
 @Composable
 fun ImageButton(
     @DrawableRes image: Int,
@@ -82,21 +87,51 @@ fun ImageButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val interaction = remember { MutableInteractionSource() }
-    val pressed by interaction.collectIsPressedAsState()
     val audio = LocalMenuAudio.current
     Image(
         painterResource(image),
         contentDescription = label,
         contentScale = ContentScale.Fit,
         modifier = modifier
-            .scale(if (pressed) 0.92f else 1f)
-            .clickable(interactionSource = interaction, indication = null) {
+            .pressClickable {
                 audio?.tap()
                 onClick()
             }
             .semantics { role = Role.Button },
     )
+}
+
+/**
+ * Como un clic normal, pero el botón se encoge un poco al pulsarlo y rebota al soltar
+ * (el ScaleButtonStyle de iOS). Sin la onda gris de Material. (De Paulo, feature/ui-android.)
+ */
+fun Modifier.pressClickable(enabled: Boolean = true, onClick: () -> Unit): Modifier = composed {
+    val source = remember { MutableInteractionSource() }
+    val pressed by source.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.93f else 1f,
+        animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessMedium),
+        label = "pressScale",
+    )
+    this
+        .graphicsLayer { scaleX = scale; scaleY = scale }
+        .clickable(interactionSource = source, indication = null, enabled = enabled, onClick = onClick)
+}
+
+/** Cápsula morada con "Cargando…" mientras Godot arranca en segundo plano (como iOS). (De Paulo.) */
+@Composable
+fun LoadingChip(modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .clip(RoundedCornerShape(50))
+            .background(Palette.DarkPurple.copy(alpha = 0.85f))
+            .padding(horizontal = 14.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CircularProgressIndicator(color = Palette.Gold, strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.MENU_CARGANDO), color = Palette.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+    }
 }
 
 /** Barra con el total de estrellas: estrella dorada y "total / máximo" en Fredoka. */
