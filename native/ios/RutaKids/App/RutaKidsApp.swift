@@ -11,6 +11,10 @@ struct RutaKidsApp: App {
     @State private var godot = GodotApp(packFile: "main.pck")
     @State private var model = AppModel()
 
+    init() {
+        registerAppFonts()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView(app: godot, model: model)

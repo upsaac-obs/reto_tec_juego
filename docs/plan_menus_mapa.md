@@ -90,3 +90,30 @@ El mapa reutiliza el arte del juego. A Codex solo se le pide lo de los menús (`
   El mapa y la pantalla de Inicio no se recortan.
 - **Rendimiento en el A15:** el mapa son ~100 sprites chicos de un solo atlas y un camino. Se dibuja una vez y el scroll solo lo mueve. Si se traba, se baja la cantidad de adornos en el script.
 - **Fuente:** Fredoka (OFL) va en `res/font/` (Android) y en el `Info.plist` de iOS (`UIAppFonts`), con su licencia.
+
+## 6. iOS: qué revisar al compilar (Diego)
+
+El código de iOS se escribió en Linux, sin Xcode. Hace lo mismo que Android (ya probado en el Galaxy A15).
+
+1. `cd native/ios && xcodegen generate`. Esto agrega solos los archivos nuevos:
+   - `RutaKids/Resources/menu_map/`: el mapa, los letreros y el auto;
+   - `RutaKids/Resources/Fonts/Fredoka.ttf`;
+   - los `.imageset` nuevos de `ASSETS de menu de IOS`.
+2. Si el compilador se queja, revisa primero estos puntos:
+   - **`LevelSelectView.swift`:**
+     - `MenuMap` es `@MainActor` y `CarOnPath` es `View, Animatable`. Si Swift 6 marca aislamiento, se puede quitar `@MainActor` de `MenuMap` y poner `nonisolated(unsafe) static let shared`.
+     - `.onChange(of:) { }` sin parámetros (iOS 17).
+   - **`Theme.swift`:**
+     - `CTFontManagerRegisterFontsForURL` y `Font.custom("Fredoka", size:).weight(...)`.
+     - Si la fuente no aparece, revisa con `UIFont.familyNames` que la familia se llame "Fredoka".
+3. **En el iPhone**, comparar con las capturas del A15 (`~/claude/a15_inicio.png`, `~/claude/a15_mapa.png`):
+   - **Inicio:** fondo postal, Jugar al centro y el engrane caramelo arriba a la derecha (un toque abre Opciones; 3 s abre Tutores).
+   - **Mapa:**
+     - la "S" pegada a la derecha;
+     - letreros grises con candado en los niveles cerrados;
+     - el letrero siguiente late;
+     - el auto avanza al ganar un nivel nuevo;
+     - el toast "Saca una estrella…" al tocar uno cerrado;
+     - en kiosco, todo abierto y sin estrellas.
+   - **Edad:** las dos ilustraciones con su texto abajo.
+   - **iPad:** el mapa cabe completo y el pasto llena arriba y abajo.

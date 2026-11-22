@@ -1,8 +1,8 @@
 import SwiftUI
 
 // MARK: - Selección de edad (primera vez que se abre la app)
-// Dos dibujos grandes, un toque. Los íconos son provisionales (SF Symbols): cuando
-// haya arte, se agregan "age_peque" y "age_grande" a "ASSETS de menu de IOS" y se usan solos.
+// Dos tarjetas grandes, un toque. Cada una es la ilustración del lote 10 ("age_peque",
+// "age_grande") con el título y las edades debajo, igual que en Android.
 
 struct AgeSelectView: View {
     let onSelect: (String) -> Void
@@ -11,29 +11,24 @@ struct AgeSelectView: View {
         ZStack {
             MenuBackground()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 12) {
                 Text(L("MENU_EDAD_TITULO"))
-                    .font(.system(size: 30, weight: .black, design: .rounded))
+                    .font(.fredoka(32, .bold))
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 2)
 
-                HStack(spacing: 28) {
-                    AgeCard(
-                        title: L("MENU_PEQUE"),
-                        ages: L("MENU_PEQUE_EDADES"),
-                        asset: "age_peque",
-                        symbol: "face.smiling"
-                    ) { onSelect(ProgressStore.modePeque) }
-
-                    AgeCard(
-                        title: L("MENU_GRANDE"),
-                        ages: L("MENU_GRANDE_EDADES"),
-                        asset: "age_grande",
-                        symbol: "gamecontroller.fill"
-                    ) { onSelect(ProgressStore.modeGrande) }
+                HStack(spacing: 36) {
+                    AgeCard(title: L("MENU_PEQUE"), ages: L("MENU_PEQUE_EDADES"), asset: "age_peque") {
+                        onSelect(ProgressStore.modePeque)
+                    }
+                    AgeCard(title: L("MENU_GRANDE"), ages: L("MENU_GRANDE_EDADES"), asset: "age_grande") {
+                        onSelect(ProgressStore.modeGrande)
+                    }
                 }
+                .frame(maxHeight: .infinity)
             }
-            .padding(24)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
         }
         .statusBar(hidden: true)
     }
@@ -43,7 +38,6 @@ private struct AgeCard: View {
     let title: String
     let ages: String
     let asset: String
-    let symbol: String
     let action: () -> Void
 
     var body: some View {
@@ -51,32 +45,26 @@ private struct AgeCard: View {
             AudioManager.shared.playSound(named: "tap")
             action()
         } label: {
-            VStack(spacing: 10) {
-                if UIImage(named: asset) != nil {
-                    Image(asset)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                } else {
-                    Image(systemName: symbol)
-                        .font(.system(size: 76, weight: .bold))
-                        .foregroundColor(Theme.gold)
-                        .frame(height: 110)
-                }
+            VStack(spacing: 2) {
+                Image(asset)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 Text(title)
-                    .font(.system(size: 26, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
+                    .font(.fredoka(32, .bold))
+                    .foregroundColor(Theme.gold)
+                    .padding(.top, 4)
                 Text(ages)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.8))
+                    .font(.fredoka(17, .medium))
+                    .foregroundColor(.white)
             }
-            .frame(minWidth: 200, maxWidth: 260, minHeight: 200)
-            .padding(20)
+            .padding(10)
+            .aspectRatio(0.82, contentMode: .fit)
             .background(
                 RoundedRectangle(cornerRadius: 28)
-                    .fill(LinearGradient(colors: [Theme.cardTop, Theme.cardBottom],
-                                         startPoint: .top, endPoint: .bottom))
-                    .overlay(RoundedRectangle(cornerRadius: 28).strokeBorder(Theme.border, lineWidth: 4))
+                    .fill(Theme.darkPurple)
+                    .overlay(RoundedRectangle(cornerRadius: 28).strokeBorder(Theme.gold, lineWidth: 5))
             )
             .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 5)
         }
