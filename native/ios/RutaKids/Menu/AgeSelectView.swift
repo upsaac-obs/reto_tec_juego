@@ -46,10 +46,9 @@ private struct AgeCard: View {
             action()
         } label: {
             VStack(spacing: 2) {
-                Image(asset)
-                    .resizable()
-                    .scaledToFill()
+                Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay(Image(asset).resizable().scaledToFill())
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 Text(title)
                     .font(.fredoka(32, .bold))
