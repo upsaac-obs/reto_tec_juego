@@ -55,8 +55,11 @@ final class AudioManager: ObservableObject {
 
     private func configureSession() {
         do {
+            // .playback: la voz del copiloto es parte de la enseñanza, así que suena aunque el
+            // iPhone esté en silencio (con .ambient, el interruptor de silencio callaba todo).
+            // Godot usa la misma categoría (project.godot, audio/general/ios/session_category).
             try AVAudioSession.sharedInstance().setCategory(
-                .ambient, mode: .default, options: [.mixWithOthers]
+                .playback, mode: .default, options: [.mixWithOthers]
             )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {

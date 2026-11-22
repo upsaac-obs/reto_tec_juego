@@ -13,6 +13,8 @@ struct RutaKidsApp: App {
 
     init() {
         registerAppFonts()
+        // Configura la sesión de audio antes de que arranque Godot (ver AudioManager).
+        _ = AudioManager.shared
     }
 
     var body: some Scene {
