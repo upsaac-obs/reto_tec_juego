@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Genera las voces del copiloto: assets/audio/voz/<CLAVE>.ogg para cada clave
 de i18n/textos.csv (columna "es").
 

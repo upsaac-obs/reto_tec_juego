@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Reproduce música, efectos cortos y efectos en bucle (motor, direccional, lluvia).
 ##

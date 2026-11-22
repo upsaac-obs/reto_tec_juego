@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name FakeBridge
 extends Node
 ## Hace de app nativa cuando Godot corre solo (editor o escritorio).

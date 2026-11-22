@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name LevelData
 extends Resource
 ## Datos de un nivel. Un archivo por nivel en data/level_XX.tres, donde XX es el

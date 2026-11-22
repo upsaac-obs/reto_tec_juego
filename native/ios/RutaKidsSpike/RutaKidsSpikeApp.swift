@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 import SwiftGodot
 import SwiftGodotKit
 import SwiftUI

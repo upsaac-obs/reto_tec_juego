@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Modo peque: el auto avanza solo al 70 % del límite; el niño solo frena.
 

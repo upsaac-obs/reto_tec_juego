@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import SwiftUI
 
 // MARK: - Tutores

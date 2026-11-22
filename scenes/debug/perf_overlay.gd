@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends CanvasLayer
 ## Medidor de rendimiento para el A15 (docs/plan_visual.md, fase 0): fps, fps mínimo de
 ## los últimos 10 s, draw calls, objetos dibujados y memoria. También lo escribe en el

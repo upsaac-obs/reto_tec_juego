@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Puente con la app nativa (contrato en docs/arquitectura.md).
 ## - Nativo → Godot: el singleton RutaBridge emite señales (start_level, pause_level,

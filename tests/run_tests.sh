@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Creación y desarrollo: Dylan Isaac Mancilla López
 # Corre todas las pruebas automáticas sin abrir el editor y guarda la salida en
 # tests/resultados/ con la fecha y el commit (evidencia para el plan de pruebas).
 set -uo pipefail

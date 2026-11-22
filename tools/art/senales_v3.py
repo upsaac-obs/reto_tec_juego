@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Sprites del arte v2 que se dibujan por código (no los genera Codex).
 
 - assets/sprites/signals/traffic_light.png (48 × 128): caja del semáforo. Los focos

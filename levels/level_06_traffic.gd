@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Path2D
 ## Tráfico del carril izquierdo del nivel 6 (no es una pieza de regla: no da
 ## faltas ni puntos). Mientras el niño contesta estacionado, los autos pasan a

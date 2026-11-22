@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name Pedestrian
 extends Node2D
 ## Peatón que camina en línea recta hacia un punto. El origen del nodo son sus pies.

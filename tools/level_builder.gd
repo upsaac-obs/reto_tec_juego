@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name LevelBuilder
 extends RefCounted
 ## Ayuda para armar niveles por script con el estilo de la calle de prueba.

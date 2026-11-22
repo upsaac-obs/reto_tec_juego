@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Cruce sin vista (nivel 3) manejando el auto en levels/level_03.tscn.
 ## El primer cruce está en x = 1300 (la ruta empieza en x = 64).

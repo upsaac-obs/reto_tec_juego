@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name HostBridge
 extends Node
 ## Puente para apps que incrustan Godot y le hablan a un nodo del árbol en vez

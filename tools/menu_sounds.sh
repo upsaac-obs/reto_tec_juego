@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Creación y desarrollo: Dylan Isaac Mancilla López
 # Sonidos de los menús nativos (Android e iOS), en M4A/AAC porque iOS (AVAudioPlayer)
 # no reproduce .ogg. Uso: tools/menu_sounds.sh   (necesita ffmpeg)
 #   menu_tap     "pop" corto al tocar un botón (sintetizado)

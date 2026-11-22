@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Genera la música de RutaKids (chiptune suave) y la convierte a .ogg con ffmpeg.
 
 - assets/audio/musica/nivel.ogg: bucle alegre y tranquilo en Do mayor, 100 BPM,

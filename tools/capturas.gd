@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Capturas de los 9 niveles en modo peque para revisar el arte (docs/plan_visual.md).
 ## Necesita ventana (no --headless):

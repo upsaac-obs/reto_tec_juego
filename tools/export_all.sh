@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Creación y desarrollo: Dylan Isaac Mancilla López
 # Exporta el juego para las dos apps con la misma marca de versión (H10).
 #
 #   tools/export_all.sh            # iOS y Android

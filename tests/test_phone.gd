@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Celular del nivel 6 (levels/level_06.tscn, pieza PhoneEvent).
 ## La ruta empieza en x = 64: progress = x - 64. Phone1 en x = 1000 (ignorar,

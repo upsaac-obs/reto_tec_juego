@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name SidewalkWalkers
 extends Node2D
 ## Gente que camina por las banquetas para darle vida a la calle. Solo decoración:

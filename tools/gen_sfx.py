@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Genera los efectos de sonido cortos (.wav) de RutaKids en assets/audio/sfx/.
 
 Solo usa numpy y la librería estándar. Es determinista: la misma versión del

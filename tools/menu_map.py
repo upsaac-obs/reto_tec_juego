@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Mapa de la selección de niveles en una sola pantalla (docs/plan_menus_mapa.md).
 
 El camino hace una "S": paradas 1 a 4 arriba (de izquierda a derecha), vuelta en U a

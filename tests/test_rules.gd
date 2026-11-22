@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Semáforo, límite de velocidad y ciclovía manejando el auto en la calle de
 ## prueba (levels/test_street.tscn).

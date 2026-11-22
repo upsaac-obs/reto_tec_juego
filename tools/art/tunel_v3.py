@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Portal del túnel del nivel 7 visto desde arriba (lo dibuja el código, no Codex).
 
 assets/sprites/city/tunel_portal.png (232 × 544): el cerro atraviesa la calle y el

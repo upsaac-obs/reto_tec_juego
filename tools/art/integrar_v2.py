@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Integra el arte v2 (docs/arte_v2/codex) desde arte_v2/entrada/ a assets/.
 
 Cada entrega de Codex (fondo transparente o magenta #FF00FF) se parte en su

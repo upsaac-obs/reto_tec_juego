@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 package org.fundacionado.rutakids
 
 import org.godotengine.godot.Godot

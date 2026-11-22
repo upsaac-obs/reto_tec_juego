@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Distancia con la bici (nivel 8) en levels/level_08.tscn. Cyclist1 dispara en
 ## x = 1450 (progreso 1386) y su bici sale en x = 1898 a 80 px/s. Cyclist2

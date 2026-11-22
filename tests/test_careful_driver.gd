@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## El conductor cuidadoso de test_levels.gd obedece a piezas nuevas sin que haya
 ## que editarlo: careful_stop_x() + must_wait(), careful_lane() + careful_range()

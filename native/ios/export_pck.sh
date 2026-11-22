@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 # Exporta el proyecto de Godot como main.pck con el preset "iOS" y lo copia a las dos
 # apps: RutaKids/main.pck (la app real) y RutaKidsSpike/main.pck (la prueba técnica).
 # Lo hace tools/export_all.sh --ios, que además pone el commit en engine_ready.

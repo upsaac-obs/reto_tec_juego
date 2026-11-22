@@ -1,3 +1,4 @@
+# Creación y desarrollo: Diego Sánchez López
 extends TestCase
 ## Cajón y puerta del final del nivel 3 (levels/level_03.tscn). El cajón y la
 ## puerta están en x = 5500; la ruta empieza en x = 64, así que ahí el auto

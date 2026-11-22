@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name HabitCard
 extends CanvasLayer
 ## Tarjeta del hábito al terminar el nivel: ilustración, nombre del nivel, punto

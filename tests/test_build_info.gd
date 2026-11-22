@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## engine_ready manda la marca del build (build_info.gd, "dev" en el repositorio).
 

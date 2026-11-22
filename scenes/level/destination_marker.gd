@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node2D
 ## Ícono redondo y dorado que flota sobre el edificio del destino (sin texto), para que
 ## una niña o un niño que todavía no lee vea a dónde va. Lo pone CityDresser.

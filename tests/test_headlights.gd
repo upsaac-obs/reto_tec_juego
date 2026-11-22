@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Luces del auto (nivel 7): set_headlights, la acción car_lights, el cono de luz
 ## y el botón del HUD, que solo aparece si el nivel pone show_lights_button.

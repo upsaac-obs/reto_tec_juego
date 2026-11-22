@@ -1,3 +1,4 @@
+# Creación y desarrollo: Diego Sánchez López
 class_name Cyclist
 extends Node2D
 ## Ciclista que pasa pedaleando en línea recta hacia +x (la misma dirección del

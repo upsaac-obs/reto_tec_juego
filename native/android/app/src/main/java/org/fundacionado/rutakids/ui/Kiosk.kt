@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 package org.fundacionado.rutakids.ui
 
 import android.app.Activity

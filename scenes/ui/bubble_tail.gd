@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name BubbleTail
 extends Control
 ## Colita del globo del copiloto: un triángulo que sale del lado izquierdo del

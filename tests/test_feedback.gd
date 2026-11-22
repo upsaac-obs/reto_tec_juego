@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Copiloto (Feedback) conectado al RuleManager del nivel.
 

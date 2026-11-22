@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Guarda estrellas por nivel, puntos, modo y silencio en user://save.cfg.
 ## No guarda nada en modo kiosco ni ningún dato personal (REQ-6).

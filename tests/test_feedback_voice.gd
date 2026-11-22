@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## La pausa de una falta dura lo que dure su voz (mínimo pause_time) y el
 ## mensaje se queda al menos lo mismo. Sin voz, todo sigue igual (2 s).

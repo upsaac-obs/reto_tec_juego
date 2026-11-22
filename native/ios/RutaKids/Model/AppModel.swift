@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import Foundation
 
 /// Une el puente con Godot, el guardado y las pantallas: qué se muestra y cuándo.

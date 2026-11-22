@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Escena de entrada de las pruebas (tests/run_tests.tscn). Las pruebas cambian
 ## de escena (el puente vuelve a idle.tscn), y eso libera esta escena; por eso

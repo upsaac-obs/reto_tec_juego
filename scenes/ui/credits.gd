@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name Credits
 extends CanvasLayer
 ## Créditos tipo película al terminar el último nivel (LevelData.show_credits; los abre

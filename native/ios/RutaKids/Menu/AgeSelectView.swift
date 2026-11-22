@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import SwiftUI
 
 // MARK: - Selección de edad (primera vez que se abre la app)

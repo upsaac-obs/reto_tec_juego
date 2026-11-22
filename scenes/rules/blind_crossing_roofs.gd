@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 @tool
 extends Node2D
 ## Portales sobre la calle que cruza: se dibujan encima del tráfico (z_index)

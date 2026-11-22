@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name Hud
 extends CanvasLayer
 ## HUD provisional del nivel, como el mockup: barra con nombre, puntos, estrellas

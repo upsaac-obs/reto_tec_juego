@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
 # Exporta el proyecto de Godot y copia sus archivos a los assets de la app (H10).
 # Lo hace tools/export_all.sh --android (preset "Android", mismas plantillas 4.7.2
 # que godot-lib; del APK se toma solo la carpeta assets/) con la marca del build.

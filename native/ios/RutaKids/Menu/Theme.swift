@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, Diego Sánchez López
 import CoreText
 import SwiftUI
 

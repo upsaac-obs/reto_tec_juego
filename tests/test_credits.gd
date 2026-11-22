@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Créditos al terminar el último nivel (scenes/ui/credits.gd): solo el nivel 8 los tiene,
 ## salen al tocar Continuar en la tarjeta, se saltan con un toque y después el nivel

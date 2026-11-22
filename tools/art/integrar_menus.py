@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: Dylan Isaac Mancilla López
 """Integra el lote 10 de Codex (menús) a las dos apps nativas con los mismos nombres.
 
 Lee arte_v2/entrada/ (acepta el sufijo _REVISAR), recorta cada celda a su dibujo,

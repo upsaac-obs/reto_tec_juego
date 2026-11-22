@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López, José Paulo Vélez Ortiz
 import java.util.Properties
 
 plugins {

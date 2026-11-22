@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Decorado de la ciudad (CityDresser, docs/plan_visual.md): solo adorna. No tiene
 ## colisiones ni grupos, no pisa los carriles, deja libre la zona de cada pieza de

@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name CityDresser
 extends Node
 ## Viste la ciudad de un nivel al cargarlo (docs/plan_visual.md, fase 0): quita las

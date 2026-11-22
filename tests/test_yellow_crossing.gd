@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Cruce que se pone en amarillo al llegar el auto (nivel 5) en
 ## levels/level_05.tscn: Rules/YellowCrossing1 con la línea en x = 2432.

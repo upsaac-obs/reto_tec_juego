@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends TestCase
 ## Tramo oscuro (nivel 7) en levels/level_07.tscn. DarkDusk empieza en x = 1000
 ## (progreso 936, la ruta empieza en x = 64) y termina en x = 2000; DarkTunnel va

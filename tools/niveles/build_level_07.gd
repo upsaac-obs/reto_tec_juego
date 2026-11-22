@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 extends Node
 ## Arma levels/level_07.tscn. Después: python3 tools/make_inherited.py levels/level_07.tscn
 

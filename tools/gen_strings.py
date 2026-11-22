@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Creación y desarrollo: José Paulo Vélez Ortiz, Diego Sánchez López
 """Genera los textos de las apps nativas a partir de i18n/textos.csv.
 
 Uso (desde cualquier carpeta):

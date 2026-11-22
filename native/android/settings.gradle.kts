@@ -1,3 +1,4 @@
+// Creación y desarrollo: Dylan Isaac Mancilla López
 pluginManagement {
     repositories {
         google()

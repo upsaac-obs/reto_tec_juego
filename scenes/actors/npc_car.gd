@@ -1,3 +1,4 @@
+# Creación y desarrollo: Dylan Isaac Mancilla López
 class_name NpcCar
 extends PathFollow2D
 ## Auto del tráfico. Sigue su Path2D (el padre) a cruise_speed y frena si tiene
