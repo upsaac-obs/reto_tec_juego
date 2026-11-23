@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -30,7 +31,8 @@ data class Progress(
 
 /**
  * Todo lo que guarda la app (plan del sprint, sección 5.2). Nada personal.
- * Claves: mode, muted, kiosk, tutorial_done, level_<id>_stars, level_<id>_points, level_<id>_infractions.
+ * Claves: mode, muted, kiosk, tutorial_done, level_<id>_stars, level_<id>_points, level_<id>_infractions,
+ * garage_owned, garage_vehicle, garage_hint_seen.
  */
 class SettingsStore(private val context: Context) {
 
@@ -40,6 +42,13 @@ class SettingsStore(private val context: Context) {
     val kiosk: Flow<Boolean> = context.dataStore.data.map { it[KIOSK] ?: false }
     /** Se terminó el tutorial (nivel 0). Hasta entonces Jugar abre el tutorial. */
     val tutorialDone: Flow<Boolean> = context.dataStore.data.map { it[TUTORIAL_DONE] ?: false }
+
+    /** Vehículos comprados, el elegido y si ya se vio el aviso (Garage). */
+    val garage: Flow<GarageState> = context.dataStore.data.map { prefs ->
+        val owned = (prefs[GARAGE_OWNED] ?: emptySet()) + Garage.DEFAULT
+        val selected = prefs[GARAGE_VEHICLE]?.takeIf { it in owned } ?: Garage.DEFAULT
+        GarageState(owned, selected, prefs[GARAGE_HINT_SEEN] ?: false)
+    }
 
     val progress: Flow<Progress> = context.dataStore.data.map { prefs ->
         val ids = Levels.all.map { it.id }
@@ -73,7 +82,41 @@ class SettingsStore(private val context: Context) {
         }
     }
 
-    /** Borra estrellas, puntos, faltas y el tutorial terminado. El modo, el sonido y el kiosco se quedan. */
+    /**
+     * Compra [vehicleId] y lo deja elegido, si alcanzan las estrellas. Revisa el saldo dentro
+     * de la misma escritura para que dos toques seguidos no gasten dos veces. Devuelve si compró.
+     */
+    suspend fun buyVehicle(vehicleId: String): Boolean {
+        val vehicle = Garage.all.firstOrNull { it.id == vehicleId } ?: return false
+        var bought = false
+        context.dataStore.edit { prefs ->
+            val owned = (prefs[GARAGE_OWNED] ?: emptySet()) + Garage.DEFAULT
+            val total = Levels.menu.sumOf { prefs[starsKey(it.id)] ?: 0 }
+            if (vehicle.id !in owned && Garage.balance(total, owned) >= vehicle.price) {
+                prefs[GARAGE_OWNED] = owned + vehicle.id
+                prefs[GARAGE_VEHICLE] = vehicle.id
+                bought = true
+            }
+        }
+        return bought
+    }
+
+    /** Elige un vehículo ya comprado. */
+    suspend fun selectVehicle(vehicleId: String) {
+        context.dataStore.edit { prefs ->
+            val owned = (prefs[GARAGE_OWNED] ?: emptySet()) + Garage.DEFAULT
+            if (vehicleId in owned) prefs[GARAGE_VEHICLE] = vehicleId
+        }
+    }
+
+    suspend fun markGarageHintSeen() {
+        context.dataStore.edit { it[GARAGE_HINT_SEEN] = true }
+    }
+
+    /**
+     * Borra estrellas, puntos, faltas, el tutorial terminado y el garaje (sin estrellas no hay
+     * con qué haberlo comprado). El modo, el sonido y el kiosco se quedan.
+     */
     suspend fun resetProgress() {
         context.dataStore.edit { prefs ->
             for (level in Levels.all) {
@@ -82,6 +125,9 @@ class SettingsStore(private val context: Context) {
                 prefs.remove(infractionsKey(level.id))
             }
             prefs.remove(TUTORIAL_DONE)
+            prefs.remove(GARAGE_OWNED)
+            prefs.remove(GARAGE_VEHICLE)
+            prefs.remove(GARAGE_HINT_SEEN)
         }
     }
 
@@ -100,6 +146,9 @@ class SettingsStore(private val context: Context) {
         private val MUTED = booleanPreferencesKey("muted")
         private val KIOSK = booleanPreferencesKey("kiosk")
         private val TUTORIAL_DONE = booleanPreferencesKey("tutorial_done")
+        private val GARAGE_OWNED = stringSetPreferencesKey("garage_owned")
+        private val GARAGE_VEHICLE = stringPreferencesKey("garage_vehicle")
+        private val GARAGE_HINT_SEEN = booleanPreferencesKey("garage_hint_seen")
         private fun starsKey(id: Int): Preferences.Key<Int> = intPreferencesKey("level_${id}_stars")
         private fun pointsKey(id: Int): Preferences.Key<Int> = intPreferencesKey("level_${id}_points")
         private fun infractionsKey(id: Int): Preferences.Key<String> = stringPreferencesKey("level_${id}_infractions")

@@ -44,6 +44,8 @@ func run() -> void:
 		check(last("bridge_error")["code"] == "level_not_built", "nivel %d (sin escena) → level_not_built" % unbuilt)
 	fake.start_level.emit('{"v":1,"level_id":99,"mode":"mediano","kiosk":false,"muted":false}')
 	check(last("bridge_error")["code"] == "invalid_field", "modo inválido → invalid_field")
+	fake.start_level.emit('{"v":1,"level_id":99,"mode":"peque","kiosk":false,"muted":false,"vehicle":"patrulla"}')
+	check(last("bridge_error")["code"] == "invalid_field", "vehículo desconocido → invalid_field")
 	check(BridgeClient.state == BridgeClient.State.IDLE and count("level_started") == 0, "después de los errores sigue en idle")
 
 	fake.send_start(99)

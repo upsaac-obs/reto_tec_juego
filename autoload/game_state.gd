@@ -47,5 +47,8 @@ const MODE_GRANDE := "grande"
 var mode: String = MODE_GRANDE
 ## En kiosco todo está abierto y no se guarda nada.
 var kiosk: bool = false
+## Vehículo del garaje con el que se juega (Vehicles.IDS). El nativo lo manda en
+## start_level; si no lo manda, el auto rojo de siempre.
+var vehicle: String = Vehicles.DEFAULT
 ## Datos del nivel abierto (los pone BridgeClient). null en idle.
 var level: LevelData

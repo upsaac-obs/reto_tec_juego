@@ -27,8 +27,8 @@ class RutaBridgePlugin(
         runOnUiThread { onEvent(event, json) }
     }
 
-    fun startLevel(levelId: Int, mode: String, kiosk: Boolean, muted: Boolean) {
-        val json = """{"v":1,"level_id":$levelId,"mode":"$mode","kiosk":$kiosk,"muted":$muted}"""
+    fun startLevel(levelId: Int, mode: String, kiosk: Boolean, muted: Boolean, vehicle: String) {
+        val json = """{"v":1,"level_id":$levelId,"mode":"$mode","kiosk":$kiosk,"muted":$muted,"vehicle":"$vehicle"}"""
         emit(START_LEVEL, json)
     }
 

@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.fundacionado.rutakids.RutaBridgePlugin
+import org.fundacionado.rutakids.data.Garage
 import org.fundacionado.rutakids.data.Levels
 import org.fundacionado.rutakids.data.SettingsStore
 import org.json.JSONObject
@@ -126,7 +127,8 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
             val mode = settings.mode.first() ?: SettingsStore.MODE_GRANDE
             val kiosk = settings.kiosk.first()
             val muted = settings.muted.first()
-            bridge?.startLevel(levelId, mode = mode, kiosk = kiosk, muted = muted)
+            val vehicle = if (kiosk) kioskVehicle.value else settings.garage.first().selected
+            bridge?.startLevel(levelId, mode = mode, kiosk = kiosk, muted = muted, vehicle = vehicle)
         }
     }
 
@@ -178,6 +180,27 @@ class BridgeViewModel(app: Application) : AndroidViewModel(app) {
             }
             goHome()
         }
+    }
+
+    // --- Garaje ---
+
+    /** En kiosco todo está disponible y la elección no se guarda (vuelve al clásico al reiniciar la app). */
+    private val _kioskVehicle = MutableStateFlow(Garage.DEFAULT)
+    val kioskVehicle: StateFlow<String> = _kioskVehicle.asStateFlow()
+
+    /** Toque en un vehículo ya disponible: lo elige. */
+    fun selectVehicle(id: String) {
+        if (kiosk.value) _kioskVehicle.value = id
+        else viewModelScope.launch { settings.selectVehicle(id) }
+    }
+
+    /** Compra confirmada (no hay devoluciones). */
+    fun buyVehicle(id: String) {
+        viewModelScope.launch { settings.buyVehicle(id) }
+    }
+
+    fun markGarageHintSeen() {
+        viewModelScope.launch { settings.markGarageHintSeen() }
     }
 
     fun resetProgress() {

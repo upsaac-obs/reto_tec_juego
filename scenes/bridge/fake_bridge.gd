@@ -4,8 +4,9 @@ extends Node
 ## Hace de app nativa cuando Godot corre solo (editor o escritorio).
 ## Imprime cada mensaje que manda Godot y, como el menú nativo, abre un nivel al
 ## recibir engine_ready y otra vez después de level_exited.
-## Nivel a abrir: argumento --fake-level=N (por defecto el 1).
-##   godot --path . -- --fake-level=99
+## Nivel a abrir: argumento --fake-level=N (por defecto el 1). Vehículo del garaje:
+## --fake-vehicle=<id> (Vehicles.IDS; por defecto el auto rojo).
+##   godot --path . -- --fake-level=99 --fake-vehicle=moto
 
 signal start_level(json: String)
 signal pause_level
@@ -19,6 +20,7 @@ var sent: Array = []
 var auto_start: bool = true
 var level_id: int = 1
 var mode: String = GameState.MODE_GRANDE
+var vehicle: String = Vehicles.DEFAULT
 
 ## Segundos que tarda el "menú" en abrir el nivel.
 @export var menu_delay: float = 0.5
@@ -28,6 +30,8 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--fake-level="):
 			level_id = int(arg.trim_prefix("--fake-level="))
+		elif arg.begins_with("--fake-vehicle="):
+			vehicle = arg.trim_prefix("--fake-vehicle=")
 
 
 func notify(event: String, json: String) -> void:
@@ -39,6 +43,6 @@ func notify(event: String, json: String) -> void:
 
 
 func send_start(id: int, kiosk := false, muted := false) -> void:
-	var json := JSON.stringify({"v": 1, "level_id": id, "mode": mode, "kiosk": kiosk, "muted": muted})
+	var json := JSON.stringify({"v": 1, "level_id": id, "mode": mode, "kiosk": kiosk, "muted": muted, "vehicle": vehicle})
 	print("[FakeBridge] → start_level %s" % json)
 	start_level.emit(json)

@@ -62,11 +62,11 @@ final class RutaBridge {
 
     // MARK: Nativo → Godot
 
-    func startLevel(_ id: Int, mode: String, kiosk: Bool, muted: Bool) {
+    func startLevel(_ id: Int, mode: String, kiosk: Bool, muted: Bool, vehicle: String) {
         guard engineReady, !starting, !playing else { return }
         starting = true
         pendingLevel = id
-        send("start_level", #"{"v":1,"level_id":\#(id),"mode":"\#(mode)","kiosk":\#(kiosk),"muted":\#(muted)}"#)
+        send("start_level", #"{"v":1,"level_id":\#(id),"mode":"\#(mode)","kiosk":\#(kiosk),"muted":\#(muted),"vehicle":"\#(vehicle)"}"#)
         // Si Godot no contesta nunca, no dejamos el menú bloqueado.
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
             guard let self, self.starting, !self.playing else { return }

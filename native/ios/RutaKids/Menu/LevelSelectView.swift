@@ -9,6 +9,9 @@ import UIKit
 // - El 1 siempre está abierto y cada nivel se abre con 1 estrella en el anterior.
 // - En kiosco todo está abierto, no hay estrellas y el auto espera al inicio del camino.
 // - El auto espera en la parada que sigue; al ganar una nueva, maneja hasta la siguiente.
+//   Es el vehículo elegido en el garaje (el clásico usa el auto rojo del mapa).
+// - Arriba a la derecha, el botón del garaje. Al terminar el tutorial rebota y el copiloto
+//   avisa una vez hasta que se abre.
 
 struct LevelSelectView: View {
     let model: AppModel
@@ -45,6 +48,10 @@ struct LevelSelectView: View {
 
             topBar
 
+            if model.showGarageHint {
+                garageHint
+            }
+
             if let key = model.toastKey {
                 VStack {
                     Spacer()
@@ -62,6 +69,10 @@ struct LevelSelectView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: model.toastKey)
         .statusBar(hidden: true)
+        .navigationDestination(isPresented: Bindable(model).showGarage) {
+            GarageView(model: model)
+                .navigationBarBackButtonHidden(true)
+        }
         .onAppear(perform: driveCar)
         .onChange(of: targetIndex) { driveCar() }
     }
@@ -85,7 +96,7 @@ struct LevelSelectView: View {
             }
 
             if carIndex >= 0 {
-                CarOnPath(index: carIndex, map: map, unit: unit, left: left, top: top)
+                CarOnPath(index: carIndex, map: map, unit: unit, left: left, top: top, vehicle: vehicleImage)
             }
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -153,11 +164,54 @@ struct LevelSelectView: View {
                 Spacer()
                 if !kiosk {
                     StarsBanner(total: model.store.totalStars, max: model.store.maxStars)
+                        .padding(.trailing, 12)
                 }
+                Button {
+                    model.openGarage()
+                } label: {
+                    Image("btn_garage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Theme.cornerButton, height: Theme.cornerButton)
+                }
+                .buttonStyle(ScaleButtonStyle())
+                .scaleEffect(model.showGarageHint && pulse ? 1.16 : 1)
+                .animation(model.showGarageHint ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true) : .default, value: pulse)
+                .accessibilityLabel(L("GARAJE_TITULO"))
             }
             .padding(16)
             Spacer()
         }
+    }
+
+    /// Vehículo del garaje en el mapa; nil = el auto rojo del mapa.
+    private var vehicleImage: String? {
+        let id = model.store.currentVehicle
+        return id == Garage.defaultId ? nil : Garage.byId(id).image
+    }
+
+    /// El copiloto señala el globo, que queda bajo el botón del garaje.
+    private var garageHint: some View {
+        VStack {
+            HStack(spacing: 0) {
+                Spacer()
+                Image("copilot_point")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 96, height: 96)
+                Text(L("GARAJE_PISTA"))
+                    .font(.fredoka(17, .bold))
+                    .foregroundColor(Theme.darkPurple)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: 230)
+                    .background(RoundedRectangle(cornerRadius: 18).fill(.white))
+            }
+            .padding(.top, 16 + Theme.cornerButton)
+            .padding(.trailing, 8)
+            Spacer()
+        }
+        .allowsHitTesting(false)
     }
 
     // MARK: Auto
@@ -194,6 +248,8 @@ private struct CarOnPath: View, Animatable {
     let unit: CGFloat
     let left: CGFloat
     let top: CGFloat
+    /// Imagen del garaje (Assets.xcassets) o nil para el auto del mapa.
+    let vehicle: String?
 
     var animatableData: Double {
         get { index }
@@ -203,7 +259,9 @@ private struct CarOnPath: View, Animatable {
     var body: some View {
         let p = map.position(at: index)
         Group {
-            if let image = map.image(map.car.file) {
+            if let vehicle {
+                Image(vehicle).resizable().scaledToFit()
+            } else if let image = map.image(map.car.file) {
                 Image(uiImage: image).resizable()
             } else {
                 Color.clear
