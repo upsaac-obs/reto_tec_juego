@@ -40,11 +40,6 @@ Godot arranca una sola vez en una escena vacía (`scenes/bridge/idle.tscn`) y av
 | [`PLAN.md`](PLAN.md) | Tareas por fase y su criterio de terminado |
 | `RutaKids — Diseño del juego.pdf` | Diseño del juego: niveles, reglas y decálogo |
 
-## Estado del spike
-
-- **Android** (Samsung Galaxy A15): funciona. Menú nativo en 1.9 s, `engine_ready` en 3.7 s, memoria estable (247 → 253 MB en 10 ciclos de abrir y cerrar un nivel). APK *release*: 78.1 MB solo arm64, 150.5 MB con arm64 + armv7.
-- **iOS**: el kit está listo en `native/ios/`, falta compilarlo y medirlo en una Mac con un iPhone o iPad real.
-- **Por confirmar con Fundación ADO**: si Godot incrustado dentro de una app nativa cuenta como desarrollo nativo.
 
 ## Estructura
 
