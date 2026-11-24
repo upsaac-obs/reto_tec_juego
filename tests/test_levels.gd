@@ -15,6 +15,9 @@ extends TestCase
 ##   prende las luces al empezar.
 ## - DoorExit: abre la puerta de su cajón cuando no hay ciclistas cerca.
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 var car: PlayerCar
 var stops: Array = []
 var zones: Array = []

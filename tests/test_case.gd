@@ -3,6 +3,9 @@ class_name TestCase
 extends Node
 ## Base de las pruebas automáticas. Cada archivo tests/test_*.gd extiende esta
 ## clase y escribe sus casos en run(). Las corre tests/run_tests.tscn.
+## Si el archivo juega un nivel completo o tarda más de ~10 s, ponle
+## `const SLOW := true` (justo bajo el extends): `run_tests.sh --fast` lo salta.
+## Por defecto una prueba nueva NO es SLOW.
 
 var passed: int = 0
 var failed: int = 0

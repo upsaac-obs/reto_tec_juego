@@ -5,6 +5,9 @@ extends TestCase
 ## (x = 8600) suelta una bici por detrás, rápida, que luego baja la velocidad.
 ## Carriles: 0 = ciclovía, 1 = pegado, 2 y 3 = separados. El auto empieza en el 1.
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 var level: Node
 var rm: RuleManager
 var car: PlayerCar

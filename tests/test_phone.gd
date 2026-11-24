@@ -5,6 +5,9 @@ extends TestCase
 ## 5 s / 900 px), Phone2 en 3500 (ignorar, 6 s / 700 px), Phone3 en 5900 (contestar
 ## en el ParkingSpot de x = 6400, progress 6336).
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 const SPOT_PROGRESS := 6336.0
 
 var level: Node

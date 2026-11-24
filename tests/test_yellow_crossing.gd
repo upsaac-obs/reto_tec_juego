@@ -5,6 +5,9 @@ extends TestCase
 ## Las distancias son progreso sobre la ruta (la ruta empieza en x = 64) y el
 ## Hitbox del auto llega HALF_CAR px delante de su centro.
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 ## Progreso del auto cuando su frente llega al disparo (x = 2012).
 const TRIGGER := 1915.0
 ## Progreso de la línea de alto.

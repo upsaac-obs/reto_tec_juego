@@ -6,6 +6,9 @@ extends TestCase
 ## regla "distance"; el camión se distingue por has_faulted() / was_rewarded().
 ## Al final, el clímax: BusStop2 (9200) con la bici de Cyclist2 (8600).
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 const START := 3300.0
 ## Con freno desde aquí a 150 px/s el auto queda ~40 px detrás del camión.
 const BRAKE_AT := 4930.0
