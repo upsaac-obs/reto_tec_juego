@@ -5,8 +5,14 @@ extends Node
 ## (o tests/run_tests.tscn con F6, que corre todo).
 ##
 ## Argumentos (los que van después de "--"):
-##   --only=a,b  solo los archivos cuyo nombre contiene alguno de esos textos.
+##   --only=a,b  solo los archivos cuyo nombre contiene alguno de esos textos. Un
+##               texto que termina en ".gd" pide ese archivo exacto
+##               (--only=test_levels.gd), así un trabajo corre un solo archivo.
 ##   --fast      salta los archivos que declaran `const SLOW := true`.
+##   --list      no corre nada: imprime qué correría con esos filtros, en líneas
+##               "LISTA archivo <nombre>", "LISTA saltadas <a, b>" y
+##               "LISTA niveles <1,2,…>" (los de test_levels.levels()). Lo usa
+##               run_tests.sh para armar la cola de trabajos en paralelo.
 ##   --level=N, --mode=grande|peque|fast-run   los lee test_levels.gd (corre solo
 ##               ese nivel / modo; úsalos con --only=levels). El runner solo los
 ##               deja pasar sin avisar de "desconocido"; los demás archivos los ignoran.
@@ -28,6 +34,7 @@ func _run_all() -> void:
 	(BridgeClient._bridge as FakeBridge).auto_start = false
 	var only: PackedStringArray = []
 	var fast := false
+	var list_only := false
 	var only_given := false
 	var test_args: PackedStringArray = []
 	for arg: String in OS.get_cmdline_user_args():
@@ -37,6 +44,8 @@ func _run_all() -> void:
 				only.append(part.strip_edges())
 		elif arg == "--fast":
 			fast = true
+		elif arg == "--list":
+			list_only = true
 		elif arg.begins_with("--level=") or arg.begins_with("--mode="):
 			# Los lee test_levels.gd directo de OS.get_cmdline_user_args(); el
 			# runner solo evita avisarlos como desconocidos.
@@ -70,7 +79,7 @@ func _run_all() -> void:
 		if only_given:
 			var matches := false
 			for part: String in only:
-				if part in file:
+				if (file == part) if part.ends_with(".gd") else (part in file):
 					matches = true
 					break
 			if not matches:
@@ -81,6 +90,12 @@ func _run_all() -> void:
 		var slow := compiles and bool(script.get_script_constant_map().get("SLOW", false))
 		if fast and slow:
 			skipped.append(file)
+			continue
+		if list_only:
+			print("LISTA archivo " + file)
+			if file == "test_levels.gd" and compiles:
+				var ids: Array = script.call(&"levels")
+				print("LISTA niveles " + ",".join(ids.map(func(id: int) -> String: return str(id))))
 			continue
 		print("
 == %s" % file)
@@ -110,6 +125,11 @@ func _run_all() -> void:
 		print("== %s (%.1f s)%s" % [file, seconds, " [SLOW]" if slow else ""])
 		if not slow and seconds > SLOW_WARNING_SECONDS:
 			warnings.append("AVISO: %s tardó %.0f s y no está marcada SLOW" % [file, seconds])
+	if list_only:
+		if not skipped.is_empty():
+			print("LISTA saltadas " + ", ".join(skipped))
+		get_tree().quit(0)
+		return
 	if not skipped.is_empty():
 		print("
 Saltadas por --fast (SLOW): %s" % ", ".join(skipped))
