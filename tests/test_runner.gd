@@ -7,6 +7,9 @@ extends Node
 ## Argumentos (los que van después de "--"):
 ##   --only=a,b  solo los archivos cuyo nombre contiene alguno de esos textos.
 ##   --fast      salta los archivos que declaran `const SLOW := true`.
+##   --level=N, --mode=grande|peque|fast-run   los lee test_levels.gd (corre solo
+##               ese nivel / modo; úsalos con --only=levels). El runner solo los
+##               deja pasar sin avisar de "desconocido"; los demás archivos los ignoran.
 ## Un archivo que no compila cuenta como falla siempre, con o sin filtros (con
 ## --fast no se puede saber si era SLOW, así que tampoco se salta).
 ## Si el filtro no deja ninguna prueba (errata, `--only=` vacío o todo SLOW con
@@ -26,6 +29,7 @@ func _run_all() -> void:
 	var only: PackedStringArray = []
 	var fast := false
 	var only_given := false
+	var test_args: PackedStringArray = []
 	for arg: String in OS.get_cmdline_user_args():
 		if arg.begins_with("--only="):
 			only_given = true
@@ -33,9 +37,13 @@ func _run_all() -> void:
 				only.append(part.strip_edges())
 		elif arg == "--fast":
 			fast = true
+		elif arg.begins_with("--level=") or arg.begins_with("--mode="):
+			# Los lee test_levels.gd directo de OS.get_cmdline_user_args(); el
+			# runner solo evita avisarlos como desconocidos.
+			test_args.append(arg)
 		else:
 			print("AVISO: argumento desconocido '%s' (se ignora)" % arg)
-	if only.is_empty() and not fast and not only_given:
+	if only.is_empty() and not fast and not only_given and test_args.is_empty():
 		print("Filtro: ninguno (corre todo)")
 	else:
 		var filtro: PackedStringArray = []
@@ -43,6 +51,8 @@ func _run_all() -> void:
 			filtro.append("--only=" + ",".join(only))
 		if fast:
 			filtro.append("--fast (sin los SLOW)")
+		if not test_args.is_empty():
+			filtro.append(" ".join(test_args) + " (para test_levels)")
 		print("Filtro: " + " ".join(filtro))
 
 	var files := Array(DirAccess.get_files_at("res://tests"))
