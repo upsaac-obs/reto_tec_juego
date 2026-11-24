@@ -92,6 +92,10 @@ func _skip_pause(box: Control) -> void:
 	# La primera vez (no saltable): tocar no quita la pausa.
 	Feedback.show_infraction("FALTA_ALTO")
 	await wait(Feedback.skip_pause_delay + 0.1)
+	# can_skip_pause() mide con el reloj de pared (Time.get_ticks_msec()) y con
+	# --fixed-fps el wait() pasa casi sin tiempo real: esperamos de verdad para
+	# que el toque llegue cuando ya pasó skip_pause_delay, como en el celular.
+	OS.delay_msec(int(Feedback.skip_pause_delay * 1000) + 100)
 	touch()
 	touch(false)
 	check(get_tree().paused and Feedback.is_pausing(), "falta no saltable: el toque no quita la pausa")
@@ -107,6 +111,7 @@ func _skip_pause(box: Control) -> void:
 	check(get_tree().paused and Feedback.is_pausing(), "falta saltable: un toque antes de skip_pause_delay no quita la pausa")
 	# wait() cuenta en cuadros de física; el margen cubre la diferencia con el reloj real.
 	await wait(Feedback.skip_pause_delay + 0.1)
+	OS.delay_msec(int(Feedback.skip_pause_delay * 1000) + 100)  # Reloj de pared (ver arriba).
 	BridgeClient._idle_time = 30.0
 	touch()
 	check(not get_tree().paused and not Feedback.is_pausing(), "falta saltable: el toque tras skip_pause_delay quita la pausa")
@@ -135,6 +140,7 @@ func _skip_pause(box: Control) -> void:
 	check(downs[0] == 1, "sin pausa, el clic llega al botón (control de la prueba)")
 	Feedback.show_infraction("FALTA_ALTO", true)
 	await wait(Feedback.skip_pause_delay + 0.1)
+	OS.delay_msec(int(Feedback.skip_pause_delay * 1000) + 100)  # Reloj de pared (ver arriba).
 	touch()
 	click()
 	check(not get_tree().paused, "el toque quita la pausa")
