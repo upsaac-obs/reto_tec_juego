@@ -266,21 +266,21 @@ add_job() {  # etiqueta, argumentos…
   J_EST[i]="${EST["${J_LABEL[i]}"]:-1}"
   pending+=("$i")
 }
-# Un trabajo por nivel y modo, más el de fast-run (que lleva el check de la lista
-# de niveles: la suma da los mismos checks que test_levels.gd entero). Si no se
+# Un trabajo por nivel (con --level=N sin --mode corre grande y peque), más el de
+# fast-run (que lleva el check de la lista de niveles: la suma da los mismos checks
+# que test_levels.gd entero). Cada trabajo paga ~2 s de arranque de Godot, así que
+# un trabajo por nivel y modo salía ~1.5 s más lento. Si no se
 # supo la lista (test_levels.gd no compila o falló el runner), un solo trabajo con
 # test_levels.gd completo, que reporta la falla.
 add_level_jobs() {
-  local ids id mode
+  local ids id
   ids="$(sed -n 's/^LISTA niveles //p' "$tmp/list" 2>/dev/null)"
   if [ -z "$ids" ]; then
     add_job test_levels.gd --only=test_levels.gd
     return
   fi
-  for mode in grande peque; do
-    for id in ${ids//,/ }; do
-      add_job "test_levels.gd --level=$id --mode=$mode" --only=test_levels.gd --level="$id" --mode="$mode"
-    done
+  for id in ${ids//,/ }; do
+    add_job "test_levels.gd --level=$id" --only=test_levels.gd --level="$id"
   done
   add_job "test_levels.gd --mode=fast-run" --only=test_levels.gd --mode=fast-run
 }
