@@ -10,12 +10,12 @@ piezas instanciadas, que reinician sus ajustes.
 
 Uso: python3 tools/make_inherited.py levels/level_03.tscn
 """
+import os
 import re
 import sys
 
 BASE = "res://scenes/level/level.tscn"
 KEEP_OVERRIDES = {"Ground": ["tile_map_data"], "Route": ["curve", "default_lane_count"], "Route/PlayerCar": ["start_lane"], "Hud": ["show_lights_button"]}
-BASE_NODES = {".", "Ground", "Rules", "Route", "Route/PlayerCar", "FollowCamera", "RuleManager", "Hud", "HabitCard"}
 INDEX = {"Ground": ' index="0"', "Route": "", "Route/PlayerCar": ' index="0"', "Hud": ""}
 
 
@@ -27,8 +27,18 @@ def node_path(section: str) -> str:
     return name if parent.group(1) == "." else f"{parent.group(1)}/{name}"
 
 
+def base_nodes() -> set:
+    """Rutas de los nodos de level.tscn (así no se copian los que la base agregue después)."""
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+    text = open(os.path.join(root, BASE.removeprefix("res://")), encoding="utf-8").read()
+    return {node_path(s) for s in re.split(r"\n(?=\[)", text) if s.startswith("[node")}
+
+
+BASE_NODES = base_nodes()
+
+
 def convert(path: str) -> None:
-    sections = re.split(r"\n(?=\[)", open(path).read().strip())[1:]
+    sections = re.split(r"\n(?=\[)", open(path, encoding="utf-8").read().strip())[1:]
     ext = [s for s in sections if s.startswith("[ext_resource")]
     sub = [s for s in sections if s.startswith("[sub_resource")]
     nodes = [re.sub(r" unique_id=\d+", "", s) for s in sections if s.startswith("[node")]
@@ -64,7 +74,8 @@ def convert(path: str) -> None:
     result = header + "\n\n" + "\n".join([base] + used_ext) + "\n\n"
     if used_sub:
         result += "\n\n".join(used_sub) + "\n\n"
-    open(path, "w").write(result + body + "\n")
+    # Saltos de línea \n también en Windows (como guarda Godot).
+    open(path, "w", encoding="utf-8", newline="\n").write(result + body + "\n")
     print(path, "heredada:", len(out), "nodos")
 
 

@@ -13,12 +13,12 @@ const Palette := preload("res://autoload/game_state.gd")
 const NPC_COLORS: Array[Color] = [Palette.COLOR_GLASS, Palette.COLOR_GOLD, Palette.COLOR_GREEN, Palette.COLOR_SKY_MID, Palette.COLOR_WHITE]
 
 ## Inicio y fin del carril izquierdo (coordenadas del nivel, hacia +x).
-@export var start_point: Vector2 = Vector2(5100.0, -32.0)
-@export var end_point: Vector2 = Vector2(8900.0, -32.0)
+@export var start_point: Vector2 = Vector2(6236.0, -32.0)
+@export var end_point: Vector2 = Vector2(10036.0, -32.0)
 ## Empieza a generar cuando el auto del jugador pasa este x.
-@export var activate_x: float = 5600.0
+@export var activate_x: float = 6736.0
 ## Deja de generar después de este x.
-@export var stop_x: float = 7400.0
+@export var stop_x: float = 8536.0
 ## px/s: más lento que los 120 px/s de la zona de 30 km/h.
 @export var npc_speed: float = 100.0
 @export var interval_min: float = 4.0

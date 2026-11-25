@@ -2,13 +2,17 @@
 extends TestCase
 ## Celular del nivel 6 (levels/level_06.tscn, pieza PhoneEvent).
 ## La ruta empieza en x = 64: progress = x - 64. Phone1 en x = 1000 (ignorar,
-## 5 s / 900 px), Phone2 en 3500 (ignorar, 6 s / 700 px), Phone3 en 5900 (contestar
-## en el ParkingSpot de x = 6400, progress 6336).
+## 5 s / 900 px), Phone2 en 4060 (ignorar, 6 s / 700 px), Phone3 en 7036 (contestar
+## en el ParkingSpot de x = 7536). Las x se leen de la escena (progress_at).
 
 # Juega niveles enteros: run_tests.sh --fast la salta.
 const SLOW := true
 
-const SPOT_PROGRESS := 6336.0
+## x donde empieza la ruta (progress = x - ROUTE_START_X).
+const ROUTE_START_X := 64.0
+## Margen para que la falta llegue después de que acabe el aviso CELULAR_TAPA
+## (el tiempo se cuenta en cuadros de física).
+const VOICE_MARGIN := 0.3
 
 var level: Node
 var rm: RuleManager
@@ -18,6 +22,8 @@ var phone2: PhoneEvent
 var phone3: PhoneEvent
 var spot: ParkingSpot
 var driver: TestDriver
+## progress del centro del cajón.
+var spot_progress: float
 
 
 func open_level(mode: String) -> void:
@@ -30,6 +36,7 @@ func open_level(mode: String) -> void:
 	phone2 = level.get_node("Rules/Phone2") as PhoneEvent
 	phone3 = level.get_node("Rules/Phone3") as PhoneEvent
 	spot = level.get_node("Rules/ParkingSpot") as ParkingSpot
+	spot_progress = progress_at(spot.position.x)
 	for phone in [phone1, phone2, phone3]:
 		# Sin sonido para no llenar los canales de efectos durante las pruebas.
 		(phone as PhoneEvent).ring_sfx = &""
@@ -59,8 +66,29 @@ func layer_of(phone: PhoneEvent) -> CanvasLayer:
 	return phone.get_node("Layer") as CanvasLayer
 
 
+func progress_at(x: float) -> float:
+	return x - ROUTE_START_X
+
+
+## progress para arrancar antes de Phone3: el mismo hueco que antes del reacomodo
+## (después de CheckpointAfterLight y antes de que empiece el tráfico).
+func before_phone3() -> float:
+	return progress_at(phone3.position.x - 336.0)
+
+
+## Segundos de juego (cuadros de física) hasta que haya una falta, o -1 si no llega.
+func seconds_until_fault(timeout: float) -> float:
+	var elapsed := 0.0
+	while rm.faults == 0 and elapsed < timeout:
+		await get_tree().physics_frame
+		elapsed += get_physics_process_delta_time()
+	return elapsed if rm.faults > 0 else -1.0
+
+
 func run() -> void:
 	await _structure()
+	await _cover_duration()
+	await _spacing()
 	await _ignore()
 	await _ignore_by_distance()
 	await _touch_moving()
@@ -85,8 +113,73 @@ func _structure() -> void:
 	check(data.destination_key == "DESTINO_CASA_PRIMOS" and data.scene_path == "res://levels/level_06.tscn", "LevelData 6 apunta a la escena y a la casa de los primos")
 	var ground := level.get_node("Ground") as TileMapLayer
 	var finish := ground.get_used_cells_by_id(0, Vector2i(4, 1))
-	check(not finish.is_empty() and finish.all(func(c: Vector2i) -> bool: return c.x == 124), "las losas de meta siguen al final de la calle")
+	var route := level.get_node("Route") as Path2D
+	var last_column := int((route.curve.get_point_position(route.curve.point_count - 1).x + 32.0) / 64.0) - 1
+	check(not finish.is_empty() and finish.all(func(c: Vector2i) -> bool: return c.x == last_column), "las losas de meta siguen al final de la calle")
 	check(not layer_of(phone1).visible and phone1.get_state() == PhoneEvent.State.IDLE, "al empezar el celular no se ve")
+	await close_level()
+
+
+# cover_duration(): tapa al menos cover_time y lo que dure el aviso CELULAR_TAPA
+func _cover_duration() -> void:
+	await open_level(GameState.MODE_GRANDE)
+	var key := PhoneEvent.COVER_MESSAGE
+	var real := Feedback.message_duration(key)
+	check(real > Feedback.message_time, "CELULAR_TAPA tiene voz (%.2f s con message_time)" % real)
+	check(is_equal_approx(phone1.cover_duration(), maxf(phone1.cover_time, real - 2.0 * phone1.grow_time)), "con la voz actual tapa %.2f s" % phone1.cover_duration())
+	Feedback._voices[key] = null
+	check(is_equal_approx(phone1.cover_duration(), phone1.cover_time), "sin voz tapa cover_time")
+	Feedback._voices[key] = _fake_voice(4.0)
+	check(is_equal_approx(phone1.cover_duration(), 4.0 + Feedback.message_time - 2.0 * phone1.grow_time), "con voz larga tapa la voz más message_time menos crecer y encogerse")
+	Feedback._voices[key] = _fake_voice(0.5)
+	check(is_equal_approx(phone1.cover_duration(), phone1.cover_time), "con voz corta tapa al menos cover_time")
+	# Que vuelva a cargar la voz real.
+	Feedback._voices.erase(key)
+	await close_level()
+
+
+func _fake_voice(seconds: float) -> AudioStreamWAV:
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_8_BITS
+	wav.mix_rate = 8000
+	var data := PackedByteArray()
+	data.resize(int(8000 * seconds))
+	wav.data = data
+	return wav
+
+
+## Inicio de la zona que pide frenar o fijarse (-1 si la pieza no pide nada).
+func _zone_start(piece: Node2D) -> float:
+	if piece is Crosswalk:
+		return piece.position.x - piece.crosswalk_width / 2.0 - piece.approach_length
+	if piece is TrafficLight:
+		return piece.position.x - piece.zone_length
+	if piece is ParkingSpot:
+		return piece.position.x - piece.approach_length
+	if piece is SpeedZone:
+		return piece.position.x
+	return -1.0
+
+
+# Regla de espacio (docs/niveles/nivel_06.md §2): lo que avanza el auto a fondo
+# mientras suena y tapa el celular no llega a la zona de la siguiente pieza.
+func _spacing() -> void:
+	await open_level(GameState.MODE_GRANDE)
+	var pieces := level.get_node("Rules").get_children()
+	for node in pieces:
+		var phone := node as PhoneEvent
+		if phone == null or phone.spot != null:
+			continue
+		var reach := phone.position.x + phone.ring_distance + phone.cover_duration() * car.max_speed
+		var next := INF
+		var next_name := ""
+		for other in pieces:
+			var start := _zone_start(other as Node2D)
+			if start > phone.position.x and start < next:
+				next = start
+				next_name = other.name
+		print("    %s: tapa hasta x = %.0f; %s empieza en %.0f (holgura %.0f px)" % [phone.name, reach, next_name, next, next - reach])
+		check(reach <= next, "%s: el auto no llega tapado a %s (%.0f <= %.0f)" % [phone.name, next_name, reach, next])
 	await close_level()
 
 
@@ -118,7 +211,7 @@ func _ignore_by_distance() -> void:
 		elapsed[0] += get_physics_process_delta_time()
 		done = phone1.get_state() == PhoneEvent.State.DONE
 	check(done and elapsed[0] < phone1.ring_time, "a 240 px/s se calla antes de ring_time")
-	check(car.progress >= 936.0 + phone1.ring_distance - 10.0, "se calla al recorrer ring_distance")
+	check(car.progress >= progress_at(phone1.position.x) + phone1.ring_distance - 10.0, "se calla al recorrer ring_distance")
 	await close_level()
 
 
@@ -129,15 +222,19 @@ func _touch_moving() -> void:
 	driver.target = 170.0
 	await wait_until(func() -> bool: return phone1.is_ringing(), 5.0)
 	var points := rm.points
+	var message := Feedback.message_duration(PhoneEvent.COVER_MESSAGE)
 	phone1.touch_phone()
 	check(phone1.is_covering() and rm.faults == 0 and not get_tree().paused, "al tocarlo en movimiento tapa la calle sin pausar ni reportar todavía")
-	await wait(1.0)
+	var early := await seconds_until_fault(1.0)
 	var holder := phone1.get_node("Layer/Holder") as Node2D
-	check(car.speed > 10.0, "mientras tapa, el auto sigue avanzando")
+	check(early < 0.0 and car.speed > 10.0, "mientras tapa, el auto sigue avanzando")
 	check(absf(holder.scale.x - phone1.cover_scale) < 0.01 and layer_of(phone1).visible, "el celular está grande (cover_scale)")
 	phone1.touch_phone()
-	var faulted := await wait_until(func() -> bool: return rm.faults > 0, phone1.cover_time + phone1.grow_time)
-	check(faulted and rm.faults == 1 and rm.infractions.get(&"phone", 0) == 1, "al terminar la tapa se reporta la falta phone")
+	var later := await seconds_until_fault(message + VOICE_MARGIN)
+	var faulted_at := 1.0 + later if later >= 0.0 else -1.0
+	check(faulted_at >= message - 0.05, "la falta no corta el aviso CELULAR_TAPA (llega a los %.2f s; el aviso dura %.2f s)" % [faulted_at, message])
+	check(faulted_at > 0.0 and faulted_at <= message + VOICE_MARGIN, "la falta llega al terminar el aviso (%.2f s)" % faulted_at)
+	check(rm.faults == 1 and rm.infractions.get(&"phone", 0) == 1, "al terminar la tapa se reporta la falta phone")
 	check(rm.points == points, "la falta no da puntos")
 	await wait_unpaused()
 	check(not layer_of(phone1).visible and phone1.get_state() == PhoneEvent.State.DONE, "después de la falta el celular se va (DONE)")
@@ -152,7 +249,7 @@ func _touch_moving() -> void:
 # 5. Tocarlo detenido no es falta
 func _touch_stopped() -> void:
 	await open_level(GameState.MODE_GRANDE)
-	car.restart_at(3300.0)
+	car.restart_at(progress_at(phone2.position.x - 136.0))
 	driver.target = 170.0
 	await wait_until(func() -> bool: return phone2.is_ringing(), 5.0)
 	driver.target = 0.0
@@ -169,7 +266,7 @@ func _touch_stopped() -> void:
 # 6. Contestar estacionado
 func _answer_parked() -> void:
 	await open_level(GameState.MODE_GRANDE)
-	car.restart_at(5500.0)
+	car.restart_at(before_phone3())
 	driver.target = 170.0
 	var parked := await wait_until(func() -> bool: return spot.is_parked(), 25.0)
 	check(parked and phone3.is_answerable(), "al estacionarse el celular se puede contestar")
@@ -178,29 +275,46 @@ func _answer_parked() -> void:
 	check(rm.points == points + 10 and rm.faults == 0, "contestar estacionado da +10")
 	await wait(1.0)
 	check(car.speed == 0.0 and spot.is_parked() and not spot.is_released(), "durante la llamada sigue estacionado aunque pise el pedal")
-	var left := await wait_until(func() -> bool: return car.progress > SPOT_PROGRESS + 100.0, phone3.call_time + phone3.release_delay + 5.0)
+	var left := await wait_until(func() -> bool: return car.progress > spot_progress + 100.0, phone3.call_time + phone3.release_delay + 5.0)
 	check(left and phone3.get_state() == PhoneEvent.State.DONE, "después de la llamada el auto sigue la ruta")
 	await close_level()
 
 
-# 7. Tocar mientras entra al cajón es falta; después contesta estacionado
+# 7. Tocar mientras entra al cajón es falta; después contesta estacionado.
+# A 170 px/s el auto llega al cajón durante la tapa: el frenado del cajón lo
+# detiene ahí (no se pasa de largo). A 60 px/s todavía no llega: el celular espera.
 func _touch_entering_spot() -> void:
+	await _touch_entering_spot_at(170.0)
+	await _touch_entering_spot_at(60.0)
+
+
+func _touch_entering_spot_at(target: float) -> void:
 	await open_level(GameState.MODE_GRANDE)
-	car.restart_at(5500.0)
-	driver.target = 170.0
+	car.restart_at(before_phone3())
+	driver.target = target
 	await wait_until(func() -> bool: return phone3.is_ringing() and car.speed > 10.0, 10.0)
 	phone3.touch_phone()
-	check(phone3.is_covering(), "tocar Phone3 rodando tapa la calle")
-	await wait_until(func() -> bool: return rm.faults > 0, phone3.cover_time + phone3.grow_time + 0.5)
-	check(rm.infractions.get(&"phone", 0) == 1, "tocarlo mientras entra al cajón es falta phone")
+	check(phone3.is_covering(), "a %.0f px/s: tocar Phone3 rodando tapa la calle" % target)
+	var farthest := [car.progress]
+	var track := func() -> void: farthest[0] = maxf(farthest[0], car.progress)
+	get_tree().physics_frame.connect(track)
+	await seconds_until_fault(Feedback.message_duration(PhoneEvent.COVER_MESSAGE) + VOICE_MARGIN)
+	check(rm.infractions.get(&"phone", 0) == 1, "a %.0f px/s: tocarlo mientras entra al cajón es falta phone" % target)
 	await wait_unpaused()
-	check(phone3.get_state() == PhoneEvent.State.WAITING_PARK and not layer_of(phone3).visible, "después de la tapa el celular espera al cajón")
+	get_tree().physics_frame.disconnect(track)
+	check(farthest[0] <= spot_progress + spot.stop_tolerance, "a %.0f px/s: con el celular tapando, el auto no se pasa del cajón (%.0f ≤ %.0f)" % [target, farthest[0], spot_progress])
+	if spot.is_parked():
+		check(phone3.is_answerable() and layer_of(phone3).visible, "a %.0f px/s: se estacionó durante la tapa y al quitarse ya se puede contestar" % target)
+	else:
+		check(phone3.get_state() == PhoneEvent.State.WAITING_PARK and not layer_of(phone3).visible, "a %.0f px/s: después de la tapa el celular espera al cajón" % target)
+	if target < 100.0:
+		check(not spot.is_parked(), "a %.0f px/s todavía no llega al cajón al terminar la tapa" % target)
 	var parked := await wait_until(func() -> bool: return spot.is_parked(), 20.0)
 	check(parked and phone3.is_answerable() and layer_of(phone3).visible, "ya estacionado vuelve a sonar y se puede contestar")
 	var points := rm.points
 	phone3.touch_phone()
 	check(rm.points == points + 10 and rm.faults == 1, "contestar después de la falta también da +10")
-	var left := await wait_until(func() -> bool: return car.progress > SPOT_PROGRESS + 100.0, phone3.call_time + phone3.release_delay + 5.0)
+	var left := await wait_until(func() -> bool: return car.progress > spot_progress + 100.0, phone3.call_time + phone3.release_delay + 5.0)
 	check(left, "y el auto sale del cajón")
 	await close_level()
 
@@ -208,14 +322,14 @@ func _touch_entering_spot() -> void:
 # 8. Sin contestar, sigue solo
 func _no_answer() -> void:
 	await open_level(GameState.MODE_GRANDE)
-	car.restart_at(5500.0)
+	car.restart_at(before_phone3())
 	driver.target = 170.0
 	await wait_until(func() -> bool: return spot.is_parked(), 25.0)
 	var points := rm.points
 	await wait(phone3.answer_timeout + 0.5)
 	check(phone3.get_state() == PhoneEvent.State.DONE and spot.is_released(), "sin contestar, a answer_timeout suelta el auto")
 	check(rm.points == points and rm.faults == 0, "sin contestar no hay puntos ni falta")
-	var left := await wait_until(func() -> bool: return car.progress > SPOT_PROGRESS + 100.0, 5.0)
+	var left := await wait_until(func() -> bool: return car.progress > spot_progress + 100.0, 5.0)
 	check(left, "el auto sigue al dar gas")
 	await close_level()
 
@@ -226,8 +340,9 @@ func _peque() -> void:
 	car.restart_at(700.0)
 	await wait_until(func() -> bool: return phone1.is_ringing(), 5.0)
 	phone1.touch_phone()
-	await wait_until(func() -> bool: return rm.faults > 0, phone1.cover_time + phone1.grow_time + 0.5)
+	var faulted_at := await seconds_until_fault(Feedback.message_duration(PhoneEvent.COVER_MESSAGE) + VOICE_MARGIN)
 	check(rm.infractions.get(&"phone", 0) == 1, "peque: tocarlo con el auto avanzando solo es falta")
+	check(faulted_at >= Feedback.message_duration(PhoneEvent.COVER_MESSAGE) - 0.05, "peque: la falta llega cuando acaba el aviso CELULAR_TAPA (%.2f s)" % faulted_at)
 	await wait_unpaused()
 	# Otra pasada sin tocarlo.
 	car.restart_at(600.0)
@@ -240,14 +355,14 @@ func _peque() -> void:
 	await close_level()
 
 	await open_level(GameState.MODE_PEQUE)
-	car.restart_at(5500.0)
+	car.restart_at(before_phone3())
 	var parked := await wait_until(func() -> bool: return spot.is_parked(), 30.0)
 	check(parked and phone3.is_answerable(), "peque: se estaciona solo y el celular se puede contestar")
 	points = rm.points
 	phone3.touch_phone()
 	check(rm.points == points + 10, "peque: contestar estacionado da +10")
 	await wait(phone3.call_time + phone3.release_delay + 0.3)
-	var left := await wait_until(func() -> bool: return car.progress > SPOT_PROGRESS + 50.0, 5.0)
+	var left := await wait_until(func() -> bool: return car.progress > spot_progress + 50.0, 5.0)
 	check(left and rm.faults == 0, "peque: después de la llamada el auto sigue solo")
 	await close_level()
 
@@ -258,12 +373,13 @@ func _checkpoint() -> void:
 	car.restart_at(700.0)
 	driver.target = 240.0
 	await wait_until(func() -> bool: return phone1.get_state() == PhoneEvent.State.DONE, 8.0)
-	car.restart_at(3300.0)
+	var checkpoint := progress_at((level.get_node("Rules/CheckpointAfterCrosswalk") as Node2D).position.x)
+	car.restart_at(checkpoint + ROUTE_START_X)
 	var starts := [0]
 	phone2.ring_started.connect(func() -> void: starts[0] += 1)
 	await wait_until(func() -> bool: return phone2.is_ringing(), 5.0)
-	car.restart_at(3236.0)
-	rm.checkpoint_restored.emit(3236.0)
+	car.restart_at(checkpoint)
+	rm.checkpoint_restored.emit(checkpoint)
 	check(phone2.get_state() == PhoneEvent.State.IDLE and not layer_of(phone2).visible, "volver a un punto de control anterior reinicia Phone2")
 	check(phone1.get_state() == PhoneEvent.State.DONE, "Phone1 (antes del punto de control) no se reinicia")
 	await wait_until(func() -> bool: return phone2.is_ringing(), 5.0)
@@ -281,7 +397,7 @@ func _traffic() -> void:
 		var traffic := level.get_node("TrafficLeft") as Path2D
 		var seen := {}
 		var behind := false
-		car.restart_at(5500.0)
+		car.restart_at(before_phone3())
 		driver.target = 170.0
 		var elapsed := 0.0
 		while elapsed < 12.0:
@@ -290,10 +406,11 @@ func _traffic() -> void:
 			for child in traffic.get_children():
 				if child is NpcCar:
 					seen[child.get_instance_id()] = true
-					if (child as NpcCar).global_position.x < 5100.0 - 1.0:
+					if (child as NpcCar).global_position.x < traffic.get("start_point").x - 1.0:
 						behind = true
 		counts[mode] = seen.size()
-		check(not behind, "%s: ningún auto del tráfico aparece antes de x = 5100" % mode)
+		check(not behind, "%s: ningún auto del tráfico aparece antes de su start_point" % mode)
+		check(traffic.get("start_point").x > (level.get_node("Rules/TrafficLight1") as Node2D).position.x, "%s: el tráfico empieza después del semáforo" % mode)
 		await close_level()
 	check(counts[GameState.MODE_GRANDE] >= 2, "grande: pasan varios autos por el carril izquierdo")
 	check(counts[GameState.MODE_PEQUE] <= counts[GameState.MODE_GRANDE], "peque: igual o menos tráfico que grande")
