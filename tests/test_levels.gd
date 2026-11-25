@@ -12,7 +12,9 @@ extends TestCase
 ## - careful_lane() -> int y careful_range() -> Vector2 (x inicial y final): antes
 ##   y dentro de ese tramo el conductor se cambia a ese carril con las flechas.
 ## - Grupo "needs_headlights": si algún nodo del nivel está en él, el conductor
-##   prende las luces al empezar.
+##   prende las luces al empezar y las vuelve a prender cada vez que el auto está
+##   dentro de uno (is_car_inside() o wants_lights()), porque DarkZone las apaga
+##   al salir del tramo.
 ## - DoorExit: abre la puerta de su cajón cuando no hay ciclistas cerca.
 
 # Juega niveles enteros: run_tests.sh --fast la salta.
@@ -26,6 +28,8 @@ var cruise := 150.0
 var respect_limits := true
 var respect_signals := true
 var doors: Array[DoorExit] = []
+## Nodos del nivel en el grupo needs_headlights.
+var light_zones: Array[Node] = []
 ## [inicio, fin, carril] sobre la ruta, de las piezas con careful_lane().
 var lanes: Array = []
 var route: Path2D
@@ -80,6 +84,12 @@ func _physics_process(delta: float) -> void:
 	for door in doors:
 		if door.spot != null and door.spot.is_parked() and not door.is_cyclist_near():
 			door.open_door()
+	# Dentro de un tramo que pide luces, las prende (DarkZone las apaga al salir).
+	for zone in light_zones:
+		var wants: bool = zone.call(&"wants_lights") if zone.has_method(&"wants_lights") else zone.call(&"is_car_inside")
+		if wants:
+			car.set_headlights(true)
+			break
 	var p := car.progress
 	var target := cruise
 	if respect_limits:
@@ -171,10 +181,12 @@ func play(id: int) -> Variant:
 	var done := [false]
 	rm.level_finished.connect(func(_stars: int) -> void: done[0] = true)
 	await tap(&"car_seatbelt")
+	light_zones.clear()
 	for node in get_tree().get_nodes_in_group(&"needs_headlights"):
 		if level.is_ancestor_of(node):
 			rm.car.set_headlights(true)
-			break
+			if node.has_method(&"wants_lights") or node.has_method(&"is_car_inside"):
+				light_zones.append(node)
 	car = rm.car
 	var t := 0.0
 	while not done[0] and t < 240.0:
