@@ -26,7 +26,13 @@ out="$project/tests/resultados"
 GODOT="${GODOT:-godot}"
 started="${EPOCHREALTIME:-}"
 # Líneas del motor que no aportan nada al log (las mismas en serie y en paralelo).
+# Incluye el aviso de fugas de ObjectDB que Godot imprime al cerrar cada proceso y
+# sus dos líneas "at:" de backtrace (cleanup/clear). Los patrones son específicos a
+# esas dos rutas del motor y no usan "\" (el awk del modo paralelo recibe NOISE con
+# -v, que interpretaría las barras), así que las "at:" de otros avisos siguen
+# saliendo. Compromiso: se pierde la cifra de objetos fugados.
 NOISE='^Godot Engine|^\s*$|FakeBridge|resources still in use|RID allocations'
+NOISE+='|ObjectDB instances were leaked at exit|at: cleanup [(]core/object/object[.]cpp|at: clear [(]core/io/resource[.]cpp'
 
 # --- Argumentos: -j N / -jN / --jobs=N son del script; lo demás, del runner.
 jobs_wanted="${RUTAKIDS_JOBS:-}"
@@ -326,7 +332,10 @@ END {
   for (k = 1; k <= n; k++) print body[k]
   print p, f > sum
 }'
-AWK_NOISE="${NOISE//\\s/[[:space:]]}"  # awk POSIX no conoce \s
+# awk POSIX no conoce \s. La barra va entre comillas simples: sin ellas el patrón
+# era "s" a secas y reemplazaba toda "s" del filtro (el filtro del modo paralelo
+# quedaba roto para "resources", "instances"…).
+AWK_NOISE="${NOISE//'\s'/[[:space:]]}"
 
 run_job() {  # índice; corre en segundo plano y deja <i>.block, <i>.sum, <i>.fal, <i>.avi
   local i=$1 t0 code secs
