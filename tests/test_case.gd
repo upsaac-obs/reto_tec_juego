@@ -55,9 +55,18 @@ func open_scene(path: String) -> Node:
 	return level
 
 
+## Al liberar el nivel, Godot saca sus hijos del árbol en orden inverso: el
+## RuleManager sale (y deja su grupo) antes que Route, y cuando el Hitbox del auto
+## sale, las zonas donde seguía emiten area_exited y reportan un acierto que ya
+## nadie recoge ("No hay RuleManager"). Se bloquean las señales de las Area2D del
+## nivel para que el cierre no reporte nada. (Apagar `monitoring` o poner el nivel
+## en PROCESS_MODE_DISABLED no sirve: emiten las mismas salidas con el RuleManager
+## aún vivo, que se lleva un +10 y un mensaje de Feedback.)
 func close_scene(level: Node) -> void:
 	Feedback.clear()
 	get_tree().paused = false
+	for area in level.find_children("*", "Area2D", true, false):
+		area.set_block_signals(true)
 	level.queue_free()
 	await frames(2)
 
