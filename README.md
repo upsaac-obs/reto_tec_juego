@@ -83,5 +83,6 @@ tests/run_tests.sh -j 1 --only=yellow,phone               # en serie, un proceso
 ```
 
 - `-j N` (o `RUTAKIDS_JOBS=N`) fija cuántos procesos corren a la vez; por defecto son núcleos − 2.
+- **macOS**: el bash de fábrica (3.2) no soporta el modo paralelo. La suite corre en serie y tarda más (el script lo avisa al empezar). Para el modo paralelo instala bash 5.1 o más nuevo (`brew install bash`). Los resultados son los mismos en ambos modos.
 - **Regla SLOW**: si tu prueba juega un nivel completo o tarda más de ~10 s, ponle `const SLOW := true` justo debajo del `extends`. Una prueba sin SLOW que tarde más de 10 s sale con un `AVISO` en el resumen. Por defecto una prueba nueva no es SLOW.
 - Cada corrida guarda su log en `tests/resultados/` con la fecha, la hora y el commit.
