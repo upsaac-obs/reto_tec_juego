@@ -60,7 +60,6 @@ func layer_of(phone: PhoneEvent) -> CanvasLayer:
 
 
 func run() -> void:
-	Engine.time_scale = 2.0
 	await _structure()
 	await _ignore()
 	await _ignore_by_distance()
@@ -72,7 +71,6 @@ func run() -> void:
 	await _peque()
 	await _checkpoint()
 	await _traffic()
-	Engine.time_scale = 1.0
 
 
 # 0. Estructura del nivel

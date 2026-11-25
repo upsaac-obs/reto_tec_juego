@@ -263,7 +263,6 @@ func run() -> void:
 	var level_filter: int = opts["level"]
 	var mode_filter: String = opts["mode"]
 	fake_bridge().auto_start = false
-	Engine.time_scale = 3.0
 	BridgeClient._go_idle()
 	await frames()
 	var ids := levels()
@@ -272,7 +271,6 @@ func run() -> void:
 		check(ids.size() >= 5 and not ids.has(99), "la lista de niveles sale de los LevelData construidos (sin el 99)")
 	elif not ids.has(level_filter):
 		check(false, "--level=%d no es un nivel construido de la prueba (niveles: %s)" % [level_filter, str(ids)])
-		Engine.time_scale = 1.0
 		return
 	var run_ids: Array[int] = ids
 	if level_filter >= 0:
@@ -287,4 +285,3 @@ func run() -> void:
 	fake_bridge().mode = GameState.MODE_GRANDE
 	if mode_filter == MODE_FAST_RUN or (mode_filter == "" and level_filter < 0):
 		await play_fast_run_case()
-	Engine.time_scale = 1.0

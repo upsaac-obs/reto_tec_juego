@@ -34,7 +34,6 @@ func run() -> void:
 	var digits := RegEx.create_from_string("\\d")
 	var always_on_time := board.has_widget()
 	var no_digits := true
-	Engine.time_scale = 4.0
 	var t := 0.0
 	var next_check := 0.0
 	while not finished[0] and t < 400.0:
@@ -46,7 +45,6 @@ func run() -> void:
 			always_on_time = always_on_time and texts.has(tr("TABLERO_A_TIEMPO"))
 			for text in texts:
 				no_digits = no_digits and digits.search(text) == null
-	Engine.time_scale = 1.0
 	check(always_on_time, "el tablero siempre dice A tiempo")
 	check(no_digits, "el tablero no muestra números ni horas")
 	check(finished[0] and finished[1] == 3 and rm.faults == 0, "manejando muy despacio se termina con 3 estrellas y sin faltas (%.0f s de juego)" % t)

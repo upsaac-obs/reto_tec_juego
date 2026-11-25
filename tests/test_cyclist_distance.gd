@@ -68,7 +68,6 @@ func overtake(steps: int, label: String) -> void:
 
 func run() -> void:
 	GameState.mode = GameState.MODE_GRANDE
-	Engine.time_scale = 2.0
 
 	# 1 y 3. Separado (carril 2 o 3) da +10
 	await overtake(1, "carril 2")
@@ -164,4 +163,3 @@ func run() -> void:
 	await until(func() -> bool: return bike.is_done(), 20.0)
 	check(bike.was_rewarded() and rm.points == 10, "al volver a pasar, la bici sale otra vez y se evalúa")
 	await close_level()
-	Engine.time_scale = 1.0

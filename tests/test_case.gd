@@ -27,7 +27,8 @@ func check(condition: bool, description: String) -> void:
 		print("  FALLA " + description)
 
 
-## Espera en segundos de juego; sigue contando aunque el árbol esté en pausa.
+## Espera en segundos de juego (escalados por Engine.time_scale; a 1x son segundos
+## reales); sigue contando aunque el árbol esté en pausa.
 func wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds, true, true).timeout
 

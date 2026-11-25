@@ -67,7 +67,6 @@ func until(cond: Callable, limit: float) -> bool:
 
 func run() -> void:
 	GameState.mode = GameState.MODE_GRANDE
-	Engine.time_scale = 2.0
 
 	# 1, 2 y 8. Ciclo de estados; esperar detrás en el carril 2 da +10
 	await open_level()
@@ -223,4 +222,3 @@ func run() -> void:
 		check(bike.was_rewarded() and rm.faults == 0, "%s: luego el auto rebasa a la bici por el carril separado (+10)" % mode)
 		await close_level()
 	GameState.mode = GameState.MODE_GRANDE
-	Engine.time_scale = 1.0

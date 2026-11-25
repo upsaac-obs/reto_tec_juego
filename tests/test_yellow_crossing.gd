@@ -69,10 +69,8 @@ func run() -> void:
 	# 1. La luz espera al auto
 	await open_level()
 	car.restart_at(START)
-	# wait() cuenta segundos reales: 5 s a 4x son 20 s de juego.
-	Engine.time_scale = 4.0
-	await wait(5.0)
-	Engine.time_scale = 1.0
+	# A 1x, wait() cuenta segundos de juego de verdad: 20 s son 20 s de reloj del juego.
+	await wait(20.0)
 	check(light.light == TrafficLight.Light.GREEN and crossing.get_state() == YellowCrossing.State.ARMED, "sin el auto la luz se queda en verde aunque pasen 20 s")
 	driver.target = 168.0
 	await wait_until(is_state(YellowCrossing.State.YELLOW), 20.0)
