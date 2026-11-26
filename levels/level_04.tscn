@@ -36,7 +36,7 @@ position = Vector2(1400, 0)
 walkers = Array[SpriteFrames]([ExtResource("elder"), ExtResource("shopper")])
 walk_speed = 30.0
 walker_speeds = Array[float]([30.0, 64.0])
-green_after = 3.0
+green_after = 4.5
 
 
 [node name="CheckpointAfterCrossing1" type="Node2D" parent="Rules" instance=ExtResource("cp")]
@@ -47,8 +47,8 @@ position = Vector2(1900, 0)
 position = Vector2(3000, 0)
 walkers = Array[SpriteFrames]([ExtResource("dad"), ExtResource("wheel")])
 walk_speed = 34.0
-chain_spacing = 40.0
-green_after = 3.0
+chain_spacing = 56.0
+green_after = 6.0
 
 
 [node name="CheckpointAfterCrossing2" type="Node2D" parent="Rules" instance=ExtResource("cp")]
@@ -59,8 +59,9 @@ position = Vector2(3500, 0)
 position = Vector2(4600, 0)
 walkers = Array[SpriteFrames]([ExtResource("girl"), ExtResource("girl"), ExtResource("girl"), ExtResource("girl")])
 walk_speed = 40.0
-chain_spacing = 32.0
-green_after = 2.5
+chain_spacing = 48.0
+chain_columns = 2
+green_after = 5.0
 
 
 [node name="CheckpointAfterCrossing3" type="Node2D" parent="Rules" instance=ExtResource("cp")]
