@@ -12,8 +12,13 @@ extends TestCase
 ## - careful_lane() -> int y careful_range() -> Vector2 (x inicial y final): antes
 ##   y dentro de ese tramo el conductor se cambia a ese carril con las flechas.
 ## - Grupo "needs_headlights": si algún nodo del nivel está en él, el conductor
-##   prende las luces al empezar.
+##   prende las luces al empezar y las vuelve a prender cada vez que el auto está
+##   dentro de uno (is_car_inside() o wants_lights()), porque DarkZone las apaga
+##   al salir del tramo.
 ## - DoorExit: abre la puerta de su cajón cuando no hay ciclistas cerca.
+
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
 
 var car: PlayerCar
 var stops: Array = []
@@ -23,6 +28,8 @@ var cruise := 150.0
 var respect_limits := true
 var respect_signals := true
 var doors: Array[DoorExit] = []
+## Nodos del nivel en el grupo needs_headlights.
+var light_zones: Array[Node] = []
 ## [inicio, fin, carril] sobre la ruta, de las piezas con careful_lane().
 var lanes: Array = []
 var route: Path2D
@@ -77,6 +84,12 @@ func _physics_process(delta: float) -> void:
 	for door in doors:
 		if door.spot != null and door.spot.is_parked() and not door.is_cyclist_near():
 			door.open_door()
+	# Dentro de un tramo que pide luces, las prende (DarkZone las apaga al salir).
+	for zone in light_zones:
+		var wants: bool = zone.call(&"wants_lights") if zone.has_method(&"wants_lights") else zone.call(&"is_car_inside")
+		if wants:
+			car.set_headlights(true)
+			break
 	var p := car.progress
 	var target := cruise
 	if respect_limits:
@@ -168,10 +181,12 @@ func play(id: int) -> Variant:
 	var done := [false]
 	rm.level_finished.connect(func(_stars: int) -> void: done[0] = true)
 	await tap(&"car_seatbelt")
+	light_zones.clear()
 	for node in get_tree().get_nodes_in_group(&"needs_headlights"):
 		if level.is_ancestor_of(node):
 			rm.car.set_headlights(true)
-			break
+			if node.has_method(&"wants_lights") or node.has_method(&"is_car_inside"):
+				light_zones.append(node)
 	car = rm.car
 	var t := 0.0
 	while not done[0] and t < 240.0:
@@ -189,26 +204,48 @@ func play(id: int) -> Variant:
 	return result
 
 
-func run() -> void:
-	fake_bridge().auto_start = false
-	Engine.time_scale = 3.0
-	BridgeClient._go_idle()
-	await frames()
-	var ids := levels()
-	print("    niveles: %s" % str(ids))
-	check(ids.size() >= 5 and not ids.has(99), "la lista de niveles sale de los LevelData construidos (sin el 99)")
-	for id in ids:
-		fake_bridge().sent.clear()
-		var result: Variant = await play(id)
-		print("    nivel %d: %s" % [id, str(result)])
-		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d: el conductor cuidadoso lo termina con 3 estrellas y sin faltas" % id)
-	# Modo peque: el auto avanza solo; el conductor solo frena.
-	fake_bridge().mode = GameState.MODE_PEQUE
-	for id in ids:
-		fake_bridge().sent.clear()
-		var result: Variant = await play(id)
+## Modos que acepta --mode=.
+const MODE_GRANDE := "grande"
+const MODE_PEQUE := "peque"
+const MODE_FAST_RUN := "fast-run"
+
+
+## Lee --level=N y --mode=... de los argumentos de usuario (los que van tras
+## "--", los mismos que recibe test_runner.gd). Devuelve {level, mode, error}:
+## level = -1 y mode = "" cuando no se pidieron; error no vacío si algo no sirve.
+static func parse_args(args: PackedStringArray) -> Dictionary:
+	var out := {"level": -1, "mode": "", "error": ""}
+	for arg: String in args:
+		if arg.begins_with("--level="):
+			var text := arg.trim_prefix("--level=")
+			if not text.is_valid_int() or text.to_int() < 0:
+				out["error"] = "--level debe ser un número de nivel, no '%s'" % text
+			else:
+				out["level"] = text.to_int()
+		elif arg.begins_with("--mode="):
+			var text := arg.trim_prefix("--mode=")
+			if not text in [MODE_GRANDE, MODE_PEQUE, MODE_FAST_RUN]:
+				out["error"] = "--mode debe ser grande, peque o fast-run, no '%s'" % text
+			else:
+				out["mode"] = text
+	return out
+
+
+## Un nivel en un modo: el conductor cuidadoso lo termina con 3 estrellas.
+func play_level_case(id: int, peque: bool) -> void:
+	fake_bridge().mode = GameState.MODE_PEQUE if peque else GameState.MODE_GRANDE
+	fake_bridge().sent.clear()
+	var result: Variant = await play(id)
+	if peque:
 		print("    nivel %d (peque): %s" % [id, str(result)])
 		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d en modo peque: frenando a tiempo se termina con 3 estrellas" % id)
+	else:
+		print("    nivel %d: %s" % [id, str(result)])
+		check(result != null and result["stars"] == 3 and result["infractions"].is_empty(), "nivel %d: el conductor cuidadoso lo termina con 3 estrellas y sin faltas" % id)
+
+
+## Nivel 1 corriendo en grande, sin respetar límites.
+func play_fast_run_case() -> void:
 	fake_bridge().mode = GameState.MODE_GRANDE
 	respect_limits = false
 	cruise = 240.0
@@ -218,4 +255,45 @@ func run() -> void:
 	check(fast != null and fast["stars"] < 3 and fast["infractions"].has("speed"), "nivel 1: correr en la zona escolar da falta speed y menos estrellas")
 	respect_limits = true
 	cruise = 150.0
-	Engine.time_scale = 1.0
+
+
+## Sin argumentos corre todo: cada nivel en grande, cada uno en peque y el caso
+## corriendo. Filtros opcionales (para repartir el trabajo en paralelo):
+##   --level=N   solo ese nivel (en grande y peque si no hay --mode); no aplica
+##               a fast-run, que siempre es el nivel 1.
+##   --mode=grande|peque|fast-run   solo ese modo (fast-run = nivel 1 corriendo).
+## Un nivel inexistente o un modo inválido falla con un check, nunca pasa con 0.
+## El check de la lista de niveles corre cuando no se pidió --level (todos los
+## niveles están en juego): en la corrida completa y en --mode=fast-run, así que
+## repartir los casos como un trabajo por nivel+modo más uno fast-run suma
+## exactamente los mismos checks que la corrida sin argumentos.
+func run() -> void:
+	var opts := parse_args(OS.get_cmdline_user_args())
+	if opts["error"] != "":
+		check(false, "argumentos de test_levels: %s" % opts["error"])
+		return
+	var level_filter: int = opts["level"]
+	var mode_filter: String = opts["mode"]
+	fake_bridge().auto_start = false
+	BridgeClient._go_idle()
+	await frames()
+	var ids := levels()
+	print("    niveles: %s" % str(ids))
+	if level_filter < 0:
+		check(ids.size() >= 5 and not ids.has(99), "la lista de niveles sale de los LevelData construidos (sin el 99)")
+	elif not ids.has(level_filter):
+		check(false, "--level=%d no es un nivel construido de la prueba (niveles: %s)" % [level_filter, str(ids)])
+		return
+	var run_ids: Array[int] = ids
+	if level_filter >= 0:
+		run_ids = [level_filter]
+	if mode_filter in ["", MODE_GRANDE]:
+		for id in run_ids:
+			await play_level_case(id, false)
+	# Modo peque: el auto avanza solo; el conductor solo frena.
+	if mode_filter in ["", MODE_PEQUE]:
+		for id in run_ids:
+			await play_level_case(id, true)
+	fake_bridge().mode = GameState.MODE_GRANDE
+	if mode_filter == MODE_FAST_RUN or (mode_filter == "" and level_filter < 0):
+		await play_fast_run_case()

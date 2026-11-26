@@ -9,6 +9,9 @@ extends TestCase
 func skipped_by_touch(rm: RuleManager, rule_id: StringName, grave := false) -> bool:
 	rm.report_infraction(rule_id, "FALTA_ALTO", grave)
 	await wait(Feedback.skip_pause_delay + 0.1)
+	# Feedback.can_skip_pause() mide con el reloj de pared (Time.get_ticks_msec()) y
+	# con --fixed-fps el wait() de arriba pasa casi sin tiempo real: esperamos de verdad.
+	OS.delay_msec(int(Feedback.skip_pause_delay * 1000) + 100)
 	var was_paused := get_tree().paused
 	touch()
 	touch(false)

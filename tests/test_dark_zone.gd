@@ -3,16 +3,22 @@ extends TestCase
 ## Tramo oscuro (nivel 7) en levels/level_07.tscn. DarkDusk empieza en x = 1000
 ## (progreso 936, la ruta empieza en x = 64) y termina en x = 2000; DarkTunnel va
 ## de 3800 a 5200 (límite de 30 km/h) y DarkRain de 6600 a 8000.
+## Al salir de un tramo las luces se apagan solas (auto_lights_off); regresar a un
+## punto de control no las apaga.
 
 const DUSK_START := 936.0
+const DUSK_END := 1936.0
 const DUSK_PAST := 2100.0
 const CHECKPOINT_AFTER_DUSK := 2236.0
+const TUNNEL_START := 3736.0
 
 var level: Node
 var rm: RuleManager
 var car: PlayerCar
 var driver: TestDriver
 var goods: Array = []
+## Cada headlights_changed del auto: [on, progreso].
+var light_changes: Array = []
 
 
 func open_level() -> void:
@@ -21,7 +27,9 @@ func open_level() -> void:
 	car = rm.car
 	car.seatbelt_on = true
 	goods.clear()
+	light_changes.clear()
 	rm.good_action_reported.connect(func(id: StringName, pts: int) -> void: goods.append([id, pts, car.progress]))
+	car.headlights_changed.connect(func(on: bool) -> void: light_changes.append([on, car.progress]))
 	driver = TestDriver.new()
 	driver.car = car
 	add_child(driver)
@@ -56,6 +64,16 @@ func drive_until(done: Callable, limit := 30.0) -> void:
 			t += get_physics_process_delta_time()
 
 
+## Veces que headlights_changed avisó `on`.
+func light_changes_to(on: bool) -> Array:
+	return light_changes.filter(func(c: Array) -> bool: return c[0] == on)
+
+
+func physics_frames(count: int) -> void:
+	for i in count:
+		await get_tree().physics_frame
+
+
 func run() -> void:
 	GameState.mode = GameState.MODE_GRANDE
 
@@ -72,6 +90,7 @@ func run() -> void:
 	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
 	check(lights_faults() == 1 and light_goods().is_empty(), "sin luces todo el tramo: una sola falta y ningún +10 de luces")
 	check(not zone("DarkDusk").is_car_inside(), "al salir, is_car_inside() es false")
+	check(light_changes.is_empty(), "salir con las luces apagadas no avisa headlights_changed")
 	await close_level()
 
 	# 3. Prender las luces al entrar: +10 y ninguna falta
@@ -199,3 +218,91 @@ func run() -> void:
 	check(min_gap > 40.0, "el auto nunca queda a menos de 40 px de un ciclista (mínimo %d)" % int(min_gap))
 	check(rm.infractions.keys() == [&"bike_lane"] and rm.infractions[&"bike_lane"] == 1, "solo hay la falta de ciclovía: %s" % str(rm.infractions))
 	await close_level()
+
+	# 11. Al salir del tramo las luces se apagan solas, sin falta ni puntos extra
+	await open_level()
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	driver.target = 150.0
+	await drive_until(func() -> bool: return not light_goods().is_empty())
+	check(car.headlights_on and zone("DarkDusk").is_car_inside(), "dentro del tramo las luces siguen prendidas")
+	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
+	var offs := light_changes_to(false)
+	check(not car.headlights_on, "al salir del atardecer las luces se apagan solas")
+	check(offs.size() == 1 and offs[0][1] > DUSK_END, "headlights_changed(false) avisa una sola vez, ya fuera del tramo")
+	check(light_goods().size() == 1 and rm.infractions.is_empty(), "apagarlas al salir no da falta ni otro +10 de luces: %s" % str(rm.infractions))
+	await physics_frames(2)
+	check(not (level.get_node("Hud") as Hud).is_lights_pulsing(), "fuera del tramo el botón no parpadea")
+	await close_level()
+
+	# 12. Con auto_lights_off = false las luces se quedan prendidas al salir
+	await open_level()
+	zone("DarkDusk").auto_lights_off = false
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	driver.target = 150.0
+	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
+	check(car.headlights_on and light_changes_to(false).is_empty(), "con auto_lights_off = false siguen prendidas al salir")
+	await close_level()
+
+	# 13. Regresar a un punto de control con las luces prendidas no las apaga
+	await open_level()
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	await drive_until(func() -> bool: return zone("DarkDusk").is_car_inside(), 2.0)
+	car.restart_at(700.0)
+	await physics_frames(3)
+	check(not zone("DarkDusk").is_car_inside() and car.headlights_on, "restart_at() hacia antes del tramo no apaga las luces")
+	tunnel = zone("DarkTunnel")
+	car.restart_at(TUNNEL_START + 200.0)
+	await drive_until(func() -> bool: return tunnel.is_car_inside(), 2.0)
+	car.restart_at(CHECKPOINT_AFTER_DUSK)
+	rm.checkpoint_restored.emit(CHECKPOINT_AFTER_DUSK)
+	await physics_frames(3)
+	check(not tunnel.is_car_inside() and car.headlights_on, "volver al punto de control desde el túnel no apaga las luces")
+	check(light_changes_to(false).is_empty(), "ni avisa headlights_changed(false)")
+	await close_level()
+
+	# 14. Dos tramos seguidos: sin volver a prenderlas, falta en el túnel
+	await open_level()
+	tunnel = zone("DarkTunnel")
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	driver.target = 150.0
+	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
+	check(not car.headlights_on and light_goods().size() == 1, "atardecer con luces: +10 y se apagan al salir")
+	car.restart_at(TUNNEL_START - 150.0)
+	driver.target = 100.0
+	await drive_until(func() -> bool: return tunnel.is_car_inside())
+	await physics_frames(2)
+	check((level.get_node("Hud") as Hud).is_lights_pulsing(), "en el túnel, con las luces apagadas, el botón vuelve a parpadear")
+	await drive_until(func() -> bool: return lights_faults() > 0)
+	check(lights_faults() == 1 and tunnel.is_car_inside(), "sin prenderlas otra vez, en el túnel hay falta lights")
+	check(light_goods().size() == 1, "y el túnel no da +10")
+	await close_level()
+
+	# 15. Dos tramos seguidos: prenderlas otra vez en el túnel da +10
+	await open_level()
+	tunnel = zone("DarkTunnel")
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	driver.target = 150.0
+	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
+	car.restart_at(TUNNEL_START - 150.0)
+	driver.target = 100.0
+	await drive_until(func() -> bool: return tunnel.is_car_inside())
+	car.set_headlights(true)
+	await drive_until(func() -> bool: return light_goods().size() > 1, 5.0)
+	check(light_goods().size() == 2 and lights_faults() == 0, "prender las luces otra vez en el túnel da +10 y ninguna falta")
+	await close_level()
+
+	# 16. Peque: también se apagan solas al salir
+	GameState.mode = GameState.MODE_PEQUE
+	await open_level()
+	car.set_headlights(true)
+	car.restart_at(1600.0)
+	await drive_until(func() -> bool: return car.progress > DUSK_PAST)
+	check(not car.headlights_on and light_changes_to(false).size() == 1, "en peque las luces también se apagan solas al salir")
+	check(light_goods().size() == 1 and lights_faults() == 0, "en peque, con luces: +10 y sin falta")
+	await close_level()
+	GameState.mode = GameState.MODE_GRANDE

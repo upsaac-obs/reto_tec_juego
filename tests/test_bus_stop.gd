@@ -6,6 +6,9 @@ extends TestCase
 ## regla "distance"; el camión se distingue por has_faulted() / was_rewarded().
 ## Al final, el clímax: BusStop2 (9200) con la bici de Cyclist2 (8600).
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 const START := 3300.0
 ## Con freno desde aquí a 150 px/s el auto queda ~40 px detrás del camión.
 const BRAKE_AT := 4930.0
@@ -64,7 +67,6 @@ func until(cond: Callable, limit: float) -> bool:
 
 func run() -> void:
 	GameState.mode = GameState.MODE_GRANDE
-	Engine.time_scale = 2.0
 
 	# 1, 2 y 8. Ciclo de estados; esperar detrás en el carril 2 da +10
 	await open_level()
@@ -220,4 +222,3 @@ func run() -> void:
 		check(bike.was_rewarded() and rm.faults == 0, "%s: luego el auto rebasa a la bici por el carril separado (+10)" % mode)
 		await close_level()
 	GameState.mode = GameState.MODE_GRANDE
-	Engine.time_scale = 1.0

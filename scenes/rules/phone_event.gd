@@ -5,8 +5,9 @@ extends RulePiece
 ## Celular que suena (nivel 6). Cuando el auto pasa por el Trigger, el celular
 ## aparece en la esquina, vibra y suena.
 ## - Tocarlo con el auto en movimiento es falta (phone): el celular crece y tapa
-##   la calle cover_time segundos SIN pausar el juego (el auto sigue avanzando)
-##   y la falta se reporta al terminar la tapa.
+##   la calle cover_duration() segundos SIN pausar el juego (el auto sigue
+##   avanzando) y la falta se reporta al terminar la tapa, cuando ya terminó el
+##   aviso CELULAR_TAPA (así la falta no le corta la voz).
 ## - Modo ignorar (spot vacío): si se deja sonar hasta que se calla (ring_time o
 ##   ring_distance, lo primero), +points.
 ## - Modo contestar (spot = un ParkingSpot con release_after_park apagado): suena
@@ -24,6 +25,9 @@ signal ring_finished
 
 enum State { IDLE, RINGING, COVERING, WAITING_PARK, ANSWERABLE, IN_CALL, DONE }
 
+## Aviso (show_info) al tocarlo en movimiento, durante la tapa.
+const COVER_MESSAGE := "CELULAR_TAPA"
+
 ## Vacío = modo ignorar. Con un cajón = modo contestar.
 @export var spot: ParkingSpot
 @export_group("Sonar")
@@ -40,7 +44,8 @@ enum State { IDLE, RINGING, COVERING, WAITING_PARK, ANSWERABLE, IN_CALL, DONE }
 ## Cada cuántas ráfagas suena el timbre (las otras solo vibran).
 @export var ring_every: int = 2
 @export_group("Tapar la calle")
-## Segundos que el celular tapa la calle.
+## Segundos mínimos que el celular tapa la calle. Si el aviso CELULAR_TAPA (su voz
+## más message_time) dura más, tapa hasta que termina: ver cover_duration().
 @export var cover_time: float = 2.0
 ## Segundos que tarda en crecer y en encogerse.
 @export var grow_time: float = 0.25
@@ -128,6 +133,12 @@ func is_covering() -> bool:
 
 func is_answerable() -> bool:
 	return _state == State.ANSWERABLE
+
+
+## Segundos que tapa la calle (sin contar crecer y encogerse): al menos cover_time
+## y lo necesario para que el aviso CELULAR_TAPA termine antes de la falta.
+func cover_duration() -> float:
+	return maxf(cover_time, Feedback.message_duration(COVER_MESSAGE) - 2.0 * grow_time)
 
 
 func is_car_moving() -> bool:
@@ -228,9 +239,9 @@ func _cover() -> void:
 	_state = State.COVERING
 	_holder.rotation_degrees = 0.0
 	_holder.modulate = Color.WHITE
-	Feedback.show_info("CELULAR_TAPA")
+	Feedback.show_info(COVER_MESSAGE)
 	_grow_to(cover_center, cover_scale)
-	await get_tree().create_timer(grow_time + cover_time, false).timeout
+	await get_tree().create_timer(grow_time + cover_duration(), false).timeout
 	if round_id != _round or _state != State.COVERING:
 		return
 	_grow_to(small_center, small_scale)

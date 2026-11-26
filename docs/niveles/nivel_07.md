@@ -12,6 +12,7 @@ Esta ficha sigue `docs/plan_cierre.md` (Peque con las mismas reglas que Grande; 
 - **Regla principal:** `lights`. Al entrar a un tramo oscuro hay que **prender las luces**:
   - Si pasan más de 2 s dentro del tramo con las luces apagadas, es **falta**.
   - Si el auto va con las luces prendidas, gana **+10**.
+  - Al salir de cada tramo las luces **se apagan solas** (`auto_lights_off`, sin mensaje). Cada tramo se evalúa de nuevo: en el siguiente hay que volver a prenderlas y el botón vuelve a parpadear. Regresar a un punto de control (`restart_at()`) no las apaga.
 - **El porqué, sin palabras:**
   - En lo oscuro, los ciclistas casi no se ven.
   - Cuando el auto lleva las luces prendidas, el ciclista se ilumina y su chaleco reflejante brilla.
@@ -46,13 +47,13 @@ Esta ficha sigue `docs/plan_cierre.md` (Peque con las mismas reglas que Grande; 
 
 | # | Tramo | x (px) | Piezas y valores |
 | --- | --- | --- | --- |
-| A | Arranque, atardecer claro | 64 → 900 | `TutorialHint` **HintLuces** en x = 500: `message_key = "TUTO_LUCES"`, `peque_message_key = ""` (el mismo texto: las reglas son iguales), `depth = 64`, `road_width = 128` |
-| B | **Atardecer** (primer tramo oscuro) | 1000 → 2000 | `BikeLane` **BikeLane1** en (900, 0): `side_offset = 32`, `length = 1200`, `points = 10`<br>`DarkZone` **DarkDusk** en (1000, 0): `kind = DUSK`, `length = 1000`, `darkness = 0.5`, `cyclist_starts = [350.0, 750.0]`, `peque_cyclist_count = 1`, `cyclist_speed = 80`, `rain = false`, `walls = false`<br>`TutorialHint` **HintReflejante** en x = 1650: `message_key = "TUTO_REFLEJANTE"` |
+| A | Arranque, atardecer claro | 64 → 900 | `TutorialHint` **HintLuces** en x = 500: `message_key = "LUCES_INTRO"`, `peque_message_key = ""` (el mismo texto: las reglas son iguales), `depth = 64`, `road_width = 128` |
+| B | **Atardecer** (primer tramo oscuro) | 1000 → 2000 | `BikeLane` **BikeLane1** en (900, 0): `side_offset = 32`, `length = 1200`, `points = 10`<br>`DarkZone` **DarkDusk** en (1000, 0): `kind = DUSK`, `length = 1000`, `darkness = 0.5`, `cyclist_starts = [350.0, 750.0]`, `peque_cyclist_count = 1`, `cyclist_speed = 80`, `rain = false`, `walls = false`<br>`TutorialHint` **HintReflejante** en x = 1650: `message_key = "LUCES_REFLEJANTE"` |
 | — | Punto de control | 2300 | `Checkpoint` **CheckpointAfterDusk** |
-| C | Respiro, calle con luz | 2300 → 3500 | `TutorialHint` **HintTunel** en x = 3250: `message_key = "TUTO_TUNEL"` |
+| C | Respiro, calle con luz | 2300 → 3500 | `TutorialHint` **HintTunel** en x = 3250: `message_key = "LUCES_TUNEL"` |
 | D | **Túnel** (clímax) | 3500 → 5400 | `SpeedZone` **SpeedTunnel** en (3500, 0): `kind = STREET`, `limit_kmh = 30`, `zone_length = 1900`, `grace_time = 2.0`. El letrero queda antes de que empiece a oscurecer (3672).<br>`BikeLane` **BikeLane2** en (3700, 0): `side_offset = 32`, `length = 1600`<br>`DarkZone` **DarkTunnel** en (3800, 0): `kind = TUNNEL`, `length = 1400`, `darkness = 0.78`, `walls = true`, `cyclist_starts = [250.0, 700.0]`, `peque_cyclist_count = 1`, `cyclist_speed = 50`, `rain = false` |
 | — | Punto de control | 5600 | `Checkpoint` **CheckpointAfterTunnel** |
-| E | Salida del túnel | 5600 → 6500 | `TutorialHint` **HintLluvia** en x = 6300: `message_key = "TUTO_LLUVIA"` |
+| E | Salida del túnel | 5600 → 6500 | `TutorialHint` **HintLluvia** en x = 6300: `message_key = "LUCES_LLUVIA"` |
 | F | **Lluvia** (cierre tranquilo) | 6600 → 8000 | `BikeLane` **BikeLane3** en (6500, 0): `side_offset = 32`, `length = 1600`<br>`DarkZone` **DarkRain** en (6600, 0): `kind = RAIN`, `length = 1400`, `darkness = 0.55`, `rain = true`, `cyclist_starts = [400.0, 900.0]`, `peque_cyclist_count = 1`, `cyclist_speed = 80`, `walls = false` |
 | G | Llegada a casa | 8100 → 8928 | Meta del `LevelBuilder` (tile `FINISH`) y la casa en `Decor` |
 
@@ -113,6 +114,7 @@ cover_height: float = 1600.0      # alto de la sombra (cubre la pantalla aunque 
 grace_time: float = 2.0           # segundos SEGUIDOS sin luces dentro antes de la falta
 confirm_time: float = 0.5         # segundos seguidos con luces dentro para dar +10
 points: int = 10
+auto_lights_off: bool = true      # apaga las luces del auto al salir por el final del tramo
 walls: bool = false               # paredes de túnel
 wall_width: float = 24.0
 @export_group("Ciclistas")
@@ -185,7 +187,7 @@ rain_amount: int = 120
 - Mueve `Beam` y aplica `safety_gap` (3.6).
 
 **Consecuencias:**
-- Si el auto entra con las luces ya prendidas (por ejemplo, desde el tramo anterior), gana +10 a los 0.5 s. Llevar las luces prendidas es justo el hábito.
+- Si el auto entra con las luces ya prendidas (las prendió antes del tramo), gana +10 a los 0.5 s. Llevar las luces prendidas es justo el hábito. Del tramo anterior no vienen prendidas: se apagan al salir (`auto_lights_off`).
 - Si prende las luces después de la falta, no hay +10 en esa pasada.
 - Si gana +10 y luego las apaga más de 2 s, también hay falta. Son como máximo una de cada una.
 - El tiempo sin luces se cuenta **seguido** (igual que `speed_zone`): prender y apagar reinicia la cuenta.
@@ -194,6 +196,7 @@ rain_amount: int = 120
 - Desconecta la señal y `_car = null`.
 - Oculta `Beam`, `Rain.emitting = false` y `Riders.z_index = 0`.
 - **Salir del tramo devuelve la luz sola:** la sombra está en el mundo, no hay nada que restaurar.
+- **Apaga las luces del auto** con `car.set_headlights(false)` si `auto_lights_off` es `true` y el auto salió por el final (x local > `length / 2`). Sin mensaje, sin sonido, sin falta ni puntos; el botón del HUD lo refleja solo por `headlights_changed`. Si salió por detrás porque regresó a un punto de control (`restart_at()`), las luces se quedan como estaban.
 - Al salir no se dan puntos, porque ya se dieron dentro.
 
 **`_on_headlights_changed(on)`:** llama `_update_visuals()`. Esto cambia `Riders.z_index` y la visibilidad de `Beam` en el mismo cuadro: el niño ve aparecer a las bicis justo al tocar el botón.
@@ -203,6 +206,7 @@ rain_amount: int = 120
 - Libera a los ciclistas (`queue_free`) y vacía `_riders`.
 - `Beam.visible = false`, `Rain.emitting = false`, `Riders.z_index = 0`.
 - Si la señal sigue conectada, la desconecta.
+- No toca las luces del auto.
 
 **Métodos públicos para las pruebas:**
 - `is_car_inside() -> bool`
@@ -250,7 +254,7 @@ Es lo mínimo que esta ficha supone. Si la base usa otros nombres, solo se cambi
    - Un `TouchScreenButton` `%Lights` con `action = "car_lights"` (como `Seatbelt`) e ícono #16 de `docs/prompts_assets.md`, apagado o encendido según `car.headlights_changed`.
    - Solo se ve si `show_lights_button` es `true`, y en los dos modos. El nivel 7 lo pone en `true` sobrescribiendo la propiedad del nodo `Hud` en `level_07.tscn`.
 3. **`project.godot`:** la acción `car_lights` (tecla `L` para probar en el editor).
-4. **`tests/test_levels.gd`** (también es de la base): el conductor cuidadoso tiene que **prender las luces al empezar** cuando el nivel tenga algún `DarkZone` en `Rules`, con `car.set_headlights(true)` o `tap(&"car_lights")`. Sin esto, el nivel 7 no se puede terminar con 3 estrellas en la prueba general.
+4. **`tests/test_levels.gd`** (también es de la base): el conductor cuidadoso tiene que **prender las luces al empezar** cuando el nivel tenga algún `DarkZone` en `Rules`, con `car.set_headlights(true)` o `tap(&"car_lights")`, y **volver a prenderlas** cada vez que el auto esté dentro de una pieza del grupo `needs_headlights` (`is_car_inside()`), porque `DarkZone` las apaga al salir de cada tramo. Sin esto, el nivel 7 no se puede terminar con 3 estrellas en la prueba general.
 
 ## 5. Momentos (ritmo y clímax)
 
@@ -259,15 +263,15 @@ Los tiempos son aproximados para Grande a ~150–160 px/s. Peque va a 168 px/s e
 | t (s) | Momento | Qué siente el niño |
 | --- | --- | --- |
 | 0–2 | Cinturón. La calle está tibia, color de atardecer. Aparece el botón de luces | "Hay un botón nuevo" |
-| ~4 | `TUTO_LUCES`: el copiloto pide prender las luces y la calle de adelante ya se ve más oscura | Curiosidad: lo toca |
+| ~4 | `LUCES_INTRO`: el copiloto pide prender las luces y la calle de adelante ya se ve más oscura | Curiosidad: lo toca |
 | ~6–8 | Entra al **atardecer**: con luces, las bicis aparecen con el chaleco brillando | El porqué, visto con sus ojos |
 | **~8–10** | **Primer +10** (`BIEN_LUCES`). Si no las prendió, falta a los 2 s y el copiloto explica | Recompensa rápida |
-| ~13 | `TUTO_REFLEJANTE`: "las bicis traen chaleco que brilla con tus luces" | Se refuerza el porqué |
-| ~15 | Sale del tramo: +10 por la ciclovía | Ritmo de premios |
-| 15–22 | Respiro con luz. `TUTO_TUNEL` avisa del túnel | Anticipación |
+| ~13 | `LUCES_REFLEJANTE`: "Las bicis traen chaleco que brilla cuando tus luces lo alumbran." | Se refuerza el porqué |
+| ~15 | Sale del tramo: +10 por la ciclovía y las luces se apagan solas | Ritmo de premios |
+| 15–22 | Respiro con luz. `LUCES_TUNEL` avisa del túnel | Anticipación |
 | 22–38 | **Clímax, el túnel:** letrero de 30 km/h, el cerro con la boca, paredes de piedra y la sombra más fuerte (0.78). Sin luces no se ve casi nada; con luces, el haz alumbra dos ciclistas lentos | Tensión suave: ir despacio y mirar |
-| ~38 | Sale del túnel: +10 por la velocidad y +10 por la ciclovía; la luz regresa sola | Alivio y celebración |
-| 40–48 | `TUTO_LLUVIA`: empieza a llover | Último reto, más fácil |
+| ~38 | Sale del túnel: +10 por la velocidad y +10 por la ciclovía; la luz regresa sola y las luces del auto se apagan | Alivio y celebración |
+| 40–48 | `LUCES_LLUVIA`: empieza a llover | Último reto, más fácil |
 | 48–57 | **Lluvia:** gotitas, sombra media y ciclistas con reflejantes; +10 de luces y +10 de ciclovía | Lo hace solo, ya lo aprendió |
 | ~60–65 | Llega a **casa**. Tarjeta de hábito: "Si te ven, te cuidan." | Cierre cálido |
 
@@ -293,17 +297,17 @@ No hay `npc_car` en este nivel: el tramo oscuro y las bicis ya son bastante para
 Formato del archivo: `CLAVE,texto`, con comillas cuando hay comas.
 
 ```csv
-DESTINO_CASA,Casa
-TUTO_LUCES,"Se está haciendo de noche. Toca el botón para prender las luces."
-TUTO_REFLEJANTE,"Las bicis traen chaleco que brilla cuando tus luces lo alumbran."
-TUTO_TUNEL,"Ahí viene el túnel y adentro está oscuro. ¿Ya prendiste tus luces?"
-TUTO_LLUVIA,"Empezó a llover y se ve poquito. Con luces, todos te ven."
-FALTA_LUCES,"¡Está oscuro! Prende las luces para que las bicis te vean."
+DESTINO_CASA,Nuestra casa
+LUCES_INTRO,Se está haciendo de noche. Toca el botón para prender las luces.
+LUCES_REFLEJANTE,Las bicis traen chaleco que brilla cuando tus luces lo alumbran.
+LUCES_TUNEL,Ahí viene el túnel y adentro está oscuro. ¿Ya prendiste tus luces?
+LUCES_LLUVIA,"Empezó a llover y se ve poquito. Con luces, todos te ven."
+FALTA_LUCES,¡Está oscuro! Prende las luces para que las bicis te vean.
 BIEN_LUCES,"¡Muy bien! Con tus luces prendidas, todos te ven."
-FALTA_LUCES_TUNEL,"En el túnel no se ve nada. Prende las luces para que te vean."
+FALTA_LUCES_TUNEL,En el túnel está oscuro. Prende las luces para que te vean.
 BIEN_LUCES_TUNEL,"¡Bien! En el túnel, tus luces avisan que ahí vas."
-FALTA_LUCES_LLUVIA,"Con lluvia cuesta ver. Prende las luces para que te cuiden."
-BIEN_LUCES_LLUVIA,"¡Bien! Con lluvia, tus luces te hacen visible."
+FALTA_LUCES_LLUVIA,Con lluvia cuesta ver. Prende las luces para que te cuiden.
+BIEN_LUCES_LLUVIA,"¡Eso! Con lluvia, tus luces te hacen visible."
 BOTON_LUCES,Luces
 ```
 
@@ -342,7 +346,12 @@ BOTON_LUCES,Luces
     - En `DarkDusk`, poner el auto en carril 1 (`lane_index = 1`) detrás de un ciclista y acelerar.
     - Verificar que el auto nunca queda a menos de 40 px del ciclista en x.
     - Debe aparecer la falta `bike_lane` y ninguna otra.
-11. **Recorrido completo:** lo cubre `test_levels.gd` cuando la base agregue el punto 4 de §4. Debe dar 3 estrellas y 0 faltas en Peque y en Grande.
+11. **Las luces se apagan al salir** (casos 11 a 16 de la prueba):
+    - Con luces dentro de `DarkDusk`, al salir: `headlights_on == false`, un solo `headlights_changed(false)`, sin falta ni otro +10 de luces. Salir con las luces apagadas no avisa nada.
+    - Con `auto_lights_off = false` siguen prendidas al salir.
+    - `restart_at()` hacia antes del tramo, o volver a `CheckpointAfterDusk` desde el túnel, no las apaga.
+    - Dos tramos seguidos: sin volver a prenderlas, en el túnel el botón parpadea y hay falta; prenderlas otra vez da +10. En Peque se apagan igual.
+12. **Recorrido completo:** lo cubre `test_levels.gd` cuando la base agregue el punto 4 de §4. Debe dar 3 estrellas y 0 faltas en Peque y en Grande.
 
 ## 9. Arte usado (solo lo que ya existe)
 

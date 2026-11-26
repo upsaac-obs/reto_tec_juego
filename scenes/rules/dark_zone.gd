@@ -13,6 +13,8 @@ extends RulePiece
 ## sombra y solo pasan encima (se "iluminan") cuando el auto lleva las luces.
 ## Está en el grupo needs_headlights: el botón de luces del HUD parpadea mientras
 ## el auto está dentro con las luces apagadas.
+## Al salir por el final del tramo apaga las luces del auto (auto_lights_off), así
+## cada tramo pide prenderlas otra vez; regresar a un punto de control no las apaga.
 
 enum Kind { DUSK, TUNNEL, RAIN }
 
@@ -58,6 +60,8 @@ const MESSAGES := {
 ## Segundos seguidos con luces dentro para dar los puntos.
 @export var confirm_time: float = 0.5
 @export var points: int = 10
+## Apaga las luces del auto al salir del tramo.
+@export var auto_lights_off: bool = true
 ## Paredes de túnel a los lados de la calle.
 @export var walls: bool = false:
 	set(value):
@@ -253,7 +257,12 @@ func _on_zone_entered(area: Area2D) -> void:
 func _on_zone_exited(area: Area2D) -> void:
 	if _car_from(area) == null or _car == null:
 		return
+	var car := _car
 	_leave()
+	# Solo si salió por el final: si regresó a un punto de control antes del
+	# tramo (restart_at), las luces se quedan como estaban.
+	if auto_lights_off and to_local(car.global_position).x > length / 2.0:
+		car.set_headlights(false)
 
 
 ## Sale del tramo: la luz regresa sola porque la sombra está en el mundo.

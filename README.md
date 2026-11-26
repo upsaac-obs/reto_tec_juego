@@ -64,6 +64,25 @@ El trabajo más reciente está en `feature/modo-peque`; cada rama `feature/*` sa
 ## Cómo probar
 
 - **Godot**: abrir el proyecto con Godot 4.7.2. F5 abre el nivel 1 con el puente falso (`-- --fake-level=N` para otro nivel); F6 sobre un nivel lo juega directo.
-- **Pruebas automáticas**: `tests/run_tests.sh` (sin abrir el editor).
+- **Pruebas automáticas**: `tests/run_tests.sh` (sin abrir el editor). Flujo de trabajo abajo.
 - **Android**: `native/android/sync_godot.sh` y luego abrir `native/android/` en Android Studio.
 - **iOS**: seguir `native/ios/README.md`.
+
+### Flujo de pruebas
+
+- **Mientras programas**: corre solo lo que tocaste, con `--only=<tema>` (texto que aparece en el nombre del archivo `tests/test_*.gd`), o `--fast` para todo menos las pruebas lentas.
+- **Antes de entregar**: corre la suite completa, `tests/run_tests.sh`. Corre en paralelo y tarda unos 12 s. Debe terminar con `0 fallan`.
+
+```bash
+tests/run_tests.sh --only=yellow                          # solo test_yellow_crossing.gd
+tests/run_tests.sh --only=yellow,phone                    # dos temas a la vez
+tests/run_tests.sh --only=test_levels.gd                  # un archivo exacto
+tests/run_tests.sh --fast                                 # todo menos las pruebas SLOW
+tests/run_tests.sh --only=levels --level=3 --mode=peque   # un nivel en un modo
+tests/run_tests.sh -j 1 --only=yellow,phone               # en serie, un proceso
+```
+
+- `-j N` (o `RUTAKIDS_JOBS=N`) fija cuántos procesos corren a la vez; por defecto son núcleos − 2.
+- **macOS**: el bash de fábrica (3.2) no soporta el modo paralelo. La suite corre en serie y tarda más (el script lo avisa al empezar). Para el modo paralelo instala bash 5.1 o más nuevo (`brew install bash`). Los resultados son los mismos en ambos modos.
+- **Regla SLOW**: si tu prueba juega un nivel completo o tarda más de ~10 s, ponle `const SLOW := true` justo debajo del `extends`. Una prueba sin SLOW que tarde más de 10 s sale con un `AVISO` en el resumen. Por defecto una prueba nueva no es SLOW.
+- Cada corrida guarda su log en `tests/resultados/` con la fecha, la hora y el commit.

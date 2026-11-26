@@ -16,7 +16,7 @@ Fuentes que manda esta ficha: el documento de diseño, `docs/plan_cierre.md` (Pe
 
 | Situación | Resultado |
 | --- | --- |
-| Tocar el celular con el auto **en movimiento** | **Falta** `phone`. El celular crece y tapa parte de la calle **2 s sin pausar el juego**. Después viene la pausa normal de falta con la explicación. |
+| Tocar el celular con el auto **en movimiento** | **Falta** `phone`. El celular crece y tapa parte de la calle **sin pausar el juego** mientras dura el aviso `CELULAR_TAPA` (unos 4.3 s; como mínimo 2 s). Después viene la pausa normal de falta con la explicación. |
 | Dejarlo sonar hasta que se calla | **+10** («ignorar el celular», del diseño) |
 | Contestar **estacionado** en el cajón | **+10**. El auto sigue después de la llamada. |
 
@@ -27,9 +27,9 @@ Fuentes que manda esta ficha: el documento de diseño, `docs/plan_cierre.md` (Pe
 - Límite de velocidad (`speed_zone`, nivel 2).
 - Cinturón (nivel 0, ya viene en el HUD).
 
-**Destino:** casa de los primos, con la clave nueva **`DESTINO_CASA_PRIMOS`**. El arte es la casa morada del tendedero, de `assets/sprites/city/casas.png`. El nivel 3 ya usa la casa amarilla para la casa de la abuela, así que no se repite.
+**Destino:** casa de los primos, con la clave nueva **`DESTINO_CASA_PRIMOS`**. El arte es `assets/sprites/city/casa_primos.png` (arte v2; antes era la casa morada del tendedero de `casas.png`). El nivel 3 usa otra casa para la abuela, así que no se repite.
 
-**Duración objetivo:** de 70 a 80 s en Grande y en Peque. El primer +10 llega a los 12 s más o menos.
+**Duración objetivo:** de 70 a 80 s en Grande y en Peque. El primer +10 llega a los 12 s más o menos. Medido con el conductor cuidadoso de `tests/test_levels.gd` (`--level=6`): **76 s en Grande y 78 s en Peque** (antes de alargar la tapa eran 68 s).
 
 **Puntos posibles:** celular 1 (+10), paso peatonal (+10), celular 2 (+10), semáforo (+10, si toca rojo o amarillo), contestar estacionado (+10) y zona de velocidad (+10).
 
@@ -40,18 +40,18 @@ Fuentes que manda esta ficha: el documento de diseño, `docs/plan_cierre.md` (Pe
 Es una calle recta de 2 carriles hacia +x, como los niveles 1 a 4. Se arma con `tools/level_builder.gd`:
 
 ```gdscript
-LevelBuilder.new("Level06", 125, 1, 6)
+LevelBuilder.new("Level06", 142, 1, 6)
 ```
 
 | Dato | Valor |
 | --- | --- |
-| Largo | 125 tiles = **8000 px** |
-| Ruta | De (64, 0) a (7968, 0) |
+| Largo | 142 tiles = **9088 px** |
+| Ruta | De (64, 0) a (9056, 0) |
 | Carril inicial | `start_lane = 1` (derecho, el del cajón) |
 | `progress` del auto | `x − 64` |
 | Meta | Las losas de meta del final de la calle, que pone el builder. **No se quitan**: aquí el cajón está a media ruta y no es la meta. El nivel termina con `route_finished`, como en los niveles 1, 2 y 4. |
 
-Al terminar, se corre `python3 tools/make_inherited.py levels/level_06.tscn`.
+El generador es `tools/niveles/build_level_06.gd` (ver `tools/niveles/README.md`). Al terminar, se corre `python3 tools/make_inherited.py levels/level_06.tscn`. El nivel 6 no tiene ajustes a mano: todo sale del generador.
 
 ### Segmentos (en orden)
 
@@ -61,37 +61,39 @@ Al terminar, se corre `python3 tools/make_inherited.py levels/level_06.tscn`.
 | 1 | 400 | `HintIntro` | `tutorial_hint` | `message_key = "CELULAR_INTRO"`, `peque_message_key = ""`, `depth = 64`, `road_width = 128` |
 | 2 | 1000 | `Phone1` | **`phone_event`** (modo ignorar) | `spot = null`, `ring_time = 5.0`, `ring_distance = 900.0`; el resto con los valores por defecto (§3) |
 | 3 | 2000 | `CheckpointAfterPhone1` | `checkpoint` | por defecto |
-| 4 | 2900 | `Crosswalk1` | `crosswalk` | por defecto (`approach_length = 448`, `start_delay = 0.3`, peatón por defecto) |
-| 5 | 3300 | `CheckpointAfterCrosswalk` | `checkpoint` | por defecto |
-| 6 | 3500 | `Phone2` | **`phone_event`** (modo ignorar) | `spot = null`, `ring_time = 6.0`, `ring_distance = 700.0` |
-| 7 | 4900 | `TrafficLight1` | `traffic_light` | `check_yellow = true`, `green_time = 6.0`, `yellow_time = 3.0`, `red_time = 5.0`, `start_light = GREEN`, `reaction_time = 0.6` |
-| 8 | 5300 | `CheckpointAfterLight` | `checkpoint` | por defecto |
-| 9 | 5300–8900 | `TrafficLeft` (fuera de `Rules`, hijo de la raíz) | tráfico del nivel (§5) | `activate_x = 5600`, `stop_x = 7400` |
-| 10 | 5700 | `Phone3` | **`phone_event`** (modo contestar) | `spot = NodePath("../ParkingSpot")`, `vibrate_angle = 12.0` (vibra más fuerte: es el clímax) |
-| 11 | 5800 | `HintPark` | `tutorial_hint` | `message_key = "CELULAR_ESTACIONAR"`, `depth = 64` |
-| 12 | 6400 | `ParkingSpot` | `parking_spot` (reutilizable) | `bay_offset = 32`, `approach_length = 320`, `show_finish_line = false`, valores de la base para soltar el auto (ver §3.6) |
-| 13 | 6800 | `CheckpointAfterPark` | `checkpoint` | por defecto |
-| 14 | 6900 | `SpeedZone1` | `speed_zone` | `kind = STREET`, `limit_kmh = 30`, `zone_length = 768`, `grace_time = 2.0` |
-| B | 7968 | — | Fin de la ruta, `META_LLEGASTE` | — |
+| 4 | 3460 | `Crosswalk1` | `crosswalk` | por defecto (`approach_length = 448`, `start_delay = 0.3`, peatón por defecto) |
+| 5 | 3860 | `CheckpointAfterCrosswalk` | `checkpoint` | por defecto |
+| 6 | 4060 | `Phone2` | **`phone_event`** (modo ignorar) | `spot = null`, `ring_time = 6.0`, `ring_distance = 700.0` |
+| 7 | 6036 | `TrafficLight1` | `traffic_light` | `check_yellow = true`, `green_time = 6.0`, `yellow_time = 3.0`, `red_time = 5.0`, `start_light = GREEN`, `reaction_time = 1.0` |
+| 8 | 6436 | `CheckpointAfterLight` | `checkpoint` | por defecto |
+| 9 | 6236–10036 | `TrafficLeft` (fuera de `Rules`, hijo de la raíz) | tráfico del nivel (§5) | `activate_x = 6736`, `stop_x = 8536` |
+| 10 | 7036 | `Phone3` | **`phone_event`** (modo contestar) | `spot = NodePath("../ParkingSpot")`, `vibrate_angle = 12.0` (vibra más fuerte: es el clímax) |
+| 11 | 7066 | `HintPark` | `tutorial_hint` | `message_key = "CELULAR_ESTACIONAR"`, `depth = 64` |
+| 12 | 7536 | `ParkingSpot` | `parking_spot` (reutilizable) | `bay_offset = 32`, `approach_length = 320`, `show_finish_line = false`, `parked_message_key = ""`, valores de la base para soltar el auto (ver §3.6) |
+| 13 | 7936 | `CheckpointAfterPark` | `checkpoint` | por defecto |
+| 14 | 8036 | `SpeedZone1` | `speed_zone` | `kind = STREET`, `limit_kmh = 30`, `zone_length = 768`, `grace_time = 2.0` |
+| B | 9056 | — | Fin de la ruta, `META_LLEGASTE` | — |
 
 ### Decorado (nodo `Decor`, como en los niveles 3 y 4)
 
 | Nodo | Textura | Posición | Otros valores |
 | --- | --- | --- | --- |
-| `PrimosHouse` | `casas.png` | (7900, 300) | `region_enabled = true`, `region_rect = Rect2(128, 0, 128, 128)` (casa morada), `flip_v = true` (la puerta mira a la calle, igual que la casa de la abuela del nivel 3) |
-| `Buildings` (opcional) | `edificios.png` | (6400, −330) | `region_rect = Rect2(142, 0, 142, 160)`; hace ver el cajón como una calle del centro |
+| `PrimosHouse` | `casa_primos.png` | (8988, 292) | Textura completa, junto a la meta (la última columna de tiles empieza en 9024) |
+| `Buildings` (opcional) | `edificios.png` | (7536, −330) | `region_rect = Rect2(142, 0, 142, 160)`; hace ver el cajón como una calle del centro |
 
 ### Reglas de espacio (por qué están ahí las piezas)
 
-Mientras el celular tapa la calle, el auto sigue avanzando. Por eso ninguna pieza que pida frenar empieza dentro del tramo donde puede sonar o tapar el celular. Ese tramo se cuenta a velocidad máxima: 240 px/s × 2 s de tapa = 480 px.
+Mientras el celular tapa la calle, el auto sigue avanzando. Por eso ninguna pieza que pida frenar empieza dentro del tramo donde puede sonar o tapar el celular. Ese tramo se cuenta a velocidad máxima: 240 px/s × `cover_duration()`.
+
+La tapa dura lo que el aviso `CELULAR_TAPA`, para que la falta no le corte la voz (§3.4): `cover_duration() = max(cover_time, voz + message_time − 2 × grow_time)` = max(2.0, 3.82 + 1.0 − 0.5) = **4.32 s**, o sea 240 × 4.32 ≈ **1037 px**. Antes eran 2 s (480 px); por eso las piezas después de Phone1 se movieron +560 px y las de después de Phone2, +1136 px.
 
 | Celular | Dónde puede terminar de tapar | Siguiente pieza | Holgura |
 | --- | --- | --- | --- |
-| Phone1 | 1000 + 900 + 480 = **2380** | Crosswalk1: su zona empieza en 2900 − 32 − 448 = **2420** | ✔ |
-| Phone2 | 3500 + 700 + 480 = **4680** | TrafficLight1: su zona empieza en 4900 − 192 = **4708** | ✔ |
-| Phone3 | Suena dentro del frenado automático del cajón, que ya baja la velocidad | — | ✔ |
+| Phone1 | 1000 + 900 + 1037 = **2937** | Crosswalk1: su zona empieza en 3460 − 32 − 448 = **2980** | ✔ 43 px |
+| Phone2 | 4060 + 700 + 1037 = **5797** | TrafficLight1: su zona empieza en 6036 − 192 = **5844** | ✔ 47 px |
+| Phone3 | Suena dentro del frenado automático del cajón, que lo detiene en el cajón aunque la tapa siga (probado a 170 y a 60 px/s) | — | ✔ |
 
-Si se mueve una pieza, hay que respetar esta cuenta: `trigger + ring_distance + 480 ≤ inicio de la zona de la siguiente pieza`.
+Si se mueve una pieza o cambia la voz de `CELULAR_TAPA` (o `message_time`), hay que respetar esta cuenta: `trigger + ring_distance + cover_duration() × 240 ≤ inicio de la zona de la siguiente pieza`. La revisa `tests/test_phone.gd` (`_spacing`) y escribe la holgura en el log.
 
 Los checkpoints van **después** de cada celular. Así una falta grave en el paso peatonal (regreso a 2000) no vuelve a hacer sonar el Phone1.
 
@@ -131,7 +133,7 @@ PhoneEvent (Node2D, phone_event.gd)
 | `ring_time` | `float` | `5.0` | Modo ignorar: segundos que suena como máximo |
 | `ring_distance` | `float` | `900.0` | Modo ignorar: px de ruta desde el trigger. Deja de sonar con lo primero que se cumpla de `ring_time` y `ring_distance`. |
 | `moving_speed` | `float` | `10.0` | px/s. Por encima de este valor el auto está **en movimiento**. Es el mismo valor que `stop_speed` de las otras piezas. |
-| `cover_time` | `float` | `2.0` | Segundos que el celular tapa la calle (diseño) |
+| `cover_time` | `float` | `2.0` | Segundos **mínimos** que el celular tapa la calle (diseño). Tapa `cover_duration()`: esto o lo que dure el aviso `CELULAR_TAPA` (voz + `message_time`) menos crecer y encogerse, lo que sea mayor |
 | `grow_time` | `float` | `0.25` | Segundos que tarda en crecer y en encogerse |
 | `small_center` | `Vector2` | `(66, 176)` | Centro del celular chico, en la esquina superior izquierda, debajo de la barra (de 24 a 108 en x, de 96 a 256 en y). No choca con el cinturón (y ≥ 316), el engrane (a la derecha) ni la burbuja del copiloto (x ≥ 200). |
 | `small_scale` | `float` | `0.5` | 84 × 160 px |
@@ -159,7 +161,7 @@ enum State { IDLE, RINGING, COVERING, WAITING_PARK, ANSWERABLE, IN_CALL, DONE }
 | --- | --- | --- | --- |
 | `IDLE` | Nada (`Layer` oculto) | Al empezar o al reiniciar | El auto entra a `Trigger` → `RINGING` (solo una vez por pasada) |
 | `RINGING` | Celular chico en la esquina, vibrando a ráfagas y sonando | Trigger | Ver §3.4 |
-| `COVERING` | Celular grande en `cover_center`, sin vibrar y sin sonido. El juego **no** está en pausa. | Toque en movimiento | Al acabar `cover_time`: falta → `DONE` en modo ignorar, `WAITING_PARK` en modo contestar (o `ANSWERABLE` si ya está estacionado) |
+| `COVERING` | Celular grande en `cover_center`, sin vibrar y sin sonido. El juego **no** está en pausa. | Toque en movimiento | Al acabar `cover_duration()`: falta → `DONE` en modo ignorar, `WAITING_PARK` en modo contestar (o `ANSWERABLE` si ya está estacionado) |
 | `WAITING_PARK` | Nada. El celular «espera». | Modo contestar, después de la falta | `spot.parked` → `ANSWERABLE` |
 | `ANSWERABLE` | Celular chico vibrando y sonando, con un pulso de `modulate` para que se note que ahora sí se puede | `spot.parked` en modo contestar | Toque → `IN_CALL`. Al pasar `answer_timeout` → `DONE` (sin puntos) |
 | `IN_CALL` | Celular chico quieto, sin sonido | Toque estacionado | Al acabar `call_time + release_delay` → `DONE` |
@@ -202,9 +204,9 @@ func is_car_moving() -> bool:
 2. Se mata la vibración y se para `Ring`.
 3. `Feedback.show_info("CELULAR_TAPA")`. Es un aviso sin pausa: «¡no vemos la calle!».
 4. Un tween de `grow_time` mueve `Holder.position` de `small_center` a `cover_center` y `Holder.scale` de `small_scale` a `cover_scale`.
-5. Espera `cover_time`. **El auto sigue moviéndose y el niño sigue manejando**: es la experiencia que pide el diseño.
+5. Espera `cover_duration()` (al menos `cover_time`; con la voz actual, 4.32 s). **El auto sigue moviéndose y el niño sigue manejando**: es la experiencia que pide el diseño.
 6. Un tween de regreso de `grow_time` encoge el celular. `Layer` se oculta.
-7. Se llama `_report_infraction(&"phone", "FALTA_CELULAR")`. **La falta se reporta al terminar la tapa, no al tocar**, porque `Feedback.show_infraction()` pausa el juego y congelaría la calle tapada.
+7. Se llama `_report_infraction(&"phone", "FALTA_CELULAR")`. **La falta se reporta al terminar la tapa, no al tocar**, porque `Feedback.show_infraction()` pausa el juego y congelaría la calle tapada. Como la tapa dura lo que el aviso, la falta llega a los `Feedback.message_duration("CELULAR_TAPA")` segundos del toque (4.82 s) y **no corta la voz de `CELULAR_TAPA`** (`Feedback` reemplaza la burbuja y para la voz anterior al mostrar otro mensaje).
 8. Siguiente estado: `DONE` en modo ignorar. En modo contestar, `ANSWERABLE` si `spot.is_parked()`, si no `WAITING_PARK`.
 
 Cada `await` revisa `_round` (como `crosswalk`). Si el nivel se reinició o terminó a la mitad, no reporta nada.
@@ -297,6 +299,7 @@ func is_ringing() -> bool     # RINGING o ANSWERABLE
 func is_covering() -> bool    # COVERING
 func is_answerable() -> bool  # ANSWERABLE
 func get_state() -> State
+func cover_duration() -> float  # segundos que tapa (sin crecer ni encogerse)
 ```
 
 ---
@@ -311,21 +314,21 @@ Tiempos aproximados en Grande, manejando a unos 170 px/s. En Peque el auto va so
 | ~4 | 400 | `CELULAR_INTRO`: el copiloto avisa que el celular va a sonar y qué hacemos | Expectativa: le dicen la regla antes del reto |
 | ~7 | 1000 | **Ring 1**: vibra y suena en la esquina | Primera tentación, fácil y en calle vacía |
 | ~12 | ~1900 | Se calla → **+10** `BIEN_CELULAR` | **Primer +10 a los ~12 s** |
-| ~18–22 | 2900 | Paso peatonal: un peatón cruza, se espera → +10 | Repaso del nivel 1 |
-| ~27 | 3500 | **Ring 2**, más largo (6 s) y justo cuando vuelve a acelerar | Tentación con las manos ocupadas (pedal y flechas) |
-| ~31 | ~4200 | Se calla → +10 | Ya entendió el patrón |
-| ~33–42 | 4900 | Semáforo con amarillo largo (3 s): frenar, esperar el verde → +10 | Repaso de los niveles 2 y 5 |
-| ~44 | 5300–5600 | Empiezan a pasar autos por el carril izquierdo | La calle «se llena» antes del clímax |
-| ~47 | 5700 | **Ring 3 (clímax)**: vibra más fuerte y no se calla | La tentación más fuerte: «¿y si es importante?» |
-| ~47.5 | 5800 | `CELULAR_ESTACIONAR`: el copiloto señala el cajón | La regla tiene salida: sí se puede, pero estacionados |
-| ~48–52 | 6080–6400 | El auto frena solo hacia el cajón **y el celular sigue sonando** | Clímax: aguantarse hasta quedar quieto. Tocar mientras rueda todavía es falta. |
-| ~52 | 6400 | Estacionado: `CELULAR_CONTESTA`; el celular pulsa | Permiso |
-| ~53 | 6400 | Toca → **+10** `BIEN_CONTESTAR`; `CELULAR_PRIMOS`. Mientras tanto pasan autos por el carril izquierdo. | Recompensa y alivio. Se ve que estacionado es seguro: la calle sigue y nosotros no estorbamos. |
-| ~57 | 6400 | El auto queda libre | Cierre del clímax |
-| ~61–69 | 6900–7668 | Zona de 30 km/h → +10 | Repaso del nivel 2 y bajada de ritmo |
-| ~72 | 7968 | Casa de los primos, `META_LLEGASTE` y tarjeta con «El celular espera, la calle no.» | Llegada cálida |
+| ~21–25 | 3460 | Paso peatonal: un peatón cruza, se espera → +10 | Repaso del nivel 1 |
+| ~30 | 4060 | **Ring 2**, más largo (6 s) y justo cuando vuelve a acelerar | Tentación con las manos ocupadas (pedal y flechas) |
+| ~34 | ~4760 | Se calla → +10 | Ya entendió el patrón |
+| ~40–49 | 6036 | Semáforo con amarillo largo (3 s): frenar, esperar el verde → +10 | Repaso de los niveles 2 y 5 |
+| ~51 | 6436–6736 | Empiezan a pasar autos por el carril izquierdo | La calle «se llena» antes del clímax |
+| ~54 | 7036 | **Ring 3 (clímax)**: vibra más fuerte y no se calla | La tentación más fuerte: «¿y si es importante?» |
+| ~54.5 | 7066 | `CELULAR_ESTACIONAR`: el copiloto señala el cajón | La regla tiene salida: sí se puede, pero estacionados |
+| ~55–59 | 7216–7536 | El auto frena solo hacia el cajón **y el celular sigue sonando** | Clímax: aguantarse hasta quedar quieto. Tocar mientras rueda todavía es falta. |
+| ~59 | 7536 | Estacionado: `CELULAR_CONTESTA`; el celular pulsa | Permiso |
+| ~60 | 7536 | Toca → **+10** `BIEN_CONTESTAR`; `CELULAR_PRIMOS`. Mientras tanto pasan autos por el carril izquierdo. | Recompensa y alivio. Se ve que estacionado es seguro: la calle sigue y nosotros no estorbamos. |
+| ~64 | 7536 | El auto queda libre | Cierre del clímax |
+| ~68–76 | 8036–8804 | Zona de 30 km/h → +10 | Repaso del nivel 2 y bajada de ritmo |
+| ~78 | 9056 | Casa de los primos, `META_LLEGASTE` y tarjeta con «El celular espera, la calle no.» | Llegada cálida |
 
-- **Total:** de 70 a 80 s. Puede llegar a ~85 s si toca rojo completo en el semáforo. Queda dentro de 1 a 2 min.
+- **Total:** de 70 a 80 s (medido: 76 s en Grande y 78 s en Peque). Puede llegar a ~90 s si toca rojo completo en el semáforo. Queda dentro de 1 a 2 min.
 - **Escalada:** ring 1 en calle vacía, ring 2 con 1 s más y mientras acelera, ring 3 que no se calla y vibra más.
 - **Lo que pasa si se equivoca:** el niño ve con sus ojos que, con el celular enfrente, la calle desaparece mientras el auto sigue. Luego el copiloto explica por qué, sin regaño.
 
@@ -342,17 +345,17 @@ Tiempos aproximados en Grande, manejando a unos 170 px/s. En Peque el auto va so
 Lo único que cambia es el **tráfico** del carril izquierdo, en el nodo `TrafficLeft`. Es un script del nivel (`levels/level_06_traffic.gd`), no una pieza compartida:
 
 - `extends Path2D`.
-- Curva de (5100, −32) a (8900, −32), en el carril izquierdo y hacia +x.
+- Curva de (6236, −32) a (10036, −32), en el carril izquierdo y hacia +x.
 - Empieza **después** del semáforo, para que ningún auto del tráfico se pase el rojo en pantalla: `NpcCar` no respeta semáforos.
 
 | Export | Defecto | Grande | Peque |
 | --- | --- | --- | --- |
-| `activate_x` | `5600.0` | Empieza a generar cuando el auto pasa este x | igual |
-| `stop_x` | `7400.0` | Deja de generar después de este x | igual |
+| `activate_x` | `6736.0` | Empieza a generar cuando el auto pasa este x | igual |
+| `stop_x` | `8536.0` | Deja de generar después de este x | igual |
 | `npc_speed` | `100.0` | px/s, por debajo de los 120 px/s de la zona de 30 km/h | igual |
 | `interval_min` / `interval_max` | `4.0` / `6.0` | Cada 4 a 6 s | × `peque_traffic_factor` |
 | `peque_traffic_factor` | `1.8` | — | Cada 7 a 11 s (igual que en `blind_crossing`) |
-| `spawn_behind` | `520.0` | Aparece en `max(car_x − 520, 5100)`, justo fuera de la pantalla por la izquierda | igual |
+| `spawn_behind` | `520.0` | Aparece en `max(car_x − 520, 6236)`, justo fuera de la pantalla por la izquierda | igual |
 | `despawn_behind` | `1500.0` | Se borra si queda más de 1500 px detrás del auto | igual |
 
 El primer auto sale en cuanto se activa. El tráfico se usa con la escena `scenes/actors/npc_car.tscn` y colores de `NPC_COLORS`, como `blind_crossing`, o de la paleta.
@@ -403,18 +406,20 @@ Archivo: `tests/test_phone.gd` (`extends TestCase`, mismo estilo que `test_parki
 | # | Nombre del bloque | Pasos | Asserts (`check`) |
 | --- | --- | --- | --- |
 | 0 | Estructura | Abrir en Grande | Hay 3 `PhoneEvent`; `Phone1.spot == null` y `Phone2.spot == null`; `Phone3.spot == ParkingSpot`; `ParkingSpot.show_finish_line == false`; `LevelData` 6 tiene `destination_key == "DESTINO_CASA_PRIMOS"` y `scene_path == "res://levels/level_06.tscn"`; las losas de meta siguen al final de la calle |
+| 0b | `cover_duration()` | Con `Feedback._voices` falso (como `test_feedback_voice.gd`) | Con la voz real: `max(cover_time, voz + message_time − 2·grow_time)`; sin voz o con voz corta: `cover_time`; con voz de 4 s: 4 + `message_time` − 2·`grow_time` |
+| 0c | Regla de espacio | Abrir en Grande | Para cada celular en modo ignorar: `x + ring_distance + cover_duration() × max_speed ≤` inicio de la zona de la siguiente pieza (escribe la holgura en el log) |
 | 1 | Ignorar da +10 | `restart_at(700)`, `driver.target = 170` | `Phone1.is_ringing()` en ≤ 5 s y `Phone1.get_node("Layer").visible`; al callarse (≤ `ring_time + 1`): `rm.points` subió 10, `rm.faults == 0`, `get_state() == DONE`, `Layer` oculto |
 | 2 | Para por distancia | Igual que el 1 con `driver.target = 240` | Deja de sonar antes de `ring_time` y con `car.progress >= trigger + ring_distance − 10` |
-| 3 | Tocar en movimiento: tapa sin pausa | `restart_at(700)`, target 170; cuando suena, `touch_phone()` | Enseguida: `is_covering()`, `rm.faults == 0`, `not get_tree().paused`. A 1 s: `car.speed > 10` (el auto sigue) y la escala de `Holder` ≈ `cover_scale`. A `cover_time + grow_time + 0.2`: `rm.faults == 1`, `rm.infractions[&"phone"] == 1`, puntos sin cambio. Después de `wait_unpaused()`: `Layer` oculto, `DONE`, y al pasar `ring_time` **no** se sumó +10 |
+| 3 | Tocar en movimiento: tapa sin pausa | `restart_at(700)`, target 170; cuando suena, `touch_phone()` | Enseguida: `is_covering()`, `rm.faults == 0`, `not get_tree().paused`. A 1 s: `car.speed > 10` (el auto sigue) y la escala de `Holder` ≈ `cover_scale`. La falta llega **no antes** de `Feedback.message_duration("CELULAR_TAPA")` desde el toque (la voz del aviso no se corta) y a más tardar 0.3 s después: `rm.faults == 1`, `rm.infractions[&"phone"] == 1`, puntos sin cambio. Después de `wait_unpaused()`: `Layer` oculto, `DONE`, y al pasar `ring_time` **no** se sumó +10 |
 | 4 | Una falta por pasada | Después del 3, `touch_phone()` dos veces | `rm.faults == 1` |
 | 5 | Tocar detenido no es falta | Suena Phone2; `driver.target = 0` hasta `car.speed == 0`; `touch_phone()` | `rm.faults == 0`, `is_ringing()`, `not is_covering()`; al soltar el freno y callarse, +10 |
-| 6 | Contestar estacionado | `restart_at(5500)`, target 170 sin tocar; `wait_until(spot.is_parked, 25)` | `Phone3.is_answerable()`; `touch_phone()` → +10 y `faults == 0`. Antes de `call_time + release_delay`, el auto sigue detenido aunque `driver.target = 170`. Después, `car.progress > 6336 + 100` en ≤ 5 s y `Phone3.get_state() == DONE` |
-| 7 | Tocar mientras entra al cajón | `restart_at(5500)`; cuando `Phone3.is_ringing()` y `car.speed > 10`, `touch_phone()` | Tras la tapa: `infractions[&"phone"] == 1`; `Layer` oculto (`WAITING_PARK`); al estacionarse, `is_answerable()`; `touch_phone()` → +10 y el auto sale |
-| 8 | Sin contestar sigue solo | `restart_at(5500)`, se estaciona y no toca | A `answer_timeout + 0.5`: `DONE`, puntos sin cambio, `faults == 0`, el auto avanza al dar gas |
-| 9 | Peque: mismas reglas | `GameState.mode = peque`; `restart_at(700)` sin driver (avanza solo); al sonar, `touch_phone()` | Después de la tapa: `infractions[&"phone"] == 1`. En otra pasada sin tocar: +10 |
-| 10 | Peque contesta | Peque, `restart_at(5500)` | Se estaciona solo; `touch_phone()` → +10; tras `call_time + release_delay`, `car.progress` aumenta sin tocar pedales |
-| 11 | Punto de control | Con Phone2 sonando, `car.restart_at(3300 − 64)` y `rm.checkpoint_restored.emit(3236.0)` | `Phone2.get_state() == IDLE`, `Layer` oculto; al manejar otra vez vuelve a sonar (`ring_started` se emite de nuevo); `Phone1.get_state() == DONE` (no se reinicia) |
-| 12 | Tráfico por modo | Grande, `restart_at(5500)`, contar `NpcCar` hijos de `TrafficLeft` durante 12 s | Grande ≥ 2; Peque ≤ Grande; ningún `NpcCar` con `position.x < 5100` |
+| 6 | Contestar estacionado | `restart_at` 336 px antes de Phone3 (progress 6636), target 170 sin tocar; `wait_until(spot.is_parked, 25)` | `Phone3.is_answerable()`; `touch_phone()` → +10 y `faults == 0`. Antes de `call_time + release_delay`, el auto sigue detenido aunque `driver.target = 170`. Después, `car.progress > 7472 + 100` en ≤ 5 s y `Phone3.get_state() == DONE` |
+| 7 | Tocar mientras entra al cajón | Igual que el 6, a target 170 y a target 60; cuando `Phone3.is_ringing()` y `car.speed > 10`, `touch_phone()` | Tras la tapa: `infractions[&"phone"] == 1` y el auto **nunca pasó del cajón**. A 170 se estaciona durante la tapa y al quitarse ya `is_answerable()`; a 60 todavía no llega: `Layer` oculto (`WAITING_PARK`) y al estacionarse, `is_answerable()`. `touch_phone()` → +10 y el auto sale |
+| 8 | Sin contestar sigue solo | Igual que el 6, se estaciona y no toca | A `answer_timeout + 0.5`: `DONE`, puntos sin cambio, `faults == 0`, el auto avanza al dar gas |
+| 9 | Peque: mismas reglas | `GameState.mode = peque`; `restart_at(700)` sin driver (avanza solo); al sonar, `touch_phone()` | Después de la tapa (cuando acaba el aviso `CELULAR_TAPA`): `infractions[&"phone"] == 1`. En otra pasada sin tocar: +10 |
+| 10 | Peque contesta | Peque, igual que el 6 | Se estaciona solo; `touch_phone()` → +10; tras `call_time + release_delay`, `car.progress` aumenta sin tocar pedales |
+| 11 | Punto de control | Con Phone2 sonando, `car.restart_at(3860 − 64)` y `rm.checkpoint_restored.emit(3796.0)` (`CheckpointAfterCrosswalk`) | `Phone2.get_state() == IDLE`, `Layer` oculto; al manejar otra vez vuelve a sonar (`ring_started` se emite de nuevo); `Phone1.get_state() == DONE` (no se reinicia) |
+| 12 | Tráfico por modo | Grande, igual que el 6, contar `NpcCar` hijos de `TrafficLeft` durante 12 s | Grande ≥ 2; Peque ≤ Grande; ningún `NpcCar` antes de `start_point` (6236), que está después del semáforo |
 
 **Recorridos completos:** los cubre `tests/test_levels.gd` en cuanto `data/level_06.tres` tenga `scene_path`. Es el punto 7 de la base técnica: la lista de niveles sale de `LevelData`.
 
@@ -431,7 +436,7 @@ Solo arte que ya existe:
 | Uso | Archivo |
 | --- | --- |
 | Celular (chico, grande y en llamada; es el mismo sprite) | `assets/ui/phone.png` (168 × 320) |
-| Casa de los primos | `assets/sprites/city/casas.png`, región `Rect2(128, 0, 128, 128)` |
+| Casa de los primos | `assets/sprites/city/casa_primos.png` |
 | Edificios junto al cajón (opcional) | `assets/sprites/city/edificios.png`, región `Rect2(142, 0, 142, 160)` |
 | Calle, banquetas, casas de fondo, meta | `assets/tiles/street_tiles.tres` (lo pinta `level_builder`) |
 | Semáforo | `assets/sprites/signals/traffic_light.png` (lo trae `traffic_light`) |

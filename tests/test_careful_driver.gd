@@ -4,6 +4,9 @@ extends TestCase
 ## que editarlo: careful_stop_x() + must_wait(), careful_lane() + careful_range()
 ## y el grupo "needs_headlights". Se le agregan piezas falsas al nivel 0.
 
+# Juega niveles enteros: run_tests.sh --fast la salta.
+const SLOW := true
+
 const STOP_X := 1600.0
 const LANE_RANGE := Vector2(2400.0, 2900.0)
 
@@ -87,7 +90,6 @@ func run() -> void:
 	add_child(driver)
 	fake_bridge().auto_start = false
 	fake_bridge().mode = GameState.MODE_GRANDE
-	Engine.time_scale = 3.0
 	BridgeClient._go_idle()
 	await frames()
 	get_tree().scene_changed.connect(_inject, CONNECT_ONE_SHOT)
@@ -107,7 +109,6 @@ func run() -> void:
 	timer.start()
 	result = await driver.play(0)
 	timer.stop()
-	Engine.time_scale = 1.0
 	print("    nivel 0 con piezas falsas: %s" % str(result))
 	check(result != null and result["infractions"].is_empty(), "el recorrido con piezas falsas termina sin faltas")
 	check(waited >= 2.0, "careful_stop_x + must_wait: se detiene donde pide la pieza y espera")
