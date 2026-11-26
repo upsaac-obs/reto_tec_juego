@@ -73,6 +73,13 @@ func run() -> void:
 	await open_level()
 	car.restart_at(500.0)
 	driver.target = 120.0
+	driver.brake_after = 1150.0
+	t = 0.0
+	# Espera antes de la línea a que el semáforo de autos se ponga en verde.
+	while not crossing.is_trap() and t < 15.0:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+	driver.brake_after = INF
 	t = 0.0
 	while rm.infractions.get(&"patience", 0) == 0 and t < 15.0:
 		await get_tree().physics_frame

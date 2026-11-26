@@ -7,8 +7,10 @@ extends RulePiece
 ## - Cuando el auto se acerca, la luz de peatones se pone verde y todas las personas
 ##   empiezan a cruzar a la vez, cada una a su paso (walker_speeds), lado a lado o en
 ##   fila (chain_spacing).
+## - En los últimos ped_blink_time segundos la luz de peatones parpadea: va a cambiar.
 ## - A los green_after segundos el semáforo de autos se pone en verde, aunque
-##   todavía haya gente en el cruce: esa es la prueba de paciencia.
+##   todavía haya alguien lento en el cruce: esa es la prueba de paciencia. green_after
+##   se elige para que casi todos ya hayan cruzado y solo falte la persona más lenta.
 ## - Si el auto pasa la línea del semáforo mientras alguien cruza: falta "patience"
 ##   (no grave) y se queda quieto hasta que termine de cruzar.
 ## - Si entra a la cebra ocupada: frena solo, la gente se asusta y es falta grave (crosswalk).
@@ -49,6 +51,8 @@ enum PedLight { OFF, RED, GREEN }
 @export var line_width: float = 8.0
 ## Segundos desde que empiezan a cruzar hasta que el semáforo de autos se pone en verde.
 @export var green_after: float = 3.0
+## Segundos antes del verde de autos en los que la luz de peatones parpadea.
+@export var ped_blink_time: float = 1.5
 ## Segundos entre que el auto se acerca y la gente empieza a cruzar.
 @export var start_delay: float = 0.3
 ## Quién cruza, una persona por cuadro de animación. En fila, la primera va adelante.
@@ -59,12 +63,16 @@ enum PedLight { OFF, RED, GREEN }
 ## Velocidad de cada persona en px/s, en el mismo orden que walkers. Si falta su
 ## entrada o vale 0 o menos, camina a walk_speed.
 @export var walker_speeds: Array[float] = []
-## Separación en x (a lo ancho de la cebra) cuando cruzan lado a lado.
-@export var walker_spacing: float = 18.0
+## Separación en x (a lo ancho de la cebra) cuando cruzan lado a lado. Cada persona
+## mide unos 40 px de ancho: con menos se enciman.
+@export var walker_spacing: float = 40.0
 ## Separación en px de la fila a lo largo del cruce. Con 0 cruzan lado a lado
 ## (walker_spacing); con más de 0, una detrás de otra: la primera de walkers en Start
 ## y cada siguiente chain_spacing px más atrás, sobre la banqueta.
 @export var chain_spacing: float = 0.0
+## En fila, cuántas personas van lado a lado en cada hilera (separadas walker_spacing).
+## Con 2 y cuatro personas: dos hileras de dos, para que la fila quepa en la banqueta.
+@export_range(1, 4) var chain_columns: int = 1
 @export var stop_speed: float = 10.0
 @export var points: int = 10
 @export var stripe_height: float = 14.0
@@ -131,8 +139,11 @@ func _physics_process(delta: float) -> void:
 					_start_crossing()
 		State.CROSSING:
 			_crossing_time += delta
-			if _crossing_time >= green_after and _light.light == TrafficLight.Light.RED:
-				_light.set_light(TrafficLight.Light.GREEN)
+			if _light.light == TrafficLight.Light.RED:
+				if _crossing_time >= green_after:
+					_light.set_light(TrafficLight.Light.GREEN)
+				elif _crossing_time >= green_after - ped_blink_time:
+					queue_redraw()
 	if _car_in_approach and is_trap() and not _faulted_patience and _car.speed <= stop_speed:
 		_waited = true
 
@@ -168,10 +179,14 @@ func _walker_speed(index: int) -> float:
 
 
 ## Cada persona espera en su lugar: lado a lado, centradas sobre la cebra, o en fila
-## detrás de la primera (chain_spacing > 0).
+## detrás de la primera (chain_spacing > 0), chain_columns por hilera.
 func _walker_start(index: int) -> Vector2:
 	if chain_spacing > 0.0:
-		return _start.position - Vector2(0.0, index * chain_spacing)
+		var columns := clampi(chain_columns, 1, maxi(walkers.size(), 1))
+		var column := index % columns
+		var row := floori(float(index) / columns)
+		var x := (column - (columns - 1) / 2.0) * walker_spacing
+		return _start.position + Vector2(x, -row * chain_spacing)
 	var offset := (index - (walkers.size() - 1) / 2.0) * walker_spacing
 	return _start.position + Vector2(offset, 0.0)
 
@@ -256,6 +271,9 @@ func _on_car_restarted() -> void:
 
 func _ped_light_state() -> PedLight:
 	if _state == State.CROSSING and _light.light == TrafficLight.Light.RED:
+		# Parpadea (verde / apagado, 3 veces por segundo) antes de cambiar.
+		if _crossing_time >= green_after - ped_blink_time and fmod(_crossing_time, 0.33) >= 0.165:
+			return PedLight.OFF
 		return PedLight.GREEN
 	return PedLight.RED
 
