@@ -121,7 +121,7 @@ ENGINES = {
 # --- Proceso ------------------------------------------------------------------
 
 # Claves que no llevan voz: los créditos (nombres y licencias) solo se leen en pantalla.
-NO_VOICE_PREFIXES = ("CREDITOS_",)
+NO_VOICE_PREFIXES = ("CREDITOS_", "GARAJE_", "VEHICULO_")
 
 
 def read_texts() -> dict[str, str]:

@@ -144,11 +144,17 @@ func _on_start_level(json: String) -> void:
 	if not (data.get("kiosk") is bool and data.get("muted") is bool):
 		_error(&"invalid_field", "kiosk y muted deben ser true o false")
 		return
+	# "vehicle" es opcional (las apps viejas no lo mandan).
+	var vehicle: Variant = data.get("vehicle", Vehicles.DEFAULT)
+	if not (vehicle is String and Vehicles.is_valid(vehicle)):
+		_error(&"invalid_field", "vehicle: %s" % str(vehicle))
+		return
 	# Cada nivel que empieza termina con level_exited, aunque lo reemplace otro.
 	if state == State.PLAYING:
 		_send(&"level_exited", {"level_id": level_id, "completed": _finished})
 	GameState.mode = mode
 	GameState.kiosk = data["kiosk"]
+	GameState.vehicle = vehicle
 	_on_set_muted(data["muted"])
 	_load_level(level)
 

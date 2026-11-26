@@ -112,6 +112,7 @@ func _ready() -> void:
 	assert(_route != null, "PlayerCar tiene que ser hijo de un DrivingRoute")
 	loop = false
 	rotates = true
+	Vehicles.apply(self, GameState.vehicle)
 	auto_drive = GameState.mode == GameState.MODE_PEQUE
 	AudioManager.start_loop(&"engine")
 	_turns = _route.get_turn_points()

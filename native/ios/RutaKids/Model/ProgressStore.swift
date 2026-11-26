@@ -14,7 +14,8 @@ struct LevelResult {
 /// Lo único que guarda la app (docs/sprint_15_28_oct.md, sección 5.2). Nada personal:
 /// modo de juego, kiosco, tutorial visto, y por nivel: estrellas, puntos y faltas.
 /// Claves (las mismas que usa Android): mode, kiosk, tutorial_done,
-/// level_<id>_stars, level_<id>_points, level_<id>_infractions.
+/// level_<id>_stars, level_<id>_points, level_<id>_infractions,
+/// garage_owned, garage_vehicle, garage_hint_seen.
 @Observable
 final class ProgressStore {
     static let modePeque = "peque"
@@ -30,6 +31,12 @@ final class ProgressStore {
     private(set) var stars: [Int: Int] = [:]
     private(set) var points: [Int: Int] = [:]
     private(set) var infractions: [Int: [String: Int]] = [:]
+    /// Garaje: comprados (el clásico siempre), el elegido y si ya se vio el aviso.
+    private(set) var ownedVehicles: Set<String> = [Garage.defaultId]
+    private(set) var selectedVehicle: String = Garage.defaultId
+    private(set) var garageHintSeen: Bool
+    /// En kiosco todo está disponible y la elección no se guarda.
+    var kioskVehicle: String = Garage.defaultId
 
     @ObservationIgnored private let defaults: UserDefaults
 
@@ -38,6 +45,11 @@ final class ProgressStore {
         mode = defaults.string(forKey: "mode")
         kiosk = defaults.bool(forKey: "kiosk")
         tutorialDone = defaults.bool(forKey: "tutorial_done")
+        garageHintSeen = defaults.bool(forKey: "garage_hint_seen")
+        ownedVehicles = Set(defaults.stringArray(forKey: "garage_owned") ?? []).union([Garage.defaultId])
+        if let saved = defaults.string(forKey: "garage_vehicle"), ownedVehicles.contains(saved) {
+            selectedVehicle = saved
+        }
         for id in [Self.tutorialLevel] + Self.menuLevels {
             stars[id] = defaults.integer(forKey: Self.starsKey(id))
             points[id] = defaults.integer(forKey: Self.pointsKey(id))
@@ -59,6 +71,14 @@ final class ProgressStore {
         if kiosk || levelId <= Self.menuLevels[0] { return true }
         return stars(for: levelId - 1) >= 1
     }
+
+    /// Estrellas que quedan para comprar en el garaje.
+    var coinBalance: Int { Garage.balance(totalStars: totalStars, owned: ownedVehicles) }
+
+    /// Vehículo con el que se juega (en kiosco, el elegido en esta sesión).
+    var currentVehicle: String { kiosk ? kioskVehicle : selectedVehicle }
+
+    func ownsVehicle(_ id: String) -> Bool { kiosk || ownedVehicles.contains(id) }
 
     // MARK: Cambios
 
@@ -90,7 +110,37 @@ final class ProgressStore {
         }
     }
 
-    /// Borra estrellas, puntos y faltas. El modo y el kiosco se quedan.
+    // MARK: Garaje
+
+    /// Compra el vehículo y lo deja elegido, si alcanzan las estrellas. Devuelve si compró.
+    @discardableResult
+    func buyVehicle(_ id: String) -> Bool {
+        guard !kiosk, let vehicle = Garage.all.first(where: { $0.id == id }),
+              !ownedVehicles.contains(id), coinBalance >= vehicle.price else { return false }
+        ownedVehicles.insert(id)
+        selectedVehicle = id
+        defaults.set(Array(ownedVehicles).sorted(), forKey: "garage_owned")
+        defaults.set(id, forKey: "garage_vehicle")
+        return true
+    }
+
+    /// Elige un vehículo ya comprado (en kiosco, cualquiera, sin guardar).
+    func selectVehicle(_ id: String) {
+        if kiosk {
+            kioskVehicle = id
+        } else if ownedVehicles.contains(id) {
+            selectedVehicle = id
+            defaults.set(id, forKey: "garage_vehicle")
+        }
+    }
+
+    func markGarageHintSeen() {
+        garageHintSeen = true
+        defaults.set(true, forKey: "garage_hint_seen")
+    }
+
+    /// Borra estrellas, puntos, faltas y el garaje (sin estrellas no hay con qué haberlo
+    /// comprado). El modo y el kiosco se quedan.
     func resetProgress() {
         for id in [Self.tutorialLevel] + Self.menuLevels {
             stars[id] = 0
@@ -102,6 +152,10 @@ final class ProgressStore {
         }
         tutorialDone = false
         defaults.removeObject(forKey: "tutorial_done")
+        ownedVehicles = [Garage.defaultId]
+        selectedVehicle = Garage.defaultId
+        garageHintSeen = false
+        for key in ["garage_owned", "garage_vehicle", "garage_hint_seen"] { defaults.removeObject(forKey: key) }
     }
 
     // MARK: Claves y formato

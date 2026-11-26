@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.fundacionado.rutakids.bridge.BridgeViewModel
 import org.fundacionado.rutakids.bridge.MenuCommand
+import org.fundacionado.rutakids.data.Garage
+import org.fundacionado.rutakids.data.GarageState
 import org.fundacionado.rutakids.data.Levels
 import org.fundacionado.rutakids.data.Progress
 
@@ -38,6 +40,7 @@ object Routes {
     const val AGE_SELECT = "edad"
     const val LEVEL_SELECT = "niveles"
     const val TUTORS = "tutores"
+    const val GARAGE = "garaje"
 }
 
 /**
@@ -55,6 +58,9 @@ fun RutaKidsApp(vm: BridgeViewModel) {
     val kiosk by vm.kiosk.collectAsState()
     val mode by vm.settings.mode.collectAsState(initial = null)
     val progress by vm.settings.progress.collectAsState(initial = Progress())
+    val garage by vm.settings.garage.collectAsState(initial = GarageState())
+    val tutorialDone by vm.settings.tutorialDone.collectAsState(initial = false)
+    val kioskVehicle by vm.kioskVehicle.collectAsState()
 
     val tutors = @Composable { onBack: () -> Unit ->
         TutorsScreen(
@@ -165,7 +171,25 @@ fun RutaKidsApp(vm: BridgeViewModel) {
                         godot = godot,
                         progress = progress,
                         kiosk = kiosk,
+                        vehicleImage = Garage.byId(if (kiosk) kioskVehicle else garage.selected)
+                            .takeIf { it.id != Garage.DEFAULT }?.image,
+                        showGarageHint = !kiosk && tutorialDone && !garage.hintSeen,
                         onLevelSelected = vm::startLevel,
+                        onOpenGarage = {
+                            vm.markGarageHintSeen()
+                            nav.navigate(Routes.GARAGE) { launchSingleTop = true }
+                        },
+                        onBack = { nav.popBackStack() },
+                    )
+                }
+                composable(Routes.GARAGE) {
+                    GarageScreen(
+                        garage = garage,
+                        totalStars = progress.totalStars,
+                        kiosk = kiosk,
+                        kioskVehicle = kioskVehicle,
+                        onSelect = vm::selectVehicle,
+                        onBuy = vm::buyVehicle,
                         onBack = { nav.popBackStack() },
                     )
                 }

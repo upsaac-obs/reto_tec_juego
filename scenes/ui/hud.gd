@@ -23,6 +23,8 @@ const Palette := preload("res://autoload/game_state.gd")
 ## El cinturón parpadea hasta que se lo ponen.
 @export var seatbelt_pulse_time: float = 0.5
 @export var seatbelt_done_tint: Color = Color(0.55, 0.55, 0.6, 1.0)
+## Botón que reemplaza al del cinturón cuando se maneja la moto.
+@export var helmet_texture: Texture2D = preload("res://assets/ui/icons/helmet.png")
 ## Botón de luces (nivel 7). Un nivel lo muestra poniendo esta propiedad en true
 ## en su nodo Hud (escena heredada). Prende y apaga las luces del auto (car_lights).
 ## Parpadea (como el cinturón) hasta que se prenden la primera vez y otra vez
@@ -70,12 +72,14 @@ func _ready() -> void:
 		rule_manager.good_action_reported.connect(func(_id: StringName, _points_won: int) -> void: _refresh_score())
 	if car != null:
 		car.seatbelt_fastened.connect(_on_seatbelt_fastened)
-		car.blocked_without_seatbelt.connect(Feedback.show_info.bind("PONTE_CINTURON"))
+		car.blocked_without_seatbelt.connect(Feedback.show_info.bind("PONTE_CASCO" if _helmet() else "PONTE_CINTURON"))
 		car.headlights_changed.connect(_on_headlights_changed)
 	_lights.visible = show_lights_button
 	# Modo peque: el auto avanza solo; el niño solo tiene freno y flechas.
 	%Gas.visible = GameState.mode != GameState.MODE_PEQUE
 	_refresh_score()
+	if _helmet():
+		_seatbelt.texture_normal = helmet_texture
 	_pulse = _start_pulse(_seatbelt)
 	set_process(show_lights_button and car != null)
 
@@ -137,7 +141,12 @@ func _on_seatbelt_fastened() -> void:
 	if _pulse != null:
 		_pulse.kill()
 	_seatbelt.modulate = seatbelt_done_tint
-	Feedback.show_good_action("CINTURON_LISTO", 0)
+	Feedback.show_good_action("CASCO_LISTO" if _helmet() else "CINTURON_LISTO", 0)
+
+
+## En la moto el botón del cinturón es el del casco (mismo lugar y misma acción).
+func _helmet() -> bool:
+	return Vehicles.uses_helmet(GameState.vehicle)
 
 
 ## Empieza a contar la presión larga. Corre aunque el juego esté en pausa (falta).

@@ -68,7 +68,7 @@ position = Vector2(1700, 0)
 position = Vector2(2600, 0)
 kind = 1
 limit_kmh = 20
-zone_length = 1600.0
+zone_length = 1000.0
 
 
 [node name="CrosswalkSchool" type="Node2D" parent="Rules" instance=ExtResource("4_2t17w")]

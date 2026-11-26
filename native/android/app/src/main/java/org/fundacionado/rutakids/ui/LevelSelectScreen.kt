@@ -18,6 +18,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -67,13 +77,19 @@ import kotlin.math.roundToInt
  * - En kiosco todo está abierto, no hay estrellas y el auto espera al inicio del camino.
  * - Si Godot respondió level_not_built, la parada queda cerrada.
  * - El auto espera en la parada que sigue; al ganar una nueva, maneja hasta la siguiente.
+ *   Es el vehículo elegido en el garaje ([vehicleImage]; null = el auto rojo del mapa).
+ * - Arriba a la derecha, el botón del garaje. Al terminar el tutorial rebota y el copiloto
+ *   avisa una vez ([showGarageHint]) hasta que se abre.
  */
 @Composable
 fun LevelSelectScreen(
     godot: GodotState,
     progress: Progress,
     kiosk: Boolean,
+    @DrawableRes vehicleImage: Int?,
+    showGarageHint: Boolean,
     onLevelSelected: (Int) -> Unit,
+    onOpenGarage: () -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -183,12 +199,13 @@ fun LevelSelectScreen(
 
         // El auto sobre el camino, mirando hacia donde avanza.
         val (cx, cy, angle) = map.carAt(car.value)
-        Image(
-            map.image(map.car.file),
-            contentDescription = null,
-            modifier = Modifier.at(cx - map.car.width / 2, cy - map.car.height / 2, map.car.width, map.car.height)
-                .graphicsLayer { rotationZ = angle },
-        )
+        val carModifier = Modifier.at(cx - map.car.width / 2, cy - map.car.height / 2, map.car.width, map.car.height)
+            .graphicsLayer { rotationZ = angle }
+        if (vehicleImage != null) {
+            Image(painterResource(vehicleImage), null, carModifier, contentScale = ContentScale.Fit)
+        } else {
+            Image(map.image(map.car.file), contentDescription = null, modifier = carModifier)
+        }
 
         // Barra de arriba: Regresar a la izquierda y las estrellas a la derecha.
         Row(
@@ -197,7 +214,45 @@ fun LevelSelectScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ImageButton(R.drawable.btn_back, stringResource(R.string.MENU_REGRESAR), onBack, Modifier.size(CornerButtonSize))
-            if (!kiosk) StarsBanner(progress.totalStars, Levels.maxStars) else Box(Modifier.alpha(0f))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (!kiosk) {
+                    StarsBanner(progress.totalStars, Levels.maxStars)
+                    Spacer(Modifier.width(12.dp))
+                }
+                ImageButton(
+                    R.drawable.btn_garage,
+                    stringResource(R.string.GARAJE_TITULO),
+                    onOpenGarage,
+                    Modifier.size(CornerButtonSize).graphicsLayer {
+                        val k = if (showGarageHint) pulse * pulse else 1f
+                        scaleX = k; scaleY = k
+                    },
+                )
+            }
+        }
+
+        // Aviso del garaje (una vez, al terminar el tutorial): el copiloto señala el botón.
+        if (showGarageHint) {
+            Row(
+                Modifier.align(Alignment.TopEnd)
+                    .windowInsetsPadding(WindowInsets.displayCutout)
+                    .padding(top = 16.dp + CornerButtonSize, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // El copiloto señala hacia la derecha: al globo, que queda bajo el botón.
+                Image(painterResource(R.drawable.copilot_point), null, Modifier.size(96.dp))
+                Text(
+                    stringResource(R.string.GARAJE_PISTA),
+                    color = Palette.DarkPurple,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .widthIn(max = 230.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Palette.White)
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                )
+            }
         }
     }
 }

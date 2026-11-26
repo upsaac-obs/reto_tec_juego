@@ -36,6 +36,9 @@ func _on_zone_entered(area: Area2D) -> void:
 	var key := message_key
 	if GameState.mode == GameState.MODE_PEQUE and not peque_message_key.is_empty():
 		key = peque_message_key
+	# En la moto, si el mensaje habla del cinturón tiene su versión con casco.
+	if Vehicles.uses_helmet(GameState.vehicle) and tr(key + "_CASCO") != key + "_CASCO":
+		key += "_CASCO"
 	Feedback.show_info(key)
 
 

@@ -41,7 +41,7 @@ Así cada plataforma implementa 5 señales y 1 método, y las dos quedan iguales
 
 | Método | Cuándo | Datos |
 | --- | --- | --- |
-| `start_level(json)` | El niño toca un nivel. Si ya hay un nivel abierto, Godot lo cierra primero con `level_exited` | `{"v":1,"level_id":3,"mode":"peque","kiosk":false,"muted":false}`. `mode` es `peque` o `grande`; `kiosk` y `muted` son booleanos |
+| `start_level(json)` | El niño toca un nivel. Si ya hay un nivel abierto, Godot lo cierra primero con `level_exited` | `{"v":1,"level_id":3,"mode":"peque","kiosk":false,"muted":false,"vehicle":"moto"}`. `mode` es `peque` o `grande`; `kiosk` y `muted` son booleanos; `vehicle` (opcional, por defecto `clasico`) es un id de `Vehicles.IDS` (garaje) |
 | `pause_level()` | La app pasa a segundo plano o entra una llamada | — |
 | `resume_level()` | La app regresa | — |
 | `abort_level()` | El nativo necesita cerrar el nivel (kiosco, tutor) | — |

@@ -11,6 +11,7 @@ final class AppModel {
     var showLevels = false
     var showOptions = false
     var showTutors = false
+    var showGarage = false
     /// Mensaje corto sobre la lista de niveles (clave de textos.csv), o nil.
     private(set) var toastKey: String?
 
@@ -64,7 +65,8 @@ final class AppModel {
             id,
             mode: store.mode ?? ProgressStore.modeGrande,
             kiosk: store.kiosk,
-            muted: !AudioManager.shared.isSoundEnabled
+            muted: !AudioManager.shared.isSoundEnabled,
+            vehicle: store.currentVehicle
         )
     }
 
@@ -76,6 +78,17 @@ final class AppModel {
         }
         // Un nivel que se cerró mientras Tutores estaba abierto ya no hay que reanudarlo.
         levelPausedForTutors = false
+    }
+
+    // MARK: Garaje
+
+    /// Aviso del garaje en el mapa: una vez, al terminar el tutorial, hasta abrirlo.
+    var showGarageHint: Bool { !store.kiosk && store.tutorialDone && !store.garageHintSeen }
+
+    func openGarage() {
+        AudioManager.shared.playSound(named: "menu_tap")
+        store.markGarageHintSeen()
+        showGarage = true
     }
 
     // MARK: Tutores
@@ -128,6 +141,7 @@ final class AppModel {
     }
 
     func goHome() {
+        showGarage = false
         showLevels = false
         showOptions = false
         lastTouch = Date()
